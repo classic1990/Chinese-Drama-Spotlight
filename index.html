@@ -14,53 +14,127 @@
 <style>
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color: #fff; }
+body {
+    margin: 0; font-family: 'Prompt', sans-serif; 
+    background-color: #0a0a0a;
+    color: #fff; 
+    overflow-x: hidden;
+}
 
+/* --- Animated Sci-Fi Background --- */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: -1;
+    background-image: 
+        linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,1)),
+        radial-gradient(ellipse at center, rgba(12, 24, 33, 0.5) 0%, rgba(10, 10, 10, 0) 70%),
+        linear-gradient(to right, rgba(229, 9, 20, 0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(229, 9, 20, 0.1) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 50px 50px, 50px 50px;
+    animation: bg-pan 60s linear infinite;
+}
+
+@keyframes bg-pan {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+}
+
+/* --- Hero & Aggressive Neon Logo --- */
 .hero {
-    height: 50vh; /* Adjusted height */
-    background: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0.4)), url("https://images.pexels.com/photos/2531709/pexels-photo-2531709.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2") center/cover;
-    display: flex; align-items: center; justify-content: center; text-align: center; }
+    height: 50vh;
+    display: flex; align-items: center; justify-content: center; text-align: center; 
+    background: transparent; /* BG is now on body */
+}
 
 .neon-logo {
-    font-family: 'Jura', sans-serif; font-weight: 700; font-size: clamp(3rem, 10vw, 6rem); color: #fff;
-    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff00de, 0 0 30px #ff00de, 0 0 40px #ff00de, 0 0 55px #ff00de, 0 0 75px #ff00de;
-    animation: flicker 2s infinite alternate; }
+    font-family: 'Jura', sans-serif; font-weight: 700; font-size: clamp(3rem, 10vw, 7rem); color: #fff;
+    text-shadow: 0 0 5px #fff, 0 0 12px #fff, 0 0 25px #e50914, 0 0 45px #e50914, 0 0 60px #e50914, 0 0 80px #e50914, 0 0 120px #e50914;
+    animation: aggressive-flicker 3s infinite alternate;
+}
 
-@keyframes flicker {
-    0%, 18%, 22%, 25%, 53%, 57%, 100% { text-shadow: 0 0 4px #fff, 0 0 10px #fff, 0 0 18px #00aeff, 0 0 38px #00aeff, 0 0 70px #00aeff, 0 0 80px #00aeff, 0 0 100px #00aeff; }
-    20%, 24%, 55% { text-shadow: none; } }
+@keyframes aggressive-flicker {
+    0%, 10%, 15%, 25%, 30%, 45%, 50%, 60%, 70%, 80%, 100% { 
+        text-shadow: 0 0 5px #fff, 0 0 12px #fff, 0 0 25px #e50914, 0 0 45px #e50914, 0 0 60px #e50914, 0 0 80px #e50914, 0 0 120px #e50914;
+        color: #fff;
+    }
+    12%, 27%, 47%, 62%, 72% { text-shadow: none; color: #555; }
+    48% { text-shadow: 0 0 5px #fff, 0 0 10px #e50914; color: #fcc; }
+}
 
+/* --- Glassmorphism Quick Nav --- */
 .quick-nav {
-    background: #111;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(12px);
     padding: 15px 50px;
     text-align: center;
     position: sticky;
     top: 0;
     z-index: 100;
-    border-bottom: 1px solid #222;
+    border-bottom: 1px solid rgba(229, 9, 20, 0.4);
     display: flex; 
     justify-content: center;
     gap: 30px;
 }
-.quick-nav a {
-    color: #ccc;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-.quick-nav a:hover {
-    color: #e50914;
-}
+.quick-nav a { color: #ccc; text-decoration: none; font-size: 16px; font-weight: 500; transition: all 0.3s ease; text-shadow: 0 0 3px rgba(0,0,0,0.5); }
+.quick-nav a:hover { color: #e50914; transform: scale(1.1); text-shadow: 0 0 5px #e50914; }
 
+/* --- Main Content & Glowing Titles --- */
 .main-content { padding: 0 50px 50px 50px; }
 .section { margin-top: 50px; }
-.section h2 { margin-bottom: 30px; font-size: 28px; padding-bottom: 10px; border-bottom: 2px solid #e50914; display: inline-block; }
-.movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 30px; }
-.movie-card { cursor: pointer; transition: transform 0.4s ease; text-decoration: none; color: #fff; }
-.movie-card:hover { transform: scale(1.08); }
-.movie-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
-.movie-title { margin-top: 10px; font-size: 15px; text-align: center; font-weight: 300; }
+.section h2 {
+    margin-bottom: 30px; font-size: 28px; display: inline-block; 
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 0 4px rgba(255,255,255,0.3), 0 0 8px #e50914, 0 0 15px #e50914;
+}
+
+/* --- Fearless Glowing Movie Cards --- */
+.movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 40px 30px; }
+.movie-card {
+    cursor: pointer; 
+    text-decoration: none; 
+    color: #fff; 
+    position: relative;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.movie-card img {
+    width: 100%; 
+    aspect-ratio: 2/3; 
+    object-fit: cover; 
+    border-radius: 18px; 
+    box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+    transition: box-shadow 0.4s ease;
+}
+.movie-card .movie-title { margin-top: 15px; font-size: 15px; text-align: center; font-weight: 400; transition: color 0.3s ease; }
+
+/* The GLOW effect */
+.movie-card::before {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background: radial-gradient(circle, #e50914, transparent 70%);
+    border-radius: 20px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s ease-out;
+}
+
+.movie-card:hover { 
+    transform: translateY(-12px) scale(1.06);
+}
+.movie-card:hover::before {
+    opacity: 1;
+}
+.movie-card:hover img {
+    box-shadow: 0 0 25px -5px #e50914, 0 15px 40px rgba(0,0,0,1);
+}
+.movie-card:hover .movie-title {
+    color: #e50914;
+    font-weight: 600;
+}
+
 .empty-grid-message { color: #888; }
 
 @media (max-width: 768px) {
@@ -166,13 +240,11 @@ body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color:
         try {
             const [moviesSnapshot, ratingsSnapshot] = await Promise.all([moviesPromise, ratingsPromise]);
 
-            // 1. Process all movies into a map
             const allMovies = {};
             moviesSnapshot.forEach(doc => {
                 allMovies[doc.id] = { id: doc.id, ...doc.data() };
             });
 
-            // 2. Process ratings to calculate averages
             const ratingsSummary = {};
             ratingsSnapshot.forEach(doc => {
                 const rating = doc.data();
@@ -188,7 +260,6 @@ body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color:
                 summary.avg = summary.total / summary.count;
             });
 
-            // 3. Categorize and sort movies
             const categorized = { movie: [], chinese_series_dubbed: [], chinese_series_vertical: [] };
             const allMoviesList = Object.values(allMovies);
 
@@ -200,13 +271,11 @@ body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color:
                 }
             });
 
-            // 4. Create and sort top-rated list
             let topRatedMovies = allMoviesList
-                .filter(movie => ratingsSummary[movie.id]) // Only movies with ratings
+                .filter(movie => ratingsSummary[movie.id])
                 .map(movie => ({ ...movie, rating: ratingsSummary[movie.id] }))
-                .sort((a, b) => b.rating.avg - a.rating.avg || b.rating.count - a.rating.count); // Sort by avg, then by count
+                .sort((a, b) => b.rating.avg - a.rating.avg || b.rating.count - a.rating.count);
 
-            // 5. Render all grids
             renderGrid(moviesGrid, categorized.movie, 'ยังไม่มีภาพยนตร์แนะนำ');
             renderGrid(topRatedGrid, topRatedMovies.slice(0, 10), 'ยังไม่มีหนังที่ได้คะแนน');
             renderGrid(dubbedSeriesGrid, categorized.chinese_series_dubbed, 'ยังไม่มีซีรีส์พากย์ไทย');
@@ -214,10 +283,11 @@ body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color:
 
         } catch (error) {
             console.error("Error loading content:", error);
-            moviesGrid.innerHTML = '<p class="empty-grid-message">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
-            topRatedGrid.innerHTML = '<p class="empty-grid-message">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
-            dubbedSeriesGrid.innerHTML = '<p class="empty-grid-message">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
-            verticalSeriesGrid.innerHTML = '<p class="empty-grid-message">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
+            const errorMessage = '<p class="empty-grid-message">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
+            moviesGrid.innerHTML = errorMessage;
+            topRatedGrid.innerHTML = errorMessage;
+            dubbedSeriesGrid.innerHTML = errorMessage;
+            verticalSeriesGrid.innerHTML = errorMessage;
         }
     }
 
