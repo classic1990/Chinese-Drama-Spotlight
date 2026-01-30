@@ -10,13 +10,14 @@
 <meta property="og:title" content="DUYDODEE-HD - ดูหนัง-ซีรีส์ออนไลน์ฟรี">
 <meta property="og:description" content="DUYDODEE-HD เว็บดูหนังและซีรีส์ออนไลน์ฟรี อัปเดตใหม่ล่าสุดก่อนใคร มีครบทุกหมวดหมู่">
 <meta property="og:image" content="https://images.pexels.com/photos/2531709/pexels-photo-2531709.jpeg">
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&family=Jura:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&family=Jura:wght@700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color: #fff; }
 
 .hero {
-    height: 60vh;
+    height: 50vh; /* Adjusted height */
     background: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0.4)), url("https://images.pexels.com/photos/2531709/pexels-photo-2531709.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2") center/cover;
     display: flex; align-items: center; justify-content: center; text-align: center; }
 
@@ -29,18 +30,42 @@ body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color:
     0%, 18%, 22%, 25%, 53%, 57%, 100% { text-shadow: 0 0 4px #fff, 0 0 10px #fff, 0 0 18px #00aeff, 0 0 38px #00aeff, 0 0 70px #00aeff, 0 0 80px #00aeff, 0 0 100px #00aeff; }
     20%, 24%, 55% { text-shadow: none; } }
 
+.quick-nav {
+    background: #111;
+    padding: 15px 50px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid #222;
+    display: flex; 
+    justify-content: center;
+    gap: 30px;
+}
+.quick-nav a {
+    color: #ccc;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+.quick-nav a:hover {
+    color: #e50914;
+}
+
 .main-content { padding: 0 50px 50px 50px; }
-.section { margin-top: 40px; }
+.section { margin-top: 50px; }
 .section h2 { margin-bottom: 30px; font-size: 28px; padding-bottom: 10px; border-bottom: 2px solid #e50914; display: inline-block; }
 .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 30px; }
 .movie-card { cursor: pointer; transition: transform 0.4s ease; text-decoration: none; color: #fff; }
 .movie-card:hover { transform: scale(1.08); }
 .movie-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
-.movie-title { margin-top: 10px; font-size: 15px; text-align: center; }
+.movie-title { margin-top: 10px; font-size: 15px; text-align: center; font-weight: 300; }
 .empty-grid-message { color: #888; }
 
 @media (max-width: 768px) {
     .hero { height: 40vh; }
+    .quick-nav { padding: 15px 20px; gap: 20px; font-size: 14px; }
     .main-content { padding: 0 20px 20px 20px; }
 }
 </style>
@@ -48,28 +73,34 @@ body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color:
 <body>
 
 <main>
-    <section class="hero">
+    <header class="hero">
         <div class="hero-content">
             <h1 class="neon-logo">DUYDODEE-HD</h1>
         </div>
-    </section>
+    </header>
+
+    <nav class="quick-nav">
+        <a href="#movies_section">ภาพยนตร์แนะนำ</a>
+        <a href="#dubbed_series_section">ซีรีส์จีนพากย์ไทยยอดฮิต</a>
+        <a href="#vertical_series_section">ซีรีส์จีนแนวตั้ง</a>
+    </nav>
 
     <div class="main-content">
-        <section class="section">
+        <section id="movies_section" class="section">
             <h2>🎬 ภาพยนตร์แนะนำ</h2>
             <div class="movie-grid" id="movies_grid">
                 <p class="empty-grid-message">กำลังโหลด...</p>
             </div>
         </section>
 
-        <section class="section">
+        <section id="dubbed_series_section" class="section">
             <h2>🔥 ซีรีส์จีนพากย์ไทยยอดฮิต</h2>
             <div class="movie-grid" id="dubbed_series_grid">
                  <p class="empty-grid-message">กำลังโหลด...</p>
             </div>
         </section>
 
-        <section class="section">
+        <section id="vertical_series_section" class="section">
             <h2>📱 ซีรีส์จีนแนวตั้ง</h2>
             <div class="movie-grid" id="vertical_series_grid">
                  <p class="empty-grid-message">กำลังโหลด...</p>
