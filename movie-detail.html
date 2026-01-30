@@ -30,8 +30,8 @@ body {
 .poster-card img { width: 100%; max-width: 320px; border-radius: 18px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); }
 .movie-info { flex: 1.6; }
 .movie-info h1 { font-size: 34px; margin-bottom: 10px; font-weight: 600; }
-.movie-info p { line-height: 1.9; font-size: 16px; margin-bottom: 30px; }
-.buttons { display: flex; gap: 18px; flex-wrap: wrap; }
+.movie-info p { line-height: 1.9; font-size: 16px; margin-bottom: 20px; }
+.buttons { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 25px; }
 .btn { padding: 14px 30px; border-radius: 30px; border: none; font-size: 16px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-align: center; transition: all 0.3s ease; }
 .btn-watch { background: #e50914; color: #fff; }
 .btn-watch:hover { background: #ff1f2d; transform: translateY(-3px); }
@@ -49,15 +49,31 @@ body {
 .vertical-info h1 { font-size: 28px; }
 .vertical-info p { margin: 15px auto 30px; line-height: 1.8; color: #eee; }
 
+/* --- Rating Section --- */
+.rating-section { margin: 20px 0; }
+.avg-rating { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+.avg-rating .stars-outer { position: relative; display: inline-block; }
+.avg-rating .stars-inner { position: absolute; top: 0; left: 0; white-space: nowrap; overflow: hidden; width: 0; }
+.avg-rating .stars-outer::before, .avg-rating .stars-inner::before { content: "★★★★★"; color: #444; }
+.avg-rating .stars-inner::before { color: #f8ce0b; }
+.avg-rating .rating-text { font-size: 14px; color: #ccc; }
+
+.user-rating .stars { display: inline-flex; flex-direction: row-reverse; justify-content: flex-end; }
+.user-rating .stars input[type="radio"] { display: none; }
+.user-rating .stars label {
+    font-size: 28px; color: #444; cursor: pointer; transition: color 0.2s;
+}
+.user-rating .stars:not(:hover) input:checked ~ label,
+.user-rating .stars:hover label:hover ~ label { color: #f8ce0b; }
+.user-rating .stars input:checked + label { color: #f8ce0b; }
+.user-rating .stars label:hover { color: #f8ce0b; }
+#rating-message { font-size: 14px; color: #aaa; margin-top: 10px; min-height: 1.2em;}
+
+
 /* --- Comment Section --- */
 .comments-section { 
-    margin-top: 50px; 
-    padding: 30px; 
-    background: rgba(0,0,0,0.3); 
-    border-radius: 20px; 
-    animation: slideUp 1s ease forwards 0.8s; 
-    opacity: 0; 
-    transform: translateY(20px);
+    margin-top: 50px; padding: 30px; background: rgba(0,0,0,0.3); border-radius: 20px; 
+    animation: slideUp 1s ease forwards 0.8s; opacity: 0; transform: translateY(20px);
 }
 .comments-section h2 { font-size: 22px; margin-bottom: 25px; border-left: 4px solid #e50914; padding-left: 15px; }
 #comment-auth-area .btn { width: 100%; max-width: 400px; margin: 20px auto; display: flex; font-size: 18px; }
@@ -140,7 +156,6 @@ body {
             const doc = await db.collection('movies').doc(movieId).get();
             if (doc.exists) {
                 const content = doc.data();
-                // Set background and meta tags
                 if (content.banner) { document.body.style.background = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url("${content.banner}") center/cover fixed`; }
                 document.title = `${content.title} | DUYDODEE-HD`;
                 createMetaTag('name', 'description', content.desc);
@@ -158,6 +173,9 @@ body {
                         </div>
                         <div class="vertical-info">
                             <h1>${content.title}</h1>
+                            <div class="rating-section">
+                                <div id="avg-rating-display" class="avg-rating"></div>
+                            </div>
                             <p>${content.desc}</p>
                             <a href="index.html" class="btn btn-back">กลับหน้าหลัก</a>
                         </div>
@@ -168,7 +186,21 @@ body {
                         <div class="movie-container">
                             <div class="poster-card"><img src="${content.poster}" alt="Poster for ${content.title}"></div>
                             <div class="movie-info">
-                                <h1>${content.title}</h1><p>${content.desc}</p>
+                                <h1>${content.title}</h1>
+                                <div class="rating-section">
+                                    <div id="avg-rating-display" class="avg-rating"></div>
+                                    <div class="user-rating">
+                                        <fieldset class="stars">
+                                            <input type="radio" id="star5" name="rating" value="5" /><label for="star5" title="5 ดาว"></label>
+                                            <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="4 ดาว"></label>
+                                            <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="3 ดาว"></label>
+                                            <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="2 ดาว"></label>
+                                            <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="1 ดาว"></label>
+                                        </fieldset>
+                                    </div>
+                                     <div id="rating-message"></div>
+                                </div>
+                                <p>${content.desc}</p>
                                 <div class="buttons">
                                     <a href="${content.link}" target="_blank" class="btn btn-watch">🎥 รับชมได้ที่นี่</a>
                                     <a href="index.html" class="btn btn-back">กลับหน้าหลัก</a>
@@ -186,7 +218,8 @@ body {
                 </div>`;
                 
                 loadingState.style.display = 'none';
-                setupAuthAndComments(); // Initialize comments after rendering
+                setupAuthAndComments();
+                setupRatingSystem();
             } else {
                 loadingState.textContent = 'ไม่พบข้อมูลเนื้อหาในระบบ';
             }
@@ -196,13 +229,98 @@ body {
         }
     }
 
+    // --- RATING LOGIC ---
+    function setupRatingSystem() {
+        updateAverageRating();
+        const ratingMessage = document.getElementById('rating-message');
+        const starsFieldset = document.querySelector('.user-rating .stars');
+
+        if (!starsFieldset) return; // Not on a page with rating input
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // User is logged in, check for their previous rating
+                const ratingDocId = `${user.uid}_${movieId}`;
+                db.collection('ratings').doc(ratingDocId).get().then(doc => {
+                    if (doc.exists) {
+                        const userRating = doc.data().rating;
+                        const starToCheck = document.getElementById(`star${userRating}`);
+                        if(starToCheck) starToCheck.checked = true;
+                        ratingMessage.textContent = `คุณเคยให้ ${userRating} ดาว`;
+                    } else {
+                        ratingMessage.textContent = 'ให้คะแนนเรื่องนี้:';
+                    }
+                });
+
+                // Add event listeners to stars
+                starsFieldset.addEventListener('change', (e) => {
+                    const rating = e.target.value;
+                    handleRatingSubmit(rating, user);
+                });
+
+            } else {
+                // User is not logged in
+                starsFieldset.disabled = true;
+                const loginUrl = `user-login.html?redirect=${encodeURIComponent(window.location.href)}`;
+                ratingMessage.innerHTML = `<a href="${loginUrl}" style="color: #f8ce0b;">เข้าสู่ระบบเพื่อให้คะแนน</a>`;
+                Array.from(starsFieldset.children).forEach(child => child.style.cursor = 'not-allowed');
+            }
+        });
+    }
+
+    function handleRatingSubmit(rating, user) {
+        const ratingDocId = `${user.uid}_${movieId}`;
+        const ratingMessage = document.getElementById('rating-message');
+
+        db.collection('ratings').doc(ratingDocId).set({
+            movieId: movieId,
+            uid: user.uid,
+            rating: parseInt(rating),
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        })
+        .then(() => {
+            ratingMessage.textContent = `ขอบคุณสำหรับ ${rating} ดาว!`;
+        })
+        .catch(error => console.error("Error submitting rating: ", error));
+    }
+
+    function updateAverageRating() {
+        const avgRatingDisplay = document.getElementById('avg-rating-display');
+        if(!avgRatingDisplay) return;
+
+        db.collection('ratings').where('movieId', '==', movieId)
+            .onSnapshot(snapshot => {
+                if (snapshot.empty) {
+                    avgRatingDisplay.innerHTML = '<span class="rating-text">ยังไม่มีการให้คะแนน</span>';
+                    return;
+                }
+
+                let totalRating = 0;
+                snapshot.forEach(doc => {
+                    totalRating += doc.data().rating;
+                });
+
+                const ratingCount = snapshot.size;
+                const averageRating = totalRating / ratingCount;
+                const starPercentage = (averageRating / 5) * 100;
+
+                avgRatingDisplay.innerHTML = `
+                    <div class="stars-outer">
+                        <div class="stars-inner" style="width: ${starPercentage}%"></div>
+                    </div>
+                    <span class="rating-text">
+                        <strong>${averageRating.toFixed(1)}</strong>/5 (${ratingCount} คะแนน)
+                    </span>
+                `;
+            });
+    }
+
     // --- AUTH & COMMENTS LOGIC ---
     function setupAuthAndComments() {
         const authArea = document.getElementById('comment-auth-area');
 
         auth.onAuthStateChanged(user => {
             if (user) {
-                // User is logged in
                 authArea.innerHTML = `
                     <form id="comment-form">
                         <img src="${user.photoURL}" alt="Your profile picture">
@@ -212,13 +330,11 @@ body {
                 `;
                 document.getElementById('comment-form').addEventListener('submit', handleCommentSubmit);
             } else {
-                // User is logged out
                 const loginUrl = `user-login.html?redirect=${encodeURIComponent(window.location.href)}`;
                 authArea.innerHTML = `<a href="${loginUrl}" class="btn btn-watch">เข้าสู่ระบบเพื่อแสดงความคิดเห็น</a>`;
             }
         });
 
-        // Fetch and display comments
         db.collection('comments').where('movieId', '==', movieId).orderBy('timestamp', 'desc')
             .onSnapshot(snapshot => {
                 const commentsList = document.getElementById('comments-list');
@@ -259,7 +375,7 @@ body {
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         })
         .then(() => {
-            document.getElementById('comment-text').value = ''; // Clear textarea
+            document.getElementById('comment-text').value = '';
         })
         .catch(error => console.error("Error adding comment: ", error));
     }
