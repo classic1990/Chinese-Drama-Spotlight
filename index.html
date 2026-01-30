@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DUYDODEE-HD - ดูหนัง-ซีรีส์ออนไลน์ฟรี</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
+<meta name="description" content="DUYDODEE-HD เว็บดูหนังและซีรีส์ออนไลน์ฟรี อัปเดตใหม่ล่าสุดก่อนใคร มีทั้งหนัง ซีรีส์จีนพากย์ไทย และซีรีส์แนวตั้งยอดนิยม">
+<meta name="keywords" content="ดูหนัง, ซีรีส์จีน, ซีรีส์แนวตั้ง, movie review, DUYDODEE-HD, ดูหนังออนไลน์, หนังฟรี">
+<meta property="og:title" content="DUYDODEE-HD - ดูหนัง-ซีรีส์ออนไลน์ฟรี">
+<meta property="og:description" content="DUYDODEE-HD เว็บดูหนังและซีรีส์ออนไลน์ฟรี อัปเดตใหม่ล่าสุดก่อนใคร มีครบทุกหมวดหมู่">
+<meta property="og:image" content="https://images.pexels.com/photos/2531709/pexels-photo-2531709.jpeg">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&family=Jura:wght@700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color: #fff; }
+
+.hero {
+    height: 60vh;
+    background: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0.4)), url("https://images.pexels.com/photos/2531709/pexels-photo-2531709.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2") center/cover;
+    display: flex; align-items: center; justify-content: center; text-align: center; }
+
+.neon-logo {
+    font-family: 'Jura', sans-serif; font-weight: 700; font-size: clamp(3rem, 10vw, 6rem); color: #fff;
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff00de, 0 0 30px #ff00de, 0 0 40px #ff00de, 0 0 55px #ff00de, 0 0 75px #ff00de;
+    animation: flicker 2s infinite alternate; }
+
+@keyframes flicker {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% { text-shadow: 0 0 4px #fff, 0 0 10px #fff, 0 0 18px #00aeff, 0 0 38px #00aeff, 0 0 70px #00aeff, 0 0 80px #00aeff, 0 0 100px #00aeff; }
+    20%, 24%, 55% { text-shadow: none; } }
+
+.main-content { padding: 0 50px 50px 50px; }
+.section { margin-top: 40px; }
+.section h2 { margin-bottom: 30px; font-size: 28px; padding-bottom: 10px; border-bottom: 2px solid #e50914; display: inline-block; }
+.movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 30px; }
+.movie-card { cursor: pointer; transition: transform 0.4s ease; text-decoration: none; color: #fff; }
+.movie-card:hover { transform: scale(1.08); }
+.movie-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+.movie-title { margin-top: 10px; font-size: 15px; text-align: center; }
+.empty-grid-message { color: #888; }
+
+@media (max-width: 768px) {
+    .hero { height: 40vh; }
+    .main-content { padding: 0 20px 20px 20px; }
+}
+</style>
+</head>
+<body>
+
+<main>
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="neon-logo">DUYDODEE-HD</h1>
+        </div>
+    </section>
+
+    <div class="main-content">
+        <section class="section">
+            <h2>🎬 ภาพยนตร์แนะนำ</h2>
+            <div class="movie-grid" id="movies_grid">
+                <p class="empty-grid-message">กำลังโหลด...</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>🔥 ซีรีส์จีนพากย์ไทยยอดฮิต</h2>
+            <div class="movie-grid" id="dubbed_series_grid">
+                 <p class="empty-grid-message">กำลังโหลด...</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>📱 ซีรีส์จีนแนวตั้ง</h2>
+            <div class="movie-grid" id="vertical_series_grid">
+                 <p class="empty-grid-message">กำลังโหลด...</p>
+            </div>
+        </section>
+    </div>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+<script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAcCn0NGbakHmLEa_G47K8OepGaRqTV02Q",
+      authDomain: "duydodeesport.firebaseapp.com",
+      projectId: "duydodeesport",
+      storageBucket: "duydodeesport.appspot.com",
+      messagingSenderId: "435929814225",
+      appId: "1:435929814225:web:fcb01803d9e5b77340e1f0",
+      measurementId: "G-JD1MFCNLY0"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    const moviesGrid = document.getElementById('movies_grid');
+    const dubbedSeriesGrid = document.getElementById('dubbed_series_grid');
+    const verticalSeriesGrid = document.getElementById('vertical_series_grid');
+
+    db.collection('movies').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+        moviesGrid.innerHTML = '';
+        dubbedSeriesGrid.innerHTML = '';
+        verticalSeriesGrid.innerHTML = '';
+
+        const categorized = { movie: [], chinese_series_dubbed: [], chinese_series_vertical: [] };
+
+        snapshot.forEach(doc => {
+            const content = doc.data();
+            content.id = doc.id;
+            if (categorized[content.category]) {
+                 categorized[content.category].push(content);
+            } else {
+                 categorized.movie.push(content); // Fallback for old data
+            }
+        });
+
+        const createCard = (content) => {
+            const card = document.createElement('a');
+            card.className = 'movie-card';
+            card.href = `movie-detail.html?id=${content.id}`;
+            card.innerHTML = `
+                <img src="${content.poster}" alt="${content.title} Poster">
+                <div class="movie-title">${content.title}</div>
+            `;
+            return card;
+        };
+
+        if (categorized.movie.length > 0) {
+            categorized.movie.forEach(content => moviesGrid.appendChild(createCard(content)));
+        } else {
+            moviesGrid.innerHTML = '<p class="empty-grid-message">ยังไม่มีเนื้อหาในหมวดหมู่นี้</p>';
+        }
+
+        if (categorized.chinese_series_dubbed.length > 0) {
+            categorized.chinese_series_dubbed.forEach(content => dubbedSeriesGrid.appendChild(createCard(content)));
+        } else {
+            dubbedSeriesGrid.innerHTML = '<p class="empty-grid-message">ยังไม่มีเนื้อหาในหมวดหมู่นี้</p>';
+        }
+
+       if (categorized.chinese_series_vertical.length > 0) {
+            categorized.chinese_series_vertical.forEach(content => verticalSeriesGrid.appendChild(createCard(content)));
+        } else {
+            verticalSeriesGrid.innerHTML = '<p class="empty-grid-message">ยังไม่มีเนื้อหาในหมวดหมู่นี้</p>';
+        }
+    });
+</script>
+
+</body>
+</html>
