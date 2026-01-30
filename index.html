@@ -10,190 +10,46 @@
 <meta property="og:title" content="DUYDODEE-HD - ดูหนัง-ซีรีส์ออนไลน์ฟรี">
 <meta property="og:description" content="DUYDODEE-HD เว็บดูหนังและซีรีส์ออนไลน์ฟรี อัปเดตใหม่ล่าสุดก่อนใคร มีครบทุกหมวดหมู่">
 <meta property="og:image" content="https://images.pexels.com/photos/2531709/pexels-photo-2531709.jpeg">
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&family=Jura:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&family=Jura:wght@700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-    margin: 0; font-family: 'Prompt', sans-serif; 
-    background-color: #000;
-    color: #fff; 
-    overflow-x: hidden;
-}
-
-/* --- Cyber Storm Background --- */
-.storm-bg {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -2;
-    background: #000;
-    overflow: hidden;
-}
-.storm-bg .lightning {
-    position: absolute;
-    left: 50%; top: 0;
-    width: 2px;
-    height: 100%;
-    background: #fff;
-    box-shadow: 0 0 10px #e50914, 0 0 20px #e50914, 0 0 30px #e50914;
-    opacity: 0;
-    transform-origin: top;
-    animation: lightning-strike 5s linear infinite;
-}
-.storm-bg .lightning:nth-child(2) { animation-delay: 1.2s; left: 20%; transform: scale(0.8); }
-.storm-bg .lightning:nth-child(3) { animation-delay: 2.5s; left: 80%; transform: scale(0.9); }
-.storm-bg .lightning:nth-child(4) { animation-delay: 4.1s; left: 60%; transform: scale(0.7); }
-
-@keyframes lightning-strike {
-    0%, 100% { opacity: 0; transform: scaleY(0); }
-    5% { opacity: 1; transform: scaleY(1); }
-    10% { opacity: 0; transform: scaleY(1); }
-}
-
-
-/* --- Hero & Electric Logo --- */
+body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color: #fff; }
 .hero {
-    height: 50vh;
+    height: 60vh;
+    background: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0.4)), url("https://images.pexels.com/photos/2531709/pexels-photo-2531709.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2") center/cover;
     display: flex; align-items: center; justify-content: center; text-align: center; 
-    position: relative;
-    overflow: hidden;
 }
-
 .neon-logo {
-    font-family: 'Jura', sans-serif; font-weight: 700; font-size: clamp(3rem, 10vw, 7rem); color: #fff;
-    text-shadow: 0 0 5px #fff, 0 0 12px #fff, 0 0 25px #e50914, 0 0 45px #e50914, 0 0 60px #e50914, 0 0 80px #e50914, 0 0 120px #e50914;
-    animation: aggressive-flicker 3s infinite alternate, static-charge 0.1s infinite alternate;
+    font-family: 'Jura', sans-serif; font-weight: 700; font-size: clamp(3rem, 10vw, 6rem); color: #fff;
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff00de, 0 0 30px #ff00de, 0 0 40px #ff00de, 0 0 55px #ff00de, 0 0 75px #ff00de;
+    animation: flicker 2s infinite alternate; 
 }
-
-@keyframes static-charge {
-    from { transform: translate(1px, 1px); }
-    to { transform: translate(-1px, -1px); }
+@keyframes flicker {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% { text-shadow: 0 0 4px #fff, 0 0 10px #fff, 0 0 18px #00aeff, 0 0 38px #00aeff, 0 0 70px #00aeff, 0 0 80px #00aeff, 0 0 100px #00aeff; }
+    20%, 24%, 55% { text-shadow: none; } 
 }
-
-@keyframes aggressive-flicker {
-    0%, 10%, 15%, 25%, 30%, 45%, 50%, 60%, 70%, 80%, 100% { 
-        text-shadow: 0 0 5px #fff, 0 0 12px #fff, 0 0 25px #e50914, 0 0 45px #e50914, 0 0 60px #e50914, 0 0 80px #e50914, 0 0 120px #e50914;
-        color: #fff;
-    }
-    12%, 27%, 47%, 62%, 72% { text-shadow: none; color: #555; }
-    48% { text-shadow: 0 0 5px #fff, 0 0 10px #e50914; color: #fcc; }
-}
-
-/* --- Holo-Interface Quick Nav --- */
-.quick-nav {
-    background: rgba(10, 10, 10, 0.6);
-    backdrop-filter: blur(10px);
-    padding: 15px 50px;
-    text-align: center;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex; 
-    justify-content: center;
-    gap: 30px;
-    border: 1px solid transparent;
-    border-image: linear-gradient(to right, transparent, rgba(229, 9, 20, 0.5), transparent) 1;
-}
-.quick-nav a { color: #ccc; text-decoration: none; font-size: 16px; font-weight: 500; transition: all 0.3s ease; text-shadow: 0 0 3px rgba(0,0,0,0.5); position: relative; padding: 5px 0;}
-.quick-nav a::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 50%;
-    width: 0%; height: 2px;
-    background: #e50914;
-    box-shadow: 0 0 10px #e50914;
-    transition: all 0.4s ease-in-out;
-    transform: translateX(-50%);
-}
-.quick-nav a:hover { color: #fff; transform: scale(1.05); }
-.quick-nav a:hover::after { width: 100%; }
-
-/* --- Main Content & Glowing Titles --- */
-.main-content { padding: 0 50px 50px 50px; background: rgba(0,0,0,0.3); }
-.section { margin-top: 50px; }
-.section h2 {
-    margin-bottom: 30px; font-size: 28px; display: inline-block; 
-    font-weight: 600;
-    color: #fff;
-    text-shadow: 0 0 4px rgba(255,255,255,0.3), 0 0 8px #e50914, 0 0 15px #e50914;
-}
-
-/* --- Fearless Glowing Movie Cards --- */
-.movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 40px 30px; }
-.movie-card {
-    cursor: pointer; 
-    text-decoration: none; 
-    color: #fff; 
-    position: relative;
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.movie-card img {
-    width: 100%; 
-    aspect-ratio: 2/3; 
-    object-fit: cover; 
-    border-radius: 18px; 
-    box-shadow: 0 15px 35px rgba(0,0,0,0.8);
-    transition: box-shadow 0.4s ease;
-}
-.movie-card .movie-title { margin-top: 15px; font-size: 15px; text-align: center; font-weight: 400; transition: color 0.3s ease; }
-
-/* The GLOW effect */
-.movie-card::before {
-    content: '';
-    position: absolute;
-    top: -2px; left: -2px; right: -2px; bottom: -2px;
-    background: radial-gradient(circle, #e50914, transparent 70%);
-    border-radius: 20px;
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.4s ease-out;
-}
-
-.movie-card:hover { 
-    transform: translateY(-12px) scale(1.06);
-}
-.movie-card:hover::before {
-    opacity: 1;
-}
-.movie-card:hover img {
-    box-shadow: 0 0 25px -5px #e50914, 0 15px 40px rgba(0,0,0,1);
-}
-.movie-card:hover .movie-title {
-    color: #e50914;
-    font-weight: 600;
-}
-
+.main-content { padding: 0 50px 50px 50px; }
+.section { margin-top: 40px; }
+.section h2 { margin-bottom: 30px; font-size: 28px; padding-bottom: 10px; border-bottom: 2px solid #e50914; display: inline-block; }
+.movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 30px; }
+.movie-card { cursor: pointer; transition: transform 0.4s ease; text-decoration: none; color: #fff; }
+.movie-card:hover { transform: scale(1.08); }
+.movie-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+.movie-title { margin-top: 10px; font-size: 15px; text-align: center; }
 .empty-grid-message { color: #888; }
-
 @media (max-width: 768px) {
     .hero { height: 40vh; }
-    .quick-nav { padding: 15px 20px; gap: 15px; font-size: 14px; flex-wrap: wrap;}
     .main-content { padding: 0 20px 20px 20px; }
 }
 </style>
 </head>
 <body>
-
-<div class="storm-bg">
-    <div class="lightning"></div>
-    <div class="lightning"></div>
-    <div class="lightning"></div>
-    <div class="lightning"></div>
-</div>
-
 <main>
     <header class="hero">
         <div class="hero-content">
             <h1 class="neon-logo">DUYDODEE-HD</h1>
         </div>
     </header>
-
-    <nav class="quick-nav">
-        <a href="#movies_section">ภาพยนตร์แนะนำ</a>
-        <a href="#top_rated_section">หนังคะแนนสูงสุด</a>
-        <a href="#dubbed_series_section">ซีรีส์จีนพากย์ไทย</a>
-        <a href="#vertical_series_section">ซีรีส์จีนแนวตั้ง</a>
-    </nav>
-
     <div class="main-content">
         <section id="movies_section" class="section">
             <h2>🎬 ภาพยนตร์แนะนำ</h2>
@@ -201,21 +57,12 @@ body {
                 <p class="empty-grid-message">กำลังโหลด...</p>
             </div>
         </section>
-
-        <section id="top_rated_section" class="section">
-            <h2>⭐ หนังคะแนนสูงสุด</h2>
-            <div class="movie-grid" id="top_rated_grid">
-                 <p class="empty-grid-message">กำลังคำนวณอันดับ...</p>
-            </div>
-        </section>
-
         <section id="dubbed_series_section" class="section">
             <h2>🔥 ซีรีส์จีนพากย์ไทยยอดฮิต</h2>
             <div class="movie-grid" id="dubbed_series_grid">
                  <p class="empty-grid-message">กำลังโหลด...</p>
             </div>
         </section>
-
         <section id="vertical_series_section" class="section">
             <h2>📱 ซีรีส์จีนแนวตั้ง</h2>
             <div class="movie-grid" id="vertical_series_grid">
@@ -224,10 +71,8 @@ body {
         </section>
     </div>
 </main>
-
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-
 <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAcCn0NGbakHmLEa_G47K8OepGaRqTV02Q",
@@ -243,7 +88,6 @@ body {
     const db = firebase.firestore();
     
     const moviesGrid = document.getElementById('movies_grid');
-    const topRatedGrid = document.getElementById('top_rated_grid');
     const dubbedSeriesGrid = document.getElementById('dubbed_series_grid');
     const verticalSeriesGrid = document.getElementById('vertical_series_grid');
 
@@ -268,50 +112,21 @@ body {
     }
 
     async function loadAllContent() {
-        const moviesPromise = db.collection('movies').orderBy('createdAt', 'desc').get();
-        const ratingsPromise = db.collection('ratings').get();
-
         try {
-            const [moviesSnapshot, ratingsSnapshot] = await Promise.all([moviesPromise, ratingsPromise]);
-
-            const allMovies = {};
-            moviesSnapshot.forEach(doc => {
-                allMovies[doc.id] = { id: doc.id, ...doc.data() };
-            });
-
-            const ratingsSummary = {};
-            ratingsSnapshot.forEach(doc => {
-                const rating = doc.data();
-                if (!ratingsSummary[rating.movieId]) {
-                    ratingsSummary[rating.movieId] = { total: 0, count: 0 };
-                }
-                ratingsSummary[rating.movieId].total += rating.rating;
-                ratingsSummary[rating.movieId].count++;
-            });
-
-            Object.keys(ratingsSummary).forEach(movieId => {
-                const summary = ratingsSummary[movieId];
-                summary.avg = summary.total / summary.count;
-            });
+            const moviesSnapshot = await db.collection('movies').orderBy('createdAt', 'desc').get();
 
             const categorized = { movie: [], chinese_series_dubbed: [], chinese_series_vertical: [] };
-            const allMoviesList = Object.values(allMovies);
 
-            allMoviesList.forEach(content => {
+            moviesSnapshot.forEach(doc => {
+                const content = { id: doc.id, ...doc.data() };
                 if (categorized[content.category]) {
                     categorized[content.category].push(content);
                 } else {
-                    categorized.movie.push(content); // Fallback
+                    categorized.movie.push(content); // Fallback for old/uncategorized data
                 }
             });
 
-            let topRatedMovies = allMoviesList
-                .filter(movie => ratingsSummary[movie.id])
-                .map(movie => ({ ...movie, rating: ratingsSummary[movie.id] }))
-                .sort((a, b) => b.rating.avg - a.rating.avg || b.rating.count - a.rating.count);
-
             renderGrid(moviesGrid, categorized.movie, 'ยังไม่มีภาพยนตร์แนะนำ');
-            renderGrid(topRatedGrid, topRatedMovies.slice(0, 10), 'ยังไม่มีหนังที่ได้คะแนน');
             renderGrid(dubbedSeriesGrid, categorized.chinese_series_dubbed, 'ยังไม่มีซีรีส์พากย์ไทย');
             renderGrid(verticalSeriesGrid, categorized.chinese_series_vertical, 'ยังไม่มีซีรีส์แนวตั้ง');
 
@@ -319,7 +134,6 @@ body {
             console.error("Error loading content:", error);
             const errorMessage = '<p class="empty-grid-message">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
             moviesGrid.innerHTML = errorMessage;
-            topRatedGrid.innerHTML = errorMessage;
             dubbedSeriesGrid.innerHTML = errorMessage;
             verticalSeriesGrid.innerHTML = errorMessage;
         }
@@ -328,6 +142,5 @@ body {
     loadAllContent();
 
 </script>
-
 </body>
 </html>
