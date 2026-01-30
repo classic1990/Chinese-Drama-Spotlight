@@ -65,7 +65,7 @@ body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color:
 
 @media (max-width: 768px) {
     .hero { height: 40vh; }
-    .quick-nav { padding: 15px 20px; gap: 20px; font-size: 14px; }
+    .quick-nav { padding: 15px 20px; gap: 15px; font-size: 14px; flex-wrap: wrap;}
     .main-content { padding: 0 20px 20px 20px; }
 }
 </style>
@@ -81,7 +81,8 @@ body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color:
 
     <nav class="quick-nav">
         <a href="#movies_section">ภาพยนตร์แนะนำ</a>
-        <a href="#dubbed_series_section">ซีรีส์จีนพากย์ไทยยอดฮิต</a>
+        <a href="#top_rated_section">หนังคะแนนสูงสุด</a>
+        <a href="#dubbed_series_section">ซีรีส์จีนพากย์ไทย</a>
         <a href="#vertical_series_section">ซีรีส์จีนแนวตั้ง</a>
     </nav>
 
@@ -90,6 +91,13 @@ body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color:
             <h2>🎬 ภาพยนตร์แนะนำ</h2>
             <div class="movie-grid" id="movies_grid">
                 <p class="empty-grid-message">กำลังโหลด...</p>
+            </div>
+        </section>
+
+        <section id="top_rated_section" class="section">
+            <h2>⭐ หนังคะแนนสูงสุด</h2>
+            <div class="movie-grid" id="top_rated_grid">
+                 <p class="empty-grid-message">กำลังคำนวณอันดับ...</p>
             </div>
         </section>
 
@@ -127,55 +135,94 @@ body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color:
     const db = firebase.firestore();
     
     const moviesGrid = document.getElementById('movies_grid');
+    const topRatedGrid = document.getElementById('top_rated_grid');
     const dubbedSeriesGrid = document.getElementById('dubbed_series_grid');
     const verticalSeriesGrid = document.getElementById('vertical_series_grid');
 
-    db.collection('movies').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
-        moviesGrid.innerHTML = '';
-        dubbedSeriesGrid.innerHTML = '';
-        verticalSeriesGrid.innerHTML = '';
+    const createCard = (content) => {
+        const card = document.createElement('a');
+        card.className = 'movie-card';
+        card.href = `movie-detail.html?id=${content.id}`;
+        card.innerHTML = `
+            <img src="${content.poster}" alt="${content.title} Poster">
+            <div class="movie-title">${content.title}</div>
+        `;
+        return card;
+    };
 
-        const categorized = { movie: [], chinese_series_dubbed: [], chinese_series_vertical: [] };
-
-        snapshot.forEach(doc => {
-            const content = doc.data();
-            content.id = doc.id;
-            if (categorized[content.category]) {
-                 categorized[content.category].push(content);
-            } else {
-                 categorized.movie.push(content); // Fallback for old data
-            }
-        });
-
-        const createCard = (content) => {
-            const card = document.createElement('a');
-            card.className = 'movie-card';
-            card.href = `movie-detail.html?id=${content.id}`;
-            card.innerHTML = `
-                <img src="${content.poster}" alt="${content.title} Poster">
-                <div class="movie-title">${content.title}</div>
-            `;
-            return card;
-        };
-
-        if (categorized.movie.length > 0) {
-            categorized.movie.forEach(content => moviesGrid.appendChild(createCard(content)));
+    const renderGrid = (gridElement, contentList, emptyMessage) => {
+        gridElement.innerHTML = '';
+        if (contentList.length > 0) {
+            contentList.forEach(content => gridElement.appendChild(createCard(content)));
         } else {
-            moviesGrid.innerHTML = '<p class="empty-grid-message">ยังไม่มีเนื้อหาในหมวดหมู่นี้</p>';
+            gridElement.innerHTML = `<p class="empty-grid-message">${emptyMessage}</p>`;
         }
+    }
 
-        if (categorized.chinese_series_dubbed.length > 0) {
-            categorized.chinese_series_dubbed.forEach(content => dubbedSeriesGrid.appendChild(createCard(content)));
-        } else {
-            dubbedSeriesGrid.innerHTML = '<p class="empty-grid-message">ยังไม่มีเนื้อหาในหมวดหมู่นี้</p>';
-        }
+    async function loadAllContent() {
+        const moviesPromise = db.collection('movies').orderBy('createdAt', 'desc').get();
+        const ratingsPromise = db.collection('ratings').get();
 
-       if (categorized.chinese_series_vertical.length > 0) {
-            categorized.chinese_series_vertical.forEach(content => verticalSeriesGrid.appendChild(createCard(content)));
-        } else {
-            verticalSeriesGrid.innerHTML = '<p class="empty-grid-message">ยังไม่มีเนื้อหาในหมวดหมู่นี้</p>';
+        try {
+            const [moviesSnapshot, ratingsSnapshot] = await Promise.all([moviesPromise, ratingsPromise]);
+
+            // 1. Process all movies into a map
+            const allMovies = {};
+            moviesSnapshot.forEach(doc => {
+                allMovies[doc.id] = { id: doc.id, ...doc.data() };
+            });
+
+            // 2. Process ratings to calculate averages
+            const ratingsSummary = {};
+            ratingsSnapshot.forEach(doc => {
+                const rating = doc.data();
+                if (!ratingsSummary[rating.movieId]) {
+                    ratingsSummary[rating.movieId] = { total: 0, count: 0 };
+                }
+                ratingsSummary[rating.movieId].total += rating.rating;
+                ratingsSummary[rating.movieId].count++;
+            });
+
+            Object.keys(ratingsSummary).forEach(movieId => {
+                const summary = ratingsSummary[movieId];
+                summary.avg = summary.total / summary.count;
+            });
+
+            // 3. Categorize and sort movies
+            const categorized = { movie: [], chinese_series_dubbed: [], chinese_series_vertical: [] };
+            const allMoviesList = Object.values(allMovies);
+
+            allMoviesList.forEach(content => {
+                if (categorized[content.category]) {
+                    categorized[content.category].push(content);
+                } else {
+                    categorized.movie.push(content); // Fallback
+                }
+            });
+
+            // 4. Create and sort top-rated list
+            let topRatedMovies = allMoviesList
+                .filter(movie => ratingsSummary[movie.id]) // Only movies with ratings
+                .map(movie => ({ ...movie, rating: ratingsSummary[movie.id] }))
+                .sort((a, b) => b.rating.avg - a.rating.avg || b.rating.count - a.rating.count); // Sort by avg, then by count
+
+            // 5. Render all grids
+            renderGrid(moviesGrid, categorized.movie, 'ยังไม่มีภาพยนตร์แนะนำ');
+            renderGrid(topRatedGrid, topRatedMovies.slice(0, 10), 'ยังไม่มีหนังที่ได้คะแนน');
+            renderGrid(dubbedSeriesGrid, categorized.chinese_series_dubbed, 'ยังไม่มีซีรีส์พากย์ไทย');
+            renderGrid(verticalSeriesGrid, categorized.chinese_series_vertical, 'ยังไม่มีซีรีส์แนวตั้ง');
+
+        } catch (error) {
+            console.error("Error loading content:", error);
+            moviesGrid.innerHTML = '<p class="empty-grid-message">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
+            topRatedGrid.innerHTML = '<p class="empty-grid-message">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
+            dubbedSeriesGrid.innerHTML = '<p class="empty-grid-message">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
+            verticalSeriesGrid.innerHTML = '<p class="empty-grid-message">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
         }
-    });
+    }
+
+    loadAllContent();
+
 </script>
 
 </body>
