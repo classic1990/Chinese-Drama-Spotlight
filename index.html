@@ -13,11 +13,31 @@
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&family=Jura:wght@700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color: #fff; }
+
+/* --- Navigation Bar --- */
+.navbar {
+    background: rgba(10, 10, 10, 0.7);
+    backdrop-filter: blur(10px);
+    padding: 15px 50px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex; 
+    justify-content: center;
+    gap: 30px;
+    border-bottom: 1px solid rgba(229, 9, 20, 0.2);
+}
+.navbar a { color: #ccc; text-decoration: none; font-size: 16px; font-weight: 500; transition: all 0.3s ease;}
+.navbar a:hover { color: #fff; text-shadow: 0 0 5px #e50914; }
+
 .hero {
     height: 60vh;
-    background: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0.4)), url("https://images.pexels.com/photos/2531709/pexels-photo-2531709.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2") center/cover;
+    background: linear-gradient(to top, rgba(13,13,13,1), rgba(13,13,13,0.3)), url("https://images.pexels.com/photos/2531709/pexels-photo-2531709.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2") center/cover no-repeat;
     display: flex; align-items: center; justify-content: center; text-align: center; 
+    transition: background-image 1s ease-in-out;
 }
 .neon-logo {
     font-family: 'Jura', sans-serif; font-weight: 700; font-size: clamp(3rem, 10vw, 6rem); color: #fff;
@@ -29,7 +49,7 @@ body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color:
     20%, 24%, 55% { text-shadow: none; } 
 }
 .main-content { padding: 0 50px 50px 50px; }
-.section { margin-top: 40px; }
+.section { margin-top: 40px; padding-top: 20px; /* Add padding for nav link scroll offset */ }
 .section h2 { margin-bottom: 30px; font-size: 28px; padding-bottom: 10px; border-bottom: 2px solid #e50914; display: inline-block; }
 .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 30px; }
 .movie-card { cursor: pointer; transition: transform 0.4s ease; text-decoration: none; color: #fff; }
@@ -40,16 +60,22 @@ body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color:
 @media (max-width: 768px) {
     .hero { height: 40vh; }
     .main-content { padding: 0 20px 20px 20px; }
+    .navbar { padding: 15px 20px; gap: 15px; flex-wrap: wrap; justify-content: center;}
 }
 </style>
 </head>
 <body>
 <main>
-    <header class="hero">
+    <header class="hero" id="hero_banner">
         <div class="hero-content">
             <h1 class="neon-logo">DUYDODEE-HD</h1>
         </div>
     </header>
+    <nav class="navbar">
+        <a href="#movies_section">🎬 ภาพยนตร์แนะนำ</a>
+        <a href="#dubbed_series_section">🔥 ซีรีส์จีนพากย์ไทย</a>
+        <a href="#vertical_series_section">📱 ซีรีส์จีนแนวตั้ง</a>
+    </nav>
     <div class="main-content">
         <section id="movies_section" class="section">
             <h2>🎬 ภาพยนตร์แนะนำ</h2>
@@ -90,6 +116,7 @@ body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color:
     const moviesGrid = document.getElementById('movies_grid');
     const dubbedSeriesGrid = document.getElementById('dubbed_series_grid');
     const verticalSeriesGrid = document.getElementById('vertical_series_grid');
+    const heroBanner = document.getElementById('hero_banner');
 
     const createCard = (content) => {
         const card = document.createElement('a');
@@ -114,15 +141,23 @@ body { margin: 0; font-family: 'Prompt', sans-serif; background: #0d0d0d; color:
     async function loadAllContent() {
         try {
             const moviesSnapshot = await db.collection('movies').orderBy('createdAt', 'desc').get();
+            const allContent = [];
+            moviesSnapshot.forEach(doc => {
+                allContent.push({ id: doc.id, ...doc.data() });
+            });
+
+            // Set Hero Banner with the latest content's banner
+            if (allContent.length > 0 && allContent[0].banner) {
+                heroBanner.style.backgroundImage = `linear-gradient(to top, rgba(13,13,13,1), rgba(13,13,13,0.3)), url("${allContent[0].banner}")`;
+            }
 
             const categorized = { movie: [], chinese_series_dubbed: [], chinese_series_vertical: [] };
 
-            moviesSnapshot.forEach(doc => {
-                const content = { id: doc.id, ...doc.data() };
+            allContent.forEach(content => {
                 if (categorized[content.category]) {
                     categorized[content.category].push(content);
                 } else {
-                    categorized.movie.push(content); // Fallback for old/uncategorized data
+                    categorized.movie.push(content); // Fallback
                 }
             });
 
