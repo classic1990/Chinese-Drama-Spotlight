@@ -3,88 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard | DUYDODEE-HD</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
+<title>Admin Panel | DUYDODEE-HD</title>
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-    body { margin: 0; font-family: 'Prompt', sans-serif; background: #1a1a1a; color: #fff; padding: 30px; }
-    .container { max-width: 1200px; margin: 0 auto; }
-    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #444; padding-bottom: 20px; }
-    .header h1 { margin: 0; }
-    .form-card { background: #2b2b2b; padding: 30px; border-radius: 18px; margin-top: 30px; }
-    .form-card h2 { margin-top: 0; }
+    body { margin: 0; font-family: 'Prompt', sans-serif; background: #0f0f0f; color: #fff; padding: 20px; }
+    .container { max-width: 900px; margin: 0 auto; }
+    
+    #loginSection { background: #1a1a1a; padding: 40px; border-radius: 20px; text-align: center; margin-top: 10vh; }
+    #adminContent { display: none; }
+
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+    .form-card { background: #1a1a1a; padding: 25px; border-radius: 15px; border: 1px solid #333; margin-bottom: 40px; }
+    
     .input-group { margin-bottom: 15px; }
-    .input-group label { display: block; margin-bottom: 8px; }
-    .input-group input, .input-group textarea, .input-group select { box-sizing: border-box; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #555; background: #333; color: #fff; font-size: 16px; font-family: 'Prompt', sans-serif; }
-    .input-group .note { font-size: 12px; color: #aaa; margin-top: 5px; }
-    .btn { padding: 12px 25px; border-radius: 8px; border: none; cursor: pointer; transition: background 0.3s ease; font-size: 16px; }
-    .btn-primary { background: #e50914; color: #fff; }
-    .btn-primary:hover { background: #ff1f2d; }
-    .btn-danger { background: #8b0000; color: #fff; }
-    .btn-danger:hover { background: #a52a2a; }
-    .movie-list { margin-top: 30px; }
-    .movie-item { display: flex; align-items: center; gap: 20px; background: #2b2b2b; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
-    .movie-item img { width: 80px; height: 120px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+    .input-group label { display: block; margin-bottom: 8px; color: #aaa; font-size: 14px; }
+    .input-group input, .input-group textarea, .input-group select { 
+        box-sizing: border-box; width: 100%; padding: 12px; border-radius: 10px; 
+        border: 1px solid #333; background: #222; color: #fff; font-size: 16px; 
+        font-family: 'Prompt', sans-serif; 
+    }
+    
+    .btn { padding: 12px 25px; border-radius: 10px; border: none; cursor: pointer; font-size: 16px; font-weight: 600; width: 100%; }
+    .btn-primary { background: #00aeff; color: #000; }
+    .btn-danger { background: #ff4444; color: #fff; width: auto; padding: 6px 12px; font-size: 13px; border-radius: 6px; }
+    
+    .movie-item { display: flex; align-items: center; gap: 15px; background: #1a1a1a; padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #222; }
+    .movie-item img { width: 45px; height: 65px; object-fit: cover; border-radius: 4px; background: #333; }
     .movie-item-info { flex-grow: 1; }
-    .movie-item-info h3 { margin: 0 0 5px 0; }
-    .movie-item-info .category-badge { font-size: 12px; background: #555; color: #eee; padding: 3px 8px; border-radius: 5px; display: inline-block; }
+    .movie-item-info h3 { margin: 0; font-size: 15px; }
+    .badge { font-size: 10px; background: #333; color: #00aeff; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
 </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <h1>Admin Dashboard</h1>
-        <button id="logoutBtn" class="btn btn-danger">ออกจากระบบ</button>
+    <!-- Login -->
+    <div id="loginSection">
+        <h1 style="color: #00aeff;">ADMIN LOGIN</h1>
+        <div class="input-group"><input type="email" id="loginEmail" placeholder="อีเมลแอดมิน"></div>
+        <div class="input-group"><input type="password" id="loginPassword" placeholder="รหัสผ่าน"></div>
+        <button class="btn btn-primary" onclick="handleLogin()">เข้าสู่ระบบ</button>
     </div>
 
-    <div class="form-card">
-        <h2 id="formTitle">เพิ่มเนื้อหาใหม่</h2>
-        <form id="movieForm">
-            <div class="input-group">
-                <label for="category">หมวดหมู่</label>
-                <select id="category" required>
-                    <option value="movie">ภาพยนตร์แนะนำ</option>
-                    <option value="series">ซีรีส์จีนพากย์ไทยยอดฮิต</option>
-                    <option value="vertical">ซีรีส์จีนแนวตั้ง</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label for="title">ชื่อเรื่อง</label>
-                <input type="text" id="title" required placeholder="เช่น: รักใสๆ หัวใจแนวตั้ง EP.1">
-            </div>
-            <div class="input-group">
-                <label for="poster">URL รูปภาพโปสเตอร์ (แนวตั้ง)</label>
-                <input type="url" id="poster" required placeholder="https://...">
-            </div>
-            <div class="input-group">
-                <label for="banner">URL รูปภาพแบนเนอร์ (แนวนอน, สำหรับพื้นหลัง)</label>
-                <input type="url" id="banner" placeholder="https://...">
-            </div>
-            <div class="input-group">
-                <label for="desc">เรื่องย่อ</label>
-                <textarea id="desc" rows="4"></textarea>
-            </div>
-            <div class="input-group">
-                <label for="videoUrl">URL สำหรับรับชม / Embed Link</label>
-                <input type="url" id="videoUrl" required placeholder="ลิงก์ Embed เท่านั้น">
-                <p class="note">💡 YouTube Embed: https://www.youtube.com/embed/รหัสคลิป</p>
-            </div>
-            <button type="submit" class="btn btn-primary">บันทึก</button>
-        </form>
-    </div>
-
-    <div class="movie-list">
-        <h2>รายการเนื้อหาทั้งหมด</h2>
-        <div id="movieListContainer">
-            <p style="color:#aaa;">กำลังโหลดข้อมูล...</p>
+    <!-- Admin Panel -->
+    <div id="adminContent">
+        <div class="header">
+            <h2>จัดการเนื้อหาเว็บ</h2>
+            <button onclick="auth.signOut()" style="background:none; border:1px solid #444; color:#aaa; cursor:pointer; padding:5px 10px; border-radius:5px;">Logout</button>
         </div>
+
+        <div class="form-card">
+            <form id="movieForm">
+                <div class="input-group">
+                    <label>หมวดหมู่ที่แสดงหน้าเว็บ</label>
+                    <select id="category" required>
+                        <option value="vertical">📱 ซีรีส์จีนแนวตั้ง</option>
+                        <option value="series">🎬 ซีรีส์จีนพากย์ไทย</option>
+                        <option value="movie">🎥 ภาพยนตร์แนะนำ</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>ชื่อเรื่อง</label>
+                    <input type="text" id="title" required placeholder="ตัวอย่าง: กู้ภัยรัก นักดับเพลิง">
+                </div>
+                <div class="input-group">
+                    <label>URL รูปโปสเตอร์ (แนวตั้ง)</label>
+                    <input type="url" id="poster" required placeholder="https://...">
+                </div>
+                <div class="input-group">
+                    <label>URL สำหรับดูหนัง (Embed Link)</label>
+                    <input type="url" id="videoUrl" required placeholder="YouTube Embed หรือลิงก์หนัง">
+                </div>
+                <div class="input-group">
+                    <label>ข้อความ Badge (ถ้ามี เช่น 'จบแล้ว' หรือ 'EP.10')</label>
+                    <input type="text" id="badge" placeholder="ปล่อยว่างได้">
+                </div>
+                <div class="input-group">
+                    <label>เรื่องย่อ</label>
+                    <textarea id="desc" rows="2"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" id="submitBtn">บันทึกและอัปเดตหน้าเว็บ</button>
+            </form>
+        </div>
+
+        <h3>รายการทั้งหมด (${totalMovies || 0})</h3>
+        <div id="movieListContainer">กำลังโหลดรายการ...</div>
     </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
 <script>
     const firebaseConfig = {
@@ -93,102 +102,89 @@
       projectId: "duydodeesport",
       storageBucket: "duydodeesport.appspot.com",
       messagingSenderId: "435929814225",
-      appId: "1:435929814225:web:fcb01803d9e5b77340e1f0",
-      measurementId: "G-JD1MFCNLY0"
+      appId: "1:435929814225:web:fcb01803d9e5b77340e1f0"
     };
     
     firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
     const db = firebase.firestore();
+    const auth = firebase.auth();
+    let totalMovies = 0;
 
-    // ตรวจสอบสถานะการล็อกอิน
     auth.onAuthStateChanged(user => {
-        if (!user) {
-            // ถ้ายังไม่ล็อกอิน ให้เด้งไปหน้า login.html
-            // window.location.href = 'login.html'; 
-            
-            // หมายเหตุ: เนื่องจากคุณอาจจะยังไม่มีไฟล์ login.html ผมขอ Comment บรรทัดบนไว้ก่อน
-            // เพื่อให้คุณทดสอบหน้านี้ได้โดยไม่ต้อง login จริง
-            console.log("User not logged in (Auto-redirect disabled for testing)");
+        if (user) {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('adminContent').style.display = 'block';
+            loadData();
+        } else {
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('adminContent').style.display = 'none';
         }
     });
 
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-        auth.signOut().then(() => alert('ออกจากระบบแล้ว'));
-    });
+    async function handleLogin() {
+        const email = document.getElementById('loginEmail').value;
+        const pass = document.getElementById('loginPassword').value;
+        try { await auth.signInWithEmailAndPassword(email, pass); } 
+        catch (err) { alert('ล็อกอินไม่สำเร็จ! ตรวจสอบอีเมลและรหัสผ่าน'); }
+    }
 
-    const movieForm = document.getElementById('movieForm');
-    const movieListContainer = document.getElementById('movieListContainer');
-    
-    const categoryDisplay = {
-        movie: 'ภาพยนตร์',
-        series: 'ซีรีส์พากย์ไทย',
-        vertical: 'ซีรีส์แนวตั้ง'
-    };
-
-    // ฟังก์ชันบันทึกข้อมูล
-    movieForm.addEventListener('submit', e => {
+    document.getElementById('movieForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        // รับค่าจากฟอร์มให้ตรงกับฟิลด์ใน Firestore ของเรา
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerText = 'กำลังบันทึก...';
+
         const data = {
             category: document.getElementById('category').value,
             title: document.getElementById('title').value,
             poster: document.getElementById('poster').value,
-            banner: document.getElementById('banner').value,
-            description: document.getElementById('desc').value, // ใช้ description ตาม index.html
-            videoUrl: document.getElementById('videoUrl').value, // ใช้ videoUrl ตาม index.html
+            videoUrl: document.getElementById('videoUrl').value,
+            badge: document.getElementById('badge').value,
+            description: document.getElementById('desc').value,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        db.collection('movies').add(data).then(() => {
-            alert('✅ บันทึกข้อมูลสำเร็จ!');
-            movieForm.reset();
-        }).catch(err => {
-            console.error('Error adding content: ', err);
-            alert('❌ เกิดข้อผิดพลาด: ' + err.message);
-        });
-    });
-
-    // แสดงรายการหนังแบบ Real-time
-    db.collection('movies').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
-        movieListContainer.innerHTML = '';
-        if(snapshot.empty) {
-            movieListContainer.innerHTML = '<p>ยังไม่มีข้อมูลในระบบ</p>';
-            return;
+        try {
+            await db.collection('movies').add(data);
+            alert('บันทึกสำเร็จ! ข้อมูลจะไปโชว์ที่หน้าบ้านทันที');
+            e.target.reset();
+        } catch (err) {
+            alert('บันทึกไม่สำเร็จ: ' + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = 'บันทึกและอัปเดตหน้าเว็บ';
         }
-
-        snapshot.forEach(doc => {
-            const movie = doc.data();
-            const categoryName = categoryDisplay[movie.category] || movie.category;
-            
-            const movieEl = document.createElement('div');
-            movieEl.classList.add('movie-item');
-            movieEl.innerHTML = `
-                <img src="${movie.poster}" alt="${movie.title}" onerror="this.src='https://via.placeholder.com/80x120?text=No+Img'">
-                <div class="movie-item-info">
-                    <h3>${movie.title}</h3>
-                    <span class="category-badge">${categoryName}</span>
-                    <div style="font-size:12px; color:#aaa; margin-top:5px;">ID: ${doc.id}</div>
-                </div>
-                <button class="btn btn-danger" onclick="deleteMovie('${doc.id}')">ลบ</button>
-            `;
-            movieListContainer.appendChild(movieEl);
-        });
-    }, error => {
-        console.error("Error loading list:", error);
-        movieListContainer.innerHTML = '<p style="color:red">โหลดข้อมูลไม่สำเร็จ (ตรวจสอบ Console)</p>';
     });
 
-    // ฟังก์ชันลบหนัง
-    window.deleteMovie = function(id) {
-        if (confirm('⚠️ คุณแน่ใจหรือไม่ว่าต้องการลบเรื่องนี้? \nการกระทำนี้ไม่สามารถย้อนกลับได้')) {
-            db.collection('movies').doc(id).delete()
-              .then(() => console.log('Content deleted!'))
-              .catch(err => alert('Error deleting content: ' + err.message));
+    function loadData() {
+        db.collection('movies').orderBy('createdAt', 'desc').onSnapshot(snap => {
+            const container = document.getElementById('movieListContainer');
+            container.innerHTML = '';
+            totalMovies = snap.size;
+            
+            snap.forEach(doc => {
+                const m = doc.data();
+                const div = document.createElement('div');
+                div.className = 'movie-item';
+                div.innerHTML = `
+                    <img src="${m.poster}" onerror="this.src='https://via.placeholder.com/50x75'">
+                    <div class="movie-item-info">
+                        <h3>${m.title}</h3>
+                        <span class="badge">${m.category}</span>
+                    </div>
+                    <button class="btn-danger" onclick="deleteItem('${doc.id}')">ลบ</button>
+                `;
+                container.appendChild(div);
+            });
+        });
+    }
+
+    window.deleteItem = async (id) => {
+        if(confirm('ต้องการลบเรื่องนี้ออกจากหน้าเว็บใช่ไหม?')) {
+            try { await db.collection('movies').doc(id).delete(); } 
+            catch (err) { alert('ลบไม่สำเร็จ: ' + err.message); }
         }
     }
 </script>
-
 </body>
 </html>
