@@ -13,8 +13,13 @@
     #adminContent { display: none; }
 
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-    .form-card { background: #1a1a1a; padding: 25px; border-radius: 15px; border: 1px solid #333; margin-bottom: 40px; }
+    .form-card { background: #1a1a1a; padding: 25px; border-radius: 15px; border: 1px solid #333; margin-bottom: 40px; position: relative; }
     
+    /* Edit Mode Highlight */
+    .form-card.edit-mode { border-color: #00aeff; box-shadow: 0 0 15px rgba(0, 174, 255, 0.2); }
+    .edit-label { display: none; color: #00aeff; font-weight: 600; margin-bottom: 10px; }
+    .form-card.edit-mode .edit-label { display: block; }
+
     .input-group { margin-bottom: 15px; }
     .input-group label { display: block; margin-bottom: 8px; color: #aaa; font-size: 14px; }
     .input-group input, .input-group textarea, .input-group select { 
@@ -26,6 +31,7 @@
     .btn { padding: 12px 25px; border-radius: 10px; border: none; cursor: pointer; font-size: 16px; font-weight: 600; width: 100%; transition: 0.3s; }
     .btn-primary { background: #00aeff; color: #000; }
     .btn-primary:hover { background: #008ecc; }
+    .btn-secondary { background: #333; color: #fff; margin-top: 10px; }
     
     .btn-google { 
         background: #fff; color: #444; margin-top: 15px; 
@@ -37,31 +43,32 @@
     .divider { margin: 20px 0; color: #555; font-size: 14px; position: relative; }
     .divider::before, .divider::after { content: ""; position: absolute; top: 50%; width: 40%; height: 1px; background: #333; }
     .divider::before { left: 0; }
-    .divider::after { right: right; }
+    .divider::after { right: 0; }
 
-    .btn-danger { background: #ff4444; color: #fff; width: auto; padding: 6px 12px; font-size: 13px; border-radius: 6px; }
+    .action-btns { display: flex; gap: 5px; }
+    .btn-danger { background: #ff4444; color: #fff; padding: 6px 12px; font-size: 13px; border-radius: 6px; }
+    .btn-edit { background: #ffcc00; color: #000; padding: 6px 12px; font-size: 13px; border-radius: 6px; }
     
     .movie-item { display: flex; align-items: center; gap: 15px; background: #1a1a1a; padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #222; }
     .movie-item img { width: 45px; height: 65px; object-fit: cover; border-radius: 4px; background: #333; }
     .movie-item-info { flex-grow: 1; }
     .movie-item-info h3 { margin: 0; font-size: 15px; line-height: 1.2; margin-bottom: 5px; }
     .badge { font-size: 10px; background: #333; color: #00aeff; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+    .url-warning { font-size: 11px; color: #ffcc00; display: block; margin-top: 5px; }
 </style>
 </head>
 <body>
 
 <div class="container">
+    <!-- Login -->
     <div id="loginSection">
         <h1 style="color: #00aeff;">ADMIN LOGIN</h1>
         <p style="color: #888; margin-bottom: 25px;">ล็อกอินเพื่อจัดการระบบ DUYDODEE-HD</p>
-        
         <button class="btn btn-google" onclick="handleGoogleLogin()">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
             เข้าสู่ระบบด้วย Google
         </button>
-
         <div class="divider">หรือใช้งานผ่านอีเมล</div>
-
         <div class="input-group">
             <input type="email" id="loginEmail" placeholder="อีเมลแอดมิน">
         </div>
@@ -71,6 +78,7 @@
         <button class="btn btn-primary" onclick="handleLogin()">ล็อกอินด้วยรหัสผ่าน</button>
     </div>
 
+    <!-- Admin Content -->
     <div id="adminContent">
         <div class="header">
             <h2>จัดการเนื้อหาเว็บ</h2>
@@ -80,10 +88,12 @@
             </div>
         </div>
 
-        <div class="form-card">
+        <div class="form-card" id="formCard">
+            <div class="edit-label">กำลังอยู่ในโหมดแก้ไขข้อมูล</div>
             <form id="movieForm">
+                <input type="hidden" id="editId">
                 <div class="input-group">
-                    <label>หมวดหมู่ที่แสดงหน้าเว็บ</label>
+                    <label>หมวดหมู่</label>
                     <select id="category" required>
                         <option value="vertical">📱 ซีรีส์จีนแนวตั้ง</option>
                         <option value="series">🎬 ซีรีส์จีนพากย์ไทย</option>
@@ -92,30 +102,31 @@
                 </div>
                 <div class="input-group">
                     <label>ชื่อเรื่อง</label>
-                    <input type="text" id="title" required placeholder="ตัวอย่าง: กู้ภัยรัก นักดับเพลิง">
+                    <input type="text" id="title" required>
                 </div>
                 <div class="input-group">
-                    <label>URL รูปโปสเตอร์ (แนวตั้ง)</label>
-                    <input type="url" id="poster" required placeholder="https://...">
+                    <label>URL รูปโปสเตอร์</label>
+                    <input type="url" id="poster" required>
                 </div>
                 <div class="input-group">
                     <label>URL สำหรับดูหนัง (รองรับลิงก์ YouTube ปกติ)</label>
-                    <input type="url" id="videoUrl" required placeholder="วอนวางลิงก์ YouTube หรือลิงก์ Embed ที่นี่">
+                    <input type="url" id="videoUrl" required>
                 </div>
                 <div class="input-group">
-                    <label>ข้อความ Badge (เช่น 'จบแล้ว' หรือ 'EP.10')</label>
-                    <input type="text" id="badge" placeholder="ปล่อยว่างได้">
+                    <label>Badge (เช่น EP.10 หรือ จบแล้ว)</label>
+                    <input type="text" id="badge">
                 </div>
                 <div class="input-group">
                     <label>เรื่องย่อ</label>
                     <textarea id="desc" rows="2"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" id="submitBtn">บันทึกและอัปเดตหน้าเว็บ</button>
+                <button type="submit" class="btn btn-primary" id="submitBtn">บันทึกข้อมูล</button>
+                <button type="button" class="btn btn-secondary" id="cancelBtn" style="display:none;" onclick="resetForm()">ยกเลิกการแก้ไข</button>
             </form>
         </div>
 
         <h3>รายการทั้งหมด</h3>
-        <div id="movieListContainer">กำลังโหลดรายการ...</div>
+        <div id="movieListContainer">กำลังโหลด...</div>
     </div>
 </div>
 
@@ -137,8 +148,9 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    // ฟังก์ชันพิเศษ: แปลงลิงก์ YouTube ทั่วไปให้เป็น Embed อัตโนมัติ
+    // Helper: Format YouTube URL
     function formatVideoUrl(url) {
+        if (!url) return "";
         if (url.includes('youtube.com/watch?v=')) {
             const videoId = url.split('v=')[1].split('&')[0];
             return `https://www.youtube.com/embed/${videoId}`;
@@ -146,14 +158,14 @@
             const videoId = url.split('youtu.be/')[1].split('?')[0];
             return `https://www.youtube.com/embed/${videoId}`;
         }
-        return url; // ถ้าไม่ใช่ YouTube หรือเป็น Embed อยู่แล้วให้ใช้ค่าเดิม
+        return url;
     }
 
     auth.onAuthStateChanged(user => {
         if (user) {
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('adminContent').style.display = 'block';
-            document.getElementById('adminEmail').innerText = "Logged in as: " + user.email;
+            document.getElementById('adminEmail').innerText = "แอดมิน: " + user.email;
             loadData();
         } else {
             document.getElementById('loginSection').style.display = 'block';
@@ -163,55 +175,61 @@
 
     async function handleGoogleLogin() {
         const provider = new firebase.auth.GoogleAuthProvider();
-        try {
-            await auth.signInWithPopup(provider);
-        } catch (err) {
-            if (err.code === 'auth/unauthorized-domain') {
-                alert('ข้อผิดพลาด: โดเมนนี้ยังไม่ได้รับอนุญาต\nกรุณาเพิ่ม "classic1990.github.io" ใน Firebase Console');
-            } else {
-                alert('Google Login Error: ' + err.message);
-            }
-        }
+        try { await auth.signInWithPopup(provider); } catch (err) { alert(err.message); }
     }
 
     async function handleLogin() {
         const email = document.getElementById('loginEmail').value;
         const pass = document.getElementById('loginPassword').value;
-        if(!email || !pass) return alert('กรุณากรอกอีเมลและรหัสผ่าน');
-        try { await auth.signInWithEmailAndPassword(email, pass); } catch (err) { alert('ล็อกอินไม่สำเร็จ!'); }
+        try { await auth.signInWithEmailAndPassword(email, pass); } catch (err) { alert('ผิดพลาด!'); }
     }
 
+    // ฟังก์ชันรีเซ็ตฟอร์ม
+    function resetForm() {
+        document.getElementById('movieForm').reset();
+        document.getElementById('editId').value = '';
+        document.getElementById('submitBtn').innerText = 'บันทึกข้อมูล';
+        document.getElementById('cancelBtn').style.display = 'none';
+        document.getElementById('formCard').classList.remove('edit-mode');
+    }
+
+    // ฟังก์ชันบันทึก หรือ อัปเดต
     document.getElementById('movieForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
+        const editId = document.getElementById('editId').value;
         btn.disabled = true;
-        btn.innerText = 'กำลังบันทึก...';
-
-        const rawUrl = document.getElementById('videoUrl').value;
-        const formattedUrl = formatVideoUrl(rawUrl);
 
         const data = {
             category: document.getElementById('category').value,
             title: document.getElementById('title').value,
             poster: document.getElementById('poster').value,
-            videoUrl: formattedUrl,
+            videoUrl: formatVideoUrl(document.getElementById('videoUrl').value),
             badge: document.getElementById('badge').value,
             description: document.getElementById('desc').value,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
         try {
-            await db.collection('movies').add(data);
-            alert('บันทึกสำเร็จ! ระบบแปลงลิงก์ YouTube ให้เป็น Embed เรียบร้อย');
-            e.target.reset();
+            if (editId) {
+                // โหมดแก้ไข
+                await db.collection('movies').doc(editId).update(data);
+                alert('อัปเดตข้อมูลเรียบร้อย!');
+            } else {
+                // โหมดเพิ่มใหม่
+                data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                await db.collection('movies').add(data);
+                alert('เพิ่มหนังใหม่เรียบร้อย!');
+            }
+            resetForm();
         } catch (err) {
-            alert('บันทึกไม่สำเร็จ: ' + err.message);
+            alert('ล้มเหลว: ' + err.message);
         } finally {
             btn.disabled = false;
-            btn.innerText = 'บันทึกและอัปเดตหน้าเว็บ';
         }
     });
 
+    // โหลดข้อมูลและแสดงผล
     function loadData() {
         db.collection('movies').orderBy('createdAt', 'desc').onSnapshot(snap => {
             const container = document.getElementById('movieListContainer');
@@ -226,16 +244,35 @@
                         <h3>${m.title}</h3>
                         <span class="badge">${m.category}</span>
                     </div>
-                    <button class="btn-danger" onclick="deleteItem('${doc.id}')">ลบ</button>
+                    <div class="action-btns">
+                        <button class="btn-edit" onclick='startEdit("${doc.id}", ${JSON.stringify(m).replace(/'/g, "&apos;")})'>แก้ไข</button>
+                        <button class="btn-danger" onclick="deleteItem('${doc.id}')">ลบ</button>
+                    </div>
                 `;
                 container.appendChild(div);
             });
         });
     }
 
+    // ฟังก์ชันเริ่มการแก้ไข (ดึงค่าใส่ฟอร์ม)
+    window.startEdit = (id, data) => {
+        document.getElementById('editId').value = id;
+        document.getElementById('category').value = data.category;
+        document.getElementById('title').value = data.title;
+        document.getElementById('poster').value = data.poster;
+        document.getElementById('videoUrl').value = data.videoUrl;
+        document.getElementById('badge').value = data.badge || '';
+        document.getElementById('desc').value = data.description || '';
+        
+        document.getElementById('submitBtn').innerText = 'อัปเดตข้อมูลหนัง';
+        document.getElementById('cancelBtn').style.display = 'block';
+        document.getElementById('formCard').classList.add('edit-mode');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     window.deleteItem = async (id) => {
         if(confirm('ยืนยันการลบ?')) {
-            try { await db.collection('movies').doc(id).delete(); } catch (err) { alert('ลบไม่สำเร็จ'); }
+            try { await db.collection('movies').doc(id).delete(); } catch (err) { alert('ลบไม่ได้'); }
         }
     }
 </script>
