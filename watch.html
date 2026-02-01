@@ -3,67 +3,288 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>กำลังรับชม - DUYDODEE-HD</title>
+    <title>Watching | DUYDODEE-HD</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { margin: 0; font-family: 'Prompt', sans-serif; background: #000; color: #fff; min-height: 100vh; display: flex; flex-direction: column; }
-        
-        .player-container {
-            flex: 1; display: flex; justify-content: center; align-items: center;
-            background: radial-gradient(circle, #1a1a1a 0%, #000 100%);
-            padding: 20px;
+        :root {
+            --primary: #00aeff;
+            --bg-dark: #0a0a0a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-main: #ffffff;
+            --text-dim: #b3b3b3;
         }
 
-        /* กรอบวิดีโอ */
-        .video-wrapper {
-            width: 100%; box-shadow: 0 0 50px rgba(0, 174, 255, 0.2);
-            background: #000; position: relative; overflow: hidden;
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Prompt', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
         }
 
-        /* โหมดปกติ (16:9) */
-        .mode-landscape { max-width: 1000px; aspect-ratio: 16/9; border-radius: 12px; }
-
-        /* โหมดแนวตั้ง (9:16) - ไฮไลท์ของเว็บนี้ */
-        .mode-vertical { 
-            max-width: 450px; aspect-ratio: 9/16; 
-            border-radius: 20px; border: 4px solid #333;
+        /* Navigation Bar */
+        nav {
+            padding: 15px 5%;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-sizing: border-box;
         }
 
-        iframe { width: 100%; height: 100%; border: none; }
-
-        .info-panel {
-            padding: 30px; background: #111; border-top: 1px solid #333;
+        .back-btn {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
         }
-        .meta-title { margin: 0 0 10px; color: #00aeff; }
-        .meta-desc { color: #aaa; line-height: 1.6; max-width: 800px; }
-        .back-link { 
-            display: inline-block; margin-bottom: 20px; color: #fff; text-decoration: none; 
-            background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 20px;
+
+        .back-btn:hover {
+            color: var(--primary);
+            transform: translateX(-5px);
+        }
+
+        /* Main Content Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 80px auto 50px;
+            padding: 0 20px;
+        }
+
+        /* Video Player Section */
+        .player-wrapper {
+            position: relative;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .player-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Movie Info Section */
+        .movie-details {
+            margin-top: 30px;
+            padding: 30px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .movie-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .title-area h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary);
+            color: #000;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+            text-transform: uppercase;
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 15px;
+        }
+
+        .action-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .description {
+            color: var(--text-dim);
+            line-height: 1.8;
+            font-size: 16px;
+            max-width: 800px;
+        }
+
+        /* Related Movies Section */
+        .related-section {
+            margin-top: 50px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--primary);
+            display: block;
+            border-radius: 2px;
+        }
+
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .related-item {
+            cursor: pointer;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .related-item:hover {
+            transform: scale(1.05);
+        }
+
+        .poster-container {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 2/3;
+        }
+
+        .poster-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .related-title {
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-dim);
+        }
+
+        /* Loading Animation */
+        #loader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            transition: 0.5s;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0,174,255,0.1);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .movie-header { flex-direction: column; gap: 20px; }
+            .action-bar { width: 100%; }
+            .action-btn { flex: 1; justify-content: center; }
+            .title-area h1 { font-size: 22px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="info-panel" style="padding-bottom: 0; background: transparent; border: none;">
-        <a href="index.html" class="back-link">⬅ กลับหน้าหลัก</a>
-    </div>
+    <div id="loader"><div class="spinner"></div></div>
 
-    <div class="player-container">
-        <div id="video-box" class="video-wrapper">
-            <!-- Iframe จะถูกฝังที่นี่ -->
+    <nav>
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> กลับหน้าหลัก
+        </a>
+    </nav>
+
+    <div class="main-container">
+        <!-- วิดีโอแนวนอน 16:9 -->
+        <div class="player-wrapper">
+            <iframe id="videoFrame" allowfullscreen allow="autoplay"></iframe>
+        </div>
+
+        <div class="movie-details">
+            <div class="movie-header">
+                <div class="title-area">
+                    <h1 id="movieTitle">กำลังโหลดข้อมูล...</h1>
+                    <span id="movieBadge" class="badge">...</span>
+                </div>
+                <div class="action-bar">
+                    <button class="action-btn" onclick="shareMovie()">
+                        <i class="fas fa-share-alt"></i> แชร์
+                    </button>
+                    <button class="action-btn">
+                        <i class="fas fa-heart"></i> เก็บไว้ดู
+                    </button>
+                </div>
+            </div>
+            <div class="description" id="movieDesc">
+                กรุณารอสักครู่...
+            </div>
+        </div>
+
+        <!-- หนังเรื่องอื่นๆ -->
+        <div class="related-section">
+            <h2 class="section-title">แนะนำสำหรับคุณ</h2>
+            <div class="related-grid" id="relatedGrid">
+                <!-- Data will load here -->
+            </div>
         </div>
     </div>
 
-    <div class="info-panel">
-        <h1 class="meta-title" id="v-title">กำลังโหลด...</h1>
-        <p class="meta-desc" id="v-desc"></p>
-        <p style="font-size: 12px; color: #555; margin-top: 20px;">
-            Content provided via embed link. Not hosted on this server.
-        </p>
-    </div>
-
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyAcCn0NGbakHmLEa_G47K8OepGaRqTV02Q",
@@ -73,34 +294,80 @@
             messagingSenderId: "435929814225",
             appId: "1:435929814225:web:fcb01803d9e5b77340e1f0"
         };
+        
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        const params = new URLSearchParams(window.location.search);
-        const id = params.get('id');
+        // Get Movie ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const movieId = urlParams.get('id');
 
-        if(id) {
-            db.collection('movies').doc(id).get().then(doc => {
+        async function init() {
+            if(!movieId) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                const doc = await db.collection('movies').doc(movieId).get();
                 if(doc.exists) {
                     const data = doc.data();
-                    document.getElementById('v-title').innerText = data.title;
-                    document.getElementById('v-desc').innerText = data.description || 'ไม่มีรายละเอียด';
-                    document.title = `รับชม: ${data.title}`;
-
-                    const box = document.getElementById('video-box');
+                    document.title = `${data.title} | DUYDODEE-HD`;
+                    document.getElementById('movieTitle').innerText = data.title;
+                    document.getElementById('movieBadge').innerText = data.badge || data.category;
+                    document.getElementById('movieDesc').innerText = data.description || "ไม่มีเรื่องย่อสำหรับรายการนี้";
+                    document.getElementById('videoFrame').src = data.videoUrl;
                     
-                    // ปรับขนาดจอตามหมวดหมู่
-                    if(data.category === 'vertical') {
-                        box.classList.add('mode-vertical');
-                    } else {
-                        box.classList.add('mode-landscape');
-                    }
-
-                    // สร้าง Iframe
-                    box.innerHTML = `<iframe src="${data.videoUrl}" allowfullscreen allow="autoplay"></iframe>`;
+                    loadRelated(data.category);
+                } else {
+                    alert('ไม่พบข้อมูลหนัง');
+                    window.location.href = 'index.html';
                 }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+            }
+        }
+
+        async function loadRelated(category) {
+            const snap = await db.collection('movies')
+                               .where('category', '==', category)
+                               .limit(6)
+                               .get();
+            
+            const grid = document.getElementById('relatedGrid');
+            snap.forEach(doc => {
+                if(doc.id === movieId) return;
+                const m = doc.data();
+                const item = document.createElement('div');
+                item.className = 'related-item';
+                item.onclick = () => window.location.href = `watch.html?id=${doc.id}`;
+                item.innerHTML = `
+                    <div class="poster-container">
+                        <img src="${m.poster}" alt="${m.title}">
+                    </div>
+                    <div class="related-title">${m.title}</div>
+                `;
+                grid.appendChild(item);
             });
         }
+
+        function shareMovie() {
+            const url = window.location.href;
+            if (navigator.share) {
+                navigator.share({
+                    title: document.getElementById('movieTitle').innerText,
+                    url: url
+                });
+            } else {
+                navigator.clipboard.writeText(url);
+                alert('คัดลอกลิงก์เรียบร้อย!');
+            }
+        }
+
+        window.onload = init;
     </script>
 </body>
 </html>
