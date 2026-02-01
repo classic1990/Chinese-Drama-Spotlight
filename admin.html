@@ -37,26 +37,24 @@
     .divider { margin: 20px 0; color: #555; font-size: 14px; position: relative; }
     .divider::before, .divider::after { content: ""; position: absolute; top: 50%; width: 40%; height: 1px; background: #333; }
     .divider::before { left: 0; }
-    .divider::after { right: 0; }
+    .divider::after { right: right; }
 
     .btn-danger { background: #ff4444; color: #fff; width: auto; padding: 6px 12px; font-size: 13px; border-radius: 6px; }
     
     .movie-item { display: flex; align-items: center; gap: 15px; background: #1a1a1a; padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #222; }
     .movie-item img { width: 45px; height: 65px; object-fit: cover; border-radius: 4px; background: #333; }
     .movie-item-info { flex-grow: 1; }
-    .movie-item-info h3 { margin: 0; font-size: 15px; }
+    .movie-item-info h3 { margin: 0; font-size: 15px; line-height: 1.2; margin-bottom: 5px; }
     .badge { font-size: 10px; background: #333; color: #00aeff; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
 </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Login Section -->
     <div id="loginSection">
         <h1 style="color: #00aeff;">ADMIN LOGIN</h1>
         <p style="color: #888; margin-bottom: 25px;">ล็อกอินเพื่อจัดการระบบ DUYDODEE-HD</p>
         
-        <!-- Google Login Button -->
         <button class="btn btn-google" onclick="handleGoogleLogin()">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
             เข้าสู่ระบบด้วย Google
@@ -73,12 +71,11 @@
         <button class="btn btn-primary" onclick="handleLogin()">ล็อกอินด้วยรหัสผ่าน</button>
     </div>
 
-    <!-- Admin Panel -->
     <div id="adminContent">
         <div class="header">
             <h2>จัดการเนื้อหาเว็บ</h2>
             <div style="text-align: right;">
-                <span id="adminEmail" style="display: block; font-size: 12px; color: #888;"></span>
+                <span id="adminEmail" style="display: block; font-size: 12px; color: #00aeff; font-weight: 600;"></span>
                 <button onclick="auth.signOut()" style="background:none; border:1px solid #444; color:#aaa; cursor:pointer; padding:5px 10px; border-radius:5px; margin-top: 5px;">Logout</button>
             </div>
         </div>
@@ -102,11 +99,11 @@
                     <input type="url" id="poster" required placeholder="https://...">
                 </div>
                 <div class="input-group">
-                    <label>URL สำหรับดูหนัง (Embed Link)</label>
-                    <input type="url" id="videoUrl" required placeholder="YouTube Embed หรือลิงก์หนัง">
+                    <label>URL สำหรับดูหนัง (รองรับลิงก์ YouTube ปกติ)</label>
+                    <input type="url" id="videoUrl" required placeholder="วอนวางลิงก์ YouTube หรือลิงก์ Embed ที่นี่">
                 </div>
                 <div class="input-group">
-                    <label>ข้อความ Badge (ถ้ามี เช่น 'จบแล้ว' หรือ 'EP.10')</label>
+                    <label>ข้อความ Badge (เช่น 'จบแล้ว' หรือ 'EP.10')</label>
                     <input type="text" id="badge" placeholder="ปล่อยว่างได้">
                 </div>
                 <div class="input-group">
@@ -140,7 +137,18 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    // ติดตามสถานะการล็อกอิน
+    // ฟังก์ชันพิเศษ: แปลงลิงก์ YouTube ทั่วไปให้เป็น Embed อัตโนมัติ
+    function formatVideoUrl(url) {
+        if (url.includes('youtube.com/watch?v=')) {
+            const videoId = url.split('v=')[1].split('&')[0];
+            return `https://www.youtube.com/embed/${videoId}`;
+        } else if (url.includes('youtu.be/')) {
+            const videoId = url.split('youtu.be/')[1].split('?')[0];
+            return `https://www.youtube.com/embed/${videoId}`;
+        }
+        return url; // ถ้าไม่ใช่ YouTube หรือเป็น Embed อยู่แล้วให้ใช้ค่าเดิม
+    }
+
     auth.onAuthStateChanged(user => {
         if (user) {
             document.getElementById('loginSection').style.display = 'none';
@@ -153,40 +161,40 @@
         }
     });
 
-    // ฟังก์ชันล็อกอินด้วย Google
     async function handleGoogleLogin() {
         const provider = new firebase.auth.GoogleAuthProvider();
         try {
             await auth.signInWithPopup(provider);
         } catch (err) {
-            alert('Google Login Error: ' + err.message);
+            if (err.code === 'auth/unauthorized-domain') {
+                alert('ข้อผิดพลาด: โดเมนนี้ยังไม่ได้รับอนุญาต\nกรุณาเพิ่ม "classic1990.github.io" ใน Firebase Console');
+            } else {
+                alert('Google Login Error: ' + err.message);
+            }
         }
     }
 
-    // ฟังก์ชันล็อกอินด้วยอีเมล (เดิม)
     async function handleLogin() {
         const email = document.getElementById('loginEmail').value;
         const pass = document.getElementById('loginPassword').value;
         if(!email || !pass) return alert('กรุณากรอกอีเมลและรหัสผ่าน');
-        try { 
-            await auth.signInWithEmailAndPassword(email, pass); 
-        } catch (err) { 
-            alert('ล็อกอินไม่สำเร็จ! ตรวจสอบสิทธิ์การเข้าถึง'); 
-        }
+        try { await auth.signInWithEmailAndPassword(email, pass); } catch (err) { alert('ล็อกอินไม่สำเร็จ!'); }
     }
 
-    // ฟังก์ชันเพิ่มข้อมูล
     document.getElementById('movieForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
         btn.innerText = 'กำลังบันทึก...';
 
+        const rawUrl = document.getElementById('videoUrl').value;
+        const formattedUrl = formatVideoUrl(rawUrl);
+
         const data = {
             category: document.getElementById('category').value,
             title: document.getElementById('title').value,
             poster: document.getElementById('poster').value,
-            videoUrl: document.getElementById('videoUrl').value,
+            videoUrl: formattedUrl,
             badge: document.getElementById('badge').value,
             description: document.getElementById('desc').value,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -194,10 +202,10 @@
 
         try {
             await db.collection('movies').add(data);
-            alert('บันทึกสำเร็จ!');
+            alert('บันทึกสำเร็จ! ระบบแปลงลิงก์ YouTube ให้เป็น Embed เรียบร้อย');
             e.target.reset();
         } catch (err) {
-            alert('บันทึกไม่สำเร็จ: ' + err.message + '\nตรวจสอบว่าคุณล็อกอินด้วยเมล Admin หรือยัง?');
+            alert('บันทึกไม่สำเร็จ: ' + err.message);
         } finally {
             btn.disabled = false;
             btn.innerText = 'บันทึกและอัปเดตหน้าเว็บ';
@@ -208,7 +216,6 @@
         db.collection('movies').orderBy('createdAt', 'desc').onSnapshot(snap => {
             const container = document.getElementById('movieListContainer');
             container.innerHTML = '';
-            
             snap.forEach(doc => {
                 const m = doc.data();
                 const div = document.createElement('div');
@@ -227,9 +234,8 @@
     }
 
     window.deleteItem = async (id) => {
-        if(confirm('ต้องการลบเรื่องนี้ออกจากหน้าเว็บใช่ไหม?')) {
-            try { await db.collection('movies').doc(id).delete(); } 
-            catch (err) { alert('ลบไม่สำเร็จ: ' + err.message); }
+        if(confirm('ยืนยันการลบ?')) {
+            try { await db.collection('movies').doc(id).delete(); } catch (err) { alert('ลบไม่สำเร็จ'); }
         }
     }
 </script>
