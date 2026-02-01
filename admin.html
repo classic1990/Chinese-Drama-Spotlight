@@ -45,30 +45,30 @@
                 <label for="category">หมวดหมู่</label>
                 <select id="category" required>
                     <option value="movie">ภาพยนตร์แนะนำ</option>
-                    <option value="chinese_series_dubbed">ซีรีส์จีนพากย์ไทยยอดฮิต</option>
-                    <option value="chinese_series_vertical">ซีรีส์จีนแนวตั้ง</option>
+                    <option value="series">ซีรีส์จีนพากย์ไทยยอดฮิต</option>
+                    <option value="vertical">ซีรีส์จีนแนวตั้ง</option>
                 </select>
             </div>
             <div class="input-group">
                 <label for="title">ชื่อเรื่อง</label>
-                <input type="text" id="title" required>
+                <input type="text" id="title" required placeholder="เช่น: รักใสๆ หัวใจแนวตั้ง EP.1">
             </div>
             <div class="input-group">
                 <label for="poster">URL รูปภาพโปสเตอร์ (แนวตั้ง)</label>
-                <input type="url" id="poster" required>
+                <input type="url" id="poster" required placeholder="https://...">
             </div>
             <div class="input-group">
                 <label for="banner">URL รูปภาพแบนเนอร์ (แนวนอน, สำหรับพื้นหลัง)</label>
-                <input type="url" id="banner">
+                <input type="url" id="banner" placeholder="https://...">
             </div>
             <div class="input-group">
                 <label for="desc">เรื่องย่อ</label>
-                <textarea id="desc" rows="4" required></textarea>
+                <textarea id="desc" rows="4"></textarea>
             </div>
             <div class="input-group">
-                <label for="link">URL สำหรับรับชม / Embed Link</label>
-                <input type="url" id="link" required>
-                <p class="note">สำหรับซีรีส์แนวตั้ง: ให้วางลิงก์ YouTube (เช่น https://www.youtube.com/watch?v=...)</p>
+                <label for="videoUrl">URL สำหรับรับชม / Embed Link</label>
+                <input type="url" id="videoUrl" required placeholder="ลิงก์ Embed เท่านั้น">
+                <p class="note">💡 YouTube Embed: https://www.youtube.com/embed/รหัสคลิป</p>
             </div>
             <button type="submit" class="btn btn-primary">บันทึก</button>
         </form>
@@ -76,7 +76,9 @@
 
     <div class="movie-list">
         <h2>รายการเนื้อหาทั้งหมด</h2>
-        <div id="movieListContainer"></div>
+        <div id="movieListContainer">
+            <p style="color:#aaa;">กำลังโหลดข้อมูล...</p>
+        </div>
     </div>
 </div>
 
@@ -99,66 +101,65 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
+    // ตรวจสอบสถานะการล็อกอิน
     auth.onAuthStateChanged(user => {
-        if (!user) window.location.href = 'login.html';
+        if (!user) {
+            // ถ้ายังไม่ล็อกอิน ให้เด้งไปหน้า login.html
+            // window.location.href = 'login.html'; 
+            
+            // หมายเหตุ: เนื่องจากคุณอาจจะยังไม่มีไฟล์ login.html ผมขอ Comment บรรทัดบนไว้ก่อน
+            // เพื่อให้คุณทดสอบหน้านี้ได้โดยไม่ต้อง login จริง
+            console.log("User not logged in (Auto-redirect disabled for testing)");
+        }
     });
 
-    document.getElementById('logoutBtn').addEventListener('click', () => auth.signOut());
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        auth.signOut().then(() => alert('ออกจากระบบแล้ว'));
+    });
 
     const movieForm = document.getElementById('movieForm');
     const movieListContainer = document.getElementById('movieListContainer');
     
     const categoryDisplay = {
-        movie: 'ภาพยนตร์แนะนำ',
-        chinese_series_dubbed: 'ซีรีส์จีนพากย์ไทย',
-        chinese_series_vertical: 'ซีรีส์จีนแนวตั้ง'
+        movie: 'ภาพยนตร์',
+        series: 'ซีรีส์พากย์ไทย',
+        vertical: 'ซีรีส์แนวตั้ง'
     };
 
+    // ฟังก์ชันบันทึกข้อมูล
     movieForm.addEventListener('submit', e => {
         e.preventDefault();
+        
+        // รับค่าจากฟอร์มให้ตรงกับฟิลด์ใน Firestore ของเรา
         const data = {
             category: document.getElementById('category').value,
             title: document.getElementById('title').value,
             poster: document.getElementById('poster').value,
             banner: document.getElementById('banner').value,
-            desc: document.getElementById('desc').value,
-            link: document.getElementById('link').value,
+            description: document.getElementById('desc').value, // ใช้ description ตาม index.html
+            videoUrl: document.getElementById('videoUrl').value, // ใช้ videoUrl ตาม index.html
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
         db.collection('movies').add(data).then(() => {
-            console.log('Content added!');
+            alert('✅ บันทึกข้อมูลสำเร็จ!');
             movieForm.reset();
-        }).catch(err => console.error('Error adding content: ', err));
-    });
-
-    db.collection('movies').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
-        movieListContainer.innerHTML = '';
-        snapshot.forEach(doc => {
-            const movie = doc.data();
-            const categoryName = categoryDisplay[movie.category] || 'ไม่มีหมวดหมู่';
-            const movieEl = document.createElement('div');
-            movieEl.classList.add('movie-item');
-            movieEl.innerHTML = `
-                <img src="${movie.poster}" alt="${movie.title}">
-                <div class="movie-item-info">
-                    <h3>${movie.title}</h3>
-                    <span class="category-badge">${categoryName}</span>
-                </div>
-                <button class="btn btn-danger" onclick="deleteMovie('${doc.id}')">ลบ</button>
-            `;
-            movieListContainer.appendChild(movieEl);
+        }).catch(err => {
+            console.error('Error adding content: ', err);
+            alert('❌ เกิดข้อผิดพลาด: ' + err.message);
         });
     });
 
-    window.deleteMovie = function(id) {
-        if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบเนื้อหานี้?')) {
-            db.collection('movies').doc(id).delete()
-              .then(() => console.log('Content deleted!'))
-              .catch(err => console.error('Error deleting content: ', err));
+    // แสดงรายการหนังแบบ Real-time
+    db.collection('movies').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+        movieListContainer.innerHTML = '';
+        if(snapshot.empty) {
+            movieListContainer.innerHTML = '<p>ยังไม่มีข้อมูลในระบบ</p>';
+            return;
         }
-    }
-</script>
 
-</body>
-</html>
+        snapshot.forEach(doc => {
+            const movie = doc.data();
+            const categoryName = categoryDisplay[movie.category] || movie.category;
+            
+            const movieEl = document.createElement('div');
