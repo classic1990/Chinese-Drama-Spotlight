@@ -9,7 +9,7 @@
     body { margin: 0; font-family: 'Prompt', sans-serif; background: #0f0f0f; color: #fff; padding: 20px; }
     .container { max-width: 900px; margin: 0 auto; }
     
-    #loginSection { background: #1a1a1a; padding: 40px; border-radius: 20px; text-align: center; margin-top: 10vh; }
+    #loginSection { background: #1a1a1a; padding: 40px; border-radius: 20px; text-align: center; margin-top: 10vh; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     #adminContent { display: none; }
 
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
@@ -23,8 +23,22 @@
         font-family: 'Prompt', sans-serif; 
     }
     
-    .btn { padding: 12px 25px; border-radius: 10px; border: none; cursor: pointer; font-size: 16px; font-weight: 600; width: 100%; }
+    .btn { padding: 12px 25px; border-radius: 10px; border: none; cursor: pointer; font-size: 16px; font-weight: 600; width: 100%; transition: 0.3s; }
     .btn-primary { background: #00aeff; color: #000; }
+    .btn-primary:hover { background: #008ecc; }
+    
+    .btn-google { 
+        background: #fff; color: #444; margin-top: 15px; 
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .btn-google:hover { background: #f1f1f1; }
+    .btn-google img { width: 20px; }
+
+    .divider { margin: 20px 0; color: #555; font-size: 14px; position: relative; }
+    .divider::before, .divider::after { content: ""; position: absolute; top: 50%; width: 40%; height: 1px; background: #333; }
+    .divider::before { left: 0; }
+    .divider::after { right: 0; }
+
     .btn-danger { background: #ff4444; color: #fff; width: auto; padding: 6px 12px; font-size: 13px; border-radius: 6px; }
     
     .movie-item { display: flex; align-items: center; gap: 15px; background: #1a1a1a; padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #222; }
@@ -37,19 +51,36 @@
 <body>
 
 <div class="container">
-    <!-- Login -->
+    <!-- Login Section -->
     <div id="loginSection">
         <h1 style="color: #00aeff;">ADMIN LOGIN</h1>
-        <div class="input-group"><input type="email" id="loginEmail" placeholder="อีเมลแอดมิน"></div>
-        <div class="input-group"><input type="password" id="loginPassword" placeholder="รหัสผ่าน"></div>
-        <button class="btn btn-primary" onclick="handleLogin()">เข้าสู่ระบบ</button>
+        <p style="color: #888; margin-bottom: 25px;">ล็อกอินเพื่อจัดการระบบ DUYDODEE-HD</p>
+        
+        <!-- Google Login Button -->
+        <button class="btn btn-google" onclick="handleGoogleLogin()">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+            เข้าสู่ระบบด้วย Google
+        </button>
+
+        <div class="divider">หรือใช้งานผ่านอีเมล</div>
+
+        <div class="input-group">
+            <input type="email" id="loginEmail" placeholder="อีเมลแอดมิน">
+        </div>
+        <div class="input-group">
+            <input type="password" id="loginPassword" placeholder="รหัสผ่าน">
+        </div>
+        <button class="btn btn-primary" onclick="handleLogin()">ล็อกอินด้วยรหัสผ่าน</button>
     </div>
 
     <!-- Admin Panel -->
     <div id="adminContent">
         <div class="header">
             <h2>จัดการเนื้อหาเว็บ</h2>
-            <button onclick="auth.signOut()" style="background:none; border:1px solid #444; color:#aaa; cursor:pointer; padding:5px 10px; border-radius:5px;">Logout</button>
+            <div style="text-align: right;">
+                <span id="adminEmail" style="display: block; font-size: 12px; color: #888;"></span>
+                <button onclick="auth.signOut()" style="background:none; border:1px solid #444; color:#aaa; cursor:pointer; padding:5px 10px; border-radius:5px; margin-top: 5px;">Logout</button>
+            </div>
         </div>
 
         <div class="form-card">
@@ -86,7 +117,7 @@
             </form>
         </div>
 
-        <h3>รายการทั้งหมด (${totalMovies || 0})</h3>
+        <h3>รายการทั้งหมด</h3>
         <div id="movieListContainer">กำลังโหลดรายการ...</div>
     </div>
 </div>
@@ -108,12 +139,13 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
-    let totalMovies = 0;
 
+    // ติดตามสถานะการล็อกอิน
     auth.onAuthStateChanged(user => {
         if (user) {
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('adminContent').style.display = 'block';
+            document.getElementById('adminEmail').innerText = "Logged in as: " + user.email;
             loadData();
         } else {
             document.getElementById('loginSection').style.display = 'block';
@@ -121,13 +153,29 @@
         }
     });
 
+    // ฟังก์ชันล็อกอินด้วย Google
+    async function handleGoogleLogin() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        try {
+            await auth.signInWithPopup(provider);
+        } catch (err) {
+            alert('Google Login Error: ' + err.message);
+        }
+    }
+
+    // ฟังก์ชันล็อกอินด้วยอีเมล (เดิม)
     async function handleLogin() {
         const email = document.getElementById('loginEmail').value;
         const pass = document.getElementById('loginPassword').value;
-        try { await auth.signInWithEmailAndPassword(email, pass); } 
-        catch (err) { alert('ล็อกอินไม่สำเร็จ! ตรวจสอบอีเมลและรหัสผ่าน'); }
+        if(!email || !pass) return alert('กรุณากรอกอีเมลและรหัสผ่าน');
+        try { 
+            await auth.signInWithEmailAndPassword(email, pass); 
+        } catch (err) { 
+            alert('ล็อกอินไม่สำเร็จ! ตรวจสอบสิทธิ์การเข้าถึง'); 
+        }
     }
 
+    // ฟังก์ชันเพิ่มข้อมูล
     document.getElementById('movieForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
@@ -146,10 +194,10 @@
 
         try {
             await db.collection('movies').add(data);
-            alert('บันทึกสำเร็จ! ข้อมูลจะไปโชว์ที่หน้าบ้านทันที');
+            alert('บันทึกสำเร็จ!');
             e.target.reset();
         } catch (err) {
-            alert('บันทึกไม่สำเร็จ: ' + err.message);
+            alert('บันทึกไม่สำเร็จ: ' + err.message + '\nตรวจสอบว่าคุณล็อกอินด้วยเมล Admin หรือยัง?');
         } finally {
             btn.disabled = false;
             btn.innerText = 'บันทึกและอัปเดตหน้าเว็บ';
@@ -160,7 +208,6 @@
         db.collection('movies').orderBy('createdAt', 'desc').onSnapshot(snap => {
             const container = document.getElementById('movieListContainer');
             container.innerHTML = '';
-            totalMovies = snap.size;
             
             snap.forEach(doc => {
                 const m = doc.data();
