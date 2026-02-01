@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>กำลังรับชม - DUYDODEE-HD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; font-family: 'Prompt', sans-serif; background: #000; color: #fff; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .player-container {
+            flex: 1; display: flex; justify-content: center; align-items: center;
+            background: radial-gradient(circle, #1a1a1a 0%, #000 100%);
+            padding: 20px;
+        }
+
+        /* กรอบวิดีโอ */
+        .video-wrapper {
+            width: 100%; box-shadow: 0 0 50px rgba(0, 174, 255, 0.2);
+            background: #000; position: relative; overflow: hidden;
+        }
+
+        /* โหมดปกติ (16:9) */
+        .mode-landscape { max-width: 1000px; aspect-ratio: 16/9; border-radius: 12px; }
+
+        /* โหมดแนวตั้ง (9:16) - ไฮไลท์ของเว็บนี้ */
+        .mode-vertical { 
+            max-width: 450px; aspect-ratio: 9/16; 
+            border-radius: 20px; border: 4px solid #333;
+        }
+
+        iframe { width: 100%; height: 100%; border: none; }
+
+        .info-panel {
+            padding: 30px; background: #111; border-top: 1px solid #333;
+        }
+        .meta-title { margin: 0 0 10px; color: #00aeff; }
+        .meta-desc { color: #aaa; line-height: 1.6; max-width: 800px; }
+        .back-link { 
+            display: inline-block; margin-bottom: 20px; color: #fff; text-decoration: none; 
+            background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="info-panel" style="padding-bottom: 0; background: transparent; border: none;">
+        <a href="index.html" class="back-link">⬅ กลับหน้าหลัก</a>
+    </div>
+
+    <div class="player-container">
+        <div id="video-box" class="video-wrapper">
+            <!-- Iframe จะถูกฝังที่นี่ -->
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <h1 class="meta-title" id="v-title">กำลังโหลด...</h1>
+        <p class="meta-desc" id="v-desc"></p>
+        <p style="font-size: 12px; color: #555; margin-top: 20px;">
+            Content provided via embed link. Not hosted on this server.
+        </p>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAcCn0NGbakHmLEa_G47K8OepGaRqTV02Q",
+            authDomain: "duydodeesport.firebaseapp.com",
+            projectId: "duydodeesport",
+            storageBucket: "duydodeesport.appspot.com",
+            messagingSenderId: "435929814225",
+            appId: "1:435929814225:web:fcb01803d9e5b77340e1f0"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+
+        if(id) {
+            db.collection('movies').doc(id).get().then(doc => {
+                if(doc.exists) {
+                    const data = doc.data();
+                    document.getElementById('v-title').innerText = data.title;
+                    document.getElementById('v-desc').innerText = data.description || 'ไม่มีรายละเอียด';
+                    document.title = `รับชม: ${data.title}`;
+
+                    const box = document.getElementById('video-box');
+                    
+                    // ปรับขนาดจอตามหมวดหมู่
+                    if(data.category === 'vertical') {
+                        box.classList.add('mode-vertical');
+                    } else {
+                        box.classList.add('mode-landscape');
+                    }
+
+                    // สร้าง Iframe
+                    box.innerHTML = `<iframe src="${data.videoUrl}" allowfullscreen allow="autoplay"></iframe>`;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
