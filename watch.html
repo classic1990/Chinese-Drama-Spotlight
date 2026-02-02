@@ -1,108 +1,183 @@
 <!DOCTYPE html>
-
 <html lang="th">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>กำลังรับชม | DUYDODEE-HD</title>
-
-    
-
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-    
-
     <style>
-
-        /* ===== THEME VARIABLES (Same as index.html) ===== */
-
         :root {
-
             --primary: #00f2ff;
-
-            --primary-dim: rgba(0, 242, 255, 0.1);
-
-            --secondary: #2d62ff;
-
-            --accent: #ff0055;
-
             --bg-dark: #050507;
-
-            --bg-surface: #121216;
-
-            --text-main: #ffffff;
-
+            --bg-surf: #121216;
             --text-muted: #9ca3af;
-
-            --card-radius: 12px;
-
-            --nav-height: 70px;
-
-            --gradient-glow: linear-gradient(135deg, #00f2ff 0%, #2d62ff 100%);
-
+            --nav-h: 70px;
         }
-
-
-
         * { box-sizing: border-box; outline: none; }
+        body { margin: 0; font-family: 'Prompt', sans-serif; background: var(--bg-dark); color: #fff; line-height: 1.6; overflow-x: hidden; }
 
+        /* Nav */
+        nav {
+            position: fixed; top: 0; width: 100%; height: var(--nav-h);
+            padding: 0 5%; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 7, 0.9); backdrop-filter: blur(15px); z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .logo { font-size: 24px; font-weight: 800; color: var(--primary); text-decoration: none; text-transform: uppercase; }
+        .nav-back { color: var(--text-muted); text-decoration: none; font-size: 14px; transition: 0.3s; }
+        .nav-back:hover { color: var(--primary); transform: translateX(-5px); }
 
-
-        body {
-
-            margin: 0;
-
-            font-family: 'Prompt', sans-serif;
-
-            background-color: var(--bg-dark);
-
-            color: var(--text-main);
-
-            line-height: 1.6;
-
-            overflow-x: hidden;
-
-            -webkit-font-smoothing: antialiased;
-
+        /* Layout */
+        .player-layout {
+            margin: calc(var(--nav-h) + 20px) auto 60px; padding: 0 5%;
+            max-width: 1400px; display: grid; grid-template-columns: 1fr 320px; gap: 30px;
         }
 
+        /* Player */
+        .video-box { position: relative; padding-bottom: 56.25%; background: #000; border-radius: 12px; overflow: hidden; border: 1px solid #222; }
+        .video-box iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
 
+        .ep-list { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+        .ep-btn { 
+            background: #1a1a1e; color: var(--text-muted); border: 1px solid #333;
+            padding: 8px 16px; border-radius: 8px; cursor: pointer; font-family: inherit; transition: 0.3s;
+        }
+        .ep-btn.active { background: var(--primary); color: #000; font-weight: 600; border-color: var(--primary); }
 
-        /* ===== SCROLLBAR ===== */
+        /* Info */
+        .info-card { margin-top: 25px; background: var(--bg-surf); padding: 25px; border-radius: 12px; }
+        .m-title { font-size: 24px; margin: 0; }
+        .meta { display: flex; gap: 15px; font-size: 13px; color: var(--text-muted); margin: 15px 0; align-items: center; }
+        .badge { background: #ff0055; color: #fff; padding: 2px 8px; border-radius: 4px; font-weight: 700; }
+        .desc { font-size: 14px; color: var(--text-muted); border-top: 1px solid #222; padding-top: 15px; }
 
-        ::-webkit-scrollbar { width: 6px; }
+        /* Sidebar */
+        .side-title { font-size: 18px; margin-bottom: 15px; border-left: 4px solid var(--primary); padding-left: 12px; }
+        .suggest-card { display: flex; gap: 12px; background: var(--bg-surf); padding: 8px; border-radius: 8px; cursor: pointer; transition: 0.3s; margin-bottom: 12px; }
+        .suggest-card:hover { transform: translateX(5px); background: #1a1a1e; }
+        .suggest-card img { width: 60px; aspect-ratio: 2/3; object-fit: cover; border-radius: 4px; }
+        .suggest-card p { margin: 0; font-size: 13px; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        /* Loader */
+        #loader { position: fixed; inset: 0; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 2000; }
+        .spin { width: 40px; height: 40px; border: 3px solid #222; border-top-color: var(--primary); border-radius: 50%; animation: s 0.8s linear infinite; }
+        @keyframes s { 100% { transform: rotate(360deg); } }
 
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        @media (max-width: 1024px) {
+            .player-layout { grid-template-columns: 1fr; }
+            .suggest-card { background: transparent; padding: 0; }
+        }
+    </style>
+</head>
+<body>
 
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+<div id="loader"><div class="spin"></div></div>
 
+<nav>
+    <a href="index.html" class="logo">DUY<span style="color:#fff">DODEE</span></a>
+    <a href="index.html" class="nav-back"><i class="fas fa-arrow-left"></i> กลับ</a>
+</nav>
 
+<div class="player-layout">
+    <main>
+        <div class="video-box" id="player"></div>
+        <div class="ep-list" id="ep-list"></div>
 
-        /* ===== NAVIGATION ===== */
+        <div class="info-card">
+            <h1 class="m-title" id="title">กำลังโหลด...</h1>
+            <div class="meta">
+                <span class="badge" id="badge">HD</span>
+                <span><i class="far fa-eye"></i> <span id="views">0</span> วิว</span>
+            </div>
+            <div class="desc" id="desc">...</div>
+        </div>
+    </main>
 
-        nav {
+    <aside>
+        <h3 class="side-title">แนะนำ</h3>
+        <div id="suggest"></div>
+    </aside>
+</div>
 
-            position: fixed;
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
-            top: 0; width: 100%; height: var(--nav-height);
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
+        authDomain: "classic-e8ab7.firebaseapp.com",
+        projectId: "classic-e8ab7",
+        appId: "1:596308927760:web:63043fd2786459082cb195"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const mid = new URLSearchParams(window.location.search).get('id');
 
-            padding: 0 5%;
+    function getEmbed(u) {
+        if (!u) return "";
+        let id = "";
+        if (u.includes("youtu.be/")) id = u.split("youtu.be/")[1].split(/[?#]/)[0];
+        else if (u.includes("v=")) id = new URLSearchParams(new URL(u).search).get('v');
+        return id ? `https://www.youtube.com/embed/${id}?autoplay=1&rel=0` : u;
+    }
 
-            display: flex; justify-content: space-between; align-items: center;
+    async function load() {
+        if(!mid) { location.href='index.html'; return; }
+        try {
+            const docRef = db.collection('artifacts').doc(mid);
+            const doc = await docRef.get();
+            if(!doc.exists) return;
+            const d = doc.data();
 
-            background: rgba(5, 5, 7, 0.85);
+            document.getElementById('title').innerText = d.title;
+            document.getElementById('badge').innerText = d.badge || 'HD';
+            document.getElementById('views').innerText = (d.viewCount || 0).toLocaleString();
+            document.getElementById('desc').innerText = d.desc || "ไม่มีเนื้อเรื่องย่อ";
 
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            const p = document.getElementById('player');
+            const el = document.getElementById('ep-list');
+            let links = Array.isArray(d.links) ? d.links : (d.link ? [d.link] : []);
 
-            z-index: 1000;
+            links.forEach((url, i) => {
+                const b = document.createElement('button');
+                b.className = 'ep-btn';
+                b.innerText = links.length > 1 ? `EP ${i+1}` : `เล่น`;
+                b.onclick = () => {
+                    p.innerHTML = `<iframe src="${getEmbed(url)}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+                    document.querySelectorAll('.ep-btn').forEach(btn => btn.classList.remove('active'));
+                    b.classList.add('active');
+                };
+                el.appendChild(b);
+                if(i === 0) b.click();
+            });
+
+            docRef.update({ viewCount: firebase.firestore.FieldValue.increment(1) });
+            fetchS();
+        } catch(e) { console.error(e); }
+        finally { document.getElementById('loader').style.display = 'none'; }
+    }
+
+    async function fetchS() {
+        const box = document.getElementById('suggest');
+        const snap = await db.collection('artifacts').limit(6).get();
+        snap.forEach(doc => {
+            if(doc.id === mid) return;
+            const m = doc.data();
+            const c = document.createElement('div');
+            c.className = 'suggest-card';
+            c.onclick = () => location.href = `watch.html?id=${doc.id}`;
+            c.innerHTML = `
+                <img src="${m.poster}" onerror="this.src='https://via.placeholder.com/100x150'">
+                <p>${m.title}</p>
+            `;
+            box.appendChild(c);
+        });
+    }
+    window.onload = load;
+</script>
+</body>
+</html>
 
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
