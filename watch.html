@@ -81,11 +81,36 @@
             border: none;
         }
 
-        /* Info Section */
-        .movie-header {
-            margin-top: 25px;
+        /* Episode Selector */
+        .ep-list {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            padding: 10px 0;
         }
 
+        .ep-btn {
+            background: #222;
+            color: #fff;
+            border: 1px solid #333;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Prompt';
+            transition: 0.3s;
+        }
+
+        .ep-btn:hover { border-color: var(--primary); }
+        .ep-btn.active {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Info Section */
+        .movie-header { margin-top: 25px; }
         .movie-header h1 {
             font-size: clamp(22px, 4vw, 30px);
             margin-bottom: 10px;
@@ -121,10 +146,7 @@
         }
 
         /* Suggestion Grid */
-        .suggest-section {
-            margin-top: 40px;
-        }
-
+        .suggest-section { margin-top: 40px; }
         .grid-suggest {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -203,6 +225,8 @@
                     </div>
             </div>
 
+            <div class="ep-list" id="ep-list-box"></div>
+
             <div class="movie-header">
                 <h1 id="m-title">กำลังโหลด...</h1>
                 <div class="meta-tags">
@@ -226,7 +250,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // Config สำหรับโปรเจกต์ Classic
         const firebaseConfig = {
             apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
             authDomain: "classic-e8ab7.firebaseapp.com",
@@ -240,14 +263,28 @@
         const urlParams = new URLSearchParams(window.location.search);
         const movieId = urlParams.get('id');
 
+        // ฟังก์ชันแปลงลิงก์ YouTube เป็น Embed อัตโนมัติ
+        function getEmbedUrl(url) {
+            if (!url) return "";
+            let videoId = "";
+            try {
+                if (url.includes("youtu.be/")) {
+                    videoId = url.split("youtu.be/")[1].split(/[?#]/)[0];
+                } else if (url.includes("youtube.com/watch")) {
+                    const params = new URLSearchParams(new URL(url).search);
+                    videoId = params.get('v');
+                } else if (url.includes("youtube.com/embed/")) {
+                    return url;
+                }
+            } catch (e) { console.error("URL Error", e); }
+            return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0` : url;
+        }
+
         async function loadContent() {
-            if(!movieId) {
-                window.location.href = 'index.html';
-                return;
-            }
+            if(!movieId) { window.location.href = 'index.html'; return; }
 
             try {
-                // ดึงข้อมูลจากคอลเลกชัน movies
+                // อ้างอิงถึง Collection 'movies' ตามโค้ดล่าสุดของคุณ
                 const docRef = db.collection('movies').doc(movieId);
                 const doc = await docRef.get();
                 
@@ -257,8 +294,6 @@
                 }
 
                 const data = doc.data();
-                
-                // อัปเดตข้อมูลบนหน้าเว็บ
                 document.getElementById('m-title').innerText = data.title;
                 document.getElementById('m-badge').innerText = data.badge || 'HD';
                 document.getElementById('m-views').innerText = (data.viewCount || 0).toLocaleString();
@@ -269,19 +304,40 @@
                     document.getElementById('m-date').innerText = date.toLocaleDateString('th-TH');
                 }
 
-                // ใส่ Iframe วิดีโอ (ใช้ฟิลด์ link)
-                if(data.link) {
-                    document.getElementById('video-box').innerHTML = `
-                        <iframe src="${data.link}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                    `;
+                // ระบบจัดการหลายตอน (Links Array)
+                const videoBox = document.getElementById('video-box');
+                const epListBox = document.getElementById('ep-list-box');
+                
+                // รวมลิงก์จากทั้งระบบเก่า (link) และระบบใหม่ (links array)
+                let allLinks = [];
+                if (data.links && Array.isArray(data.links)) {
+                    allLinks = data.links;
+                } else if (data.link) {
+                    allLinks = [data.link];
                 }
 
-                // --- อัปเดตยอดวิว (+1) ไปที่ฟิลด์ viewCount ---
-                docRef.update({
-                    viewCount: firebase.firestore.FieldValue.increment(1)
-                }).catch(e => console.log("Update view count failed"));
+                if(allLinks.length > 0) {
+                    allLinks.forEach((url, index) => {
+                        const btn = document.createElement('button');
+                        btn.className = 'ep-btn';
+                        btn.innerText = allLinks.length > 1 ? `ตอนที่ ${index + 1}` : `เริ่มเล่น`;
+                        
+                        btn.onclick = () => {
+                            videoBox.innerHTML = `<iframe src="${getEmbedUrl(url)}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+                            document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+                        };
+                        epListBox.appendChild(btn);
 
-                // โหลดหนังแนะนำ
+                        // เล่นตอนแรกทันที
+                        if(index === 0) btn.click();
+                    });
+                }
+
+                // อัปเดตยอดวิว
+                docRef.update({ viewCount: firebase.firestore.FieldValue.increment(1) })
+                      .catch(e => console.log("Update view count failed"));
+
                 fetchSuggest(data.category);
 
             } catch (err) {
@@ -294,14 +350,13 @@
         async function fetchSuggest(cat) {
             const box = document.getElementById('suggest-box');
             try {
-                // ดึงข้อมูลหนังในหมวดหมู่เดียวกัน 6 เรื่อง
                 const snap = await db.collection('movies')
                                    .where('category', '==', cat)
                                    .limit(7)
                                    .get();
                 
                 snap.forEach(doc => {
-                    if(doc.id === movieId) return; // ไม่เอาเรื่องที่ดูอยู่มาแนะนำ
+                    if(doc.id === movieId) return;
                     const m = doc.data();
                     const card = document.createElement('div');
                     card.className = 'suggest-card';
