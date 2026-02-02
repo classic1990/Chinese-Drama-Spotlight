@@ -7,37 +7,71 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #00aeff; --bg: #0f0f0f; --card: #1a1a1a; }
-        body { margin: 0; font-family: 'Prompt', sans-serif; background: var(--bg); color: #fff; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; }
-        #loginSection { background: var(--card); padding: 50px 20px; border-radius: 20px; text-align: center; margin-top: 15vh; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .google-btn { background: #fff; color: #444; border: none; padding: 12px 25px; border-radius: 10px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; transition: 0.3s; }
-        #adminContent { display: none; }
-        .form-card { background: var(--card); padding: 25px; border-radius: 15px; border: 1px solid #333; margin-bottom: 40px; }
+        :root { --primary: #00aeff; --bg: #070707; --card: #121212; --input: #1a1a1a; }
+        body { margin: 0; font-family: 'Prompt', sans-serif; background: var(--bg); color: #fff; padding-bottom: 50px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        
+        /* Login Section */
+        #loginSection { 
+            background: var(--card); padding: 60px 20px; border-radius: 20px; 
+            text-align: center; margin-top: 10vh; border: 1px solid #333;
+        }
+        .google-btn { 
+            background: #fff; color: #000; border: none; padding: 12px 25px; 
+            border-radius: 30px; font-weight: 600; cursor: pointer; 
+            display: inline-flex; align-items: center; gap: 10px; transition: 0.3s; 
+        }
+        .google-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+
+        /* Admin Content */
+        #adminContent { display: none; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .form-card { background: var(--card); padding: 30px; border-radius: 15px; border: 1px solid #333; margin-top: 20px; }
         .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; margin-bottom: 8px; color: #aaa; font-size: 14px; }
-        .input-group input, .input-group textarea, .input-group select { box-sizing: border-box; width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #333; background: #222; color: #fff; font-size: 16px; font-family: 'Prompt'; }
-        .btn { padding: 12px 25px; border-radius: 10px; border: none; cursor: pointer; font-size: 16px; font-weight: 600; width: 100%; }
-        .btn-primary { background: var(--primary); color: #000; }
-        .movie-item { display: flex; align-items: center; gap: 15px; background: var(--card); padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #222; }
-        .movie-item img { width: 50px; height: 70px; object-fit: cover; border-radius: 6px; }
+        .input-group label { display: block; margin-bottom: 8px; color: var(--primary); font-size: 14px; font-weight: 600; }
+        .input-group input, .input-group textarea, .input-group select { 
+            box-sizing: border-box; width: 100%; padding: 12px; border-radius: 8px; 
+            border: 1px solid #333; background: var(--input); color: #fff; font-size: 16px; font-family: 'Prompt'; 
+        }
+        
+        .btn { padding: 14px; border-radius: 8px; border: none; cursor: pointer; font-size: 16px; font-weight: 600; width: 100%; transition: 0.3s; }
+        .btn-primary { background: var(--primary); color: #000; margin-bottom: 10px; }
+        .btn-primary:hover { opacity: 0.8; }
+        .btn-cancel { background: #333; color: #fff; display: none; }
+
+        /* Movie List */
+        .movie-list-container { margin-top: 40px; }
+        .movie-item { 
+            display: flex; align-items: center; gap: 15px; background: var(--card); 
+            padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #222; 
+        }
+        .movie-item img { width: 50px; height: 70px; object-fit: cover; border-radius: 6px; background: #222; }
+        .movie-info { flex-grow: 1; }
+        .movie-info strong { display: block; font-size: 15px; margin-bottom: 4px; }
+        .movie-info span { font-size: 12px; color: #888; }
+        .action-btns { display: flex; gap: 10px; }
+        .action-btns button { background: none; border: none; cursor: pointer; font-size: 18px; }
+        .edit-btn { color: #ffc107; }
+        .delete-btn { color: #ff4444; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="loginSection">
-        <h1 style="color: var(--primary);">ADMIN LOGIN</h1>
+        <h1 style="margin-bottom: 10px;">DUYDODEE HD</h1>
+        <p style="color: #888; margin-bottom: 30px;">ผู้ดูแลระบบกรุณาเข้าสู่ระบบ</p>
         <button class="google-btn" onclick="loginWithGoogle()">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
-            เข้าสู่ระบบด้วย Google
+            Login with Google
         </button>
     </div>
 
     <div id="adminContent">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h2>จัดการเนื้อหา (Collection: movies)</h2>
-            <button onclick="auth.signOut()" style="background:none; color:#ff4444; border:none; cursor:pointer;">Logout</button>
+            <h2 id="adminTitle">เพิ่มซีรีส์ใหม่</h2>
+            <button onclick="auth.signOut()" style="background:#ff4444; color:#fff; border:none; padding:5px 15px; border-radius:5px; cursor:pointer;">Logout</button>
         </div>
 
         <div class="form-card">
@@ -50,15 +84,21 @@
                         <option value="series">🎬 ซีรีส์จีนพากย์ไทย</option>
                     </select>
                 </div>
-                <div class="input-group"><label>ชื่อเรื่อง</label><input type="text" id="title" required></div>
-                <div class="input-group"><label>URL รูปโปสเตอร์</label><input type="url" id="poster" required></div>
-                <div class="input-group"><label>URL วิดีโอ (YouTube)</label><input type="text" id="link" required></div>
-                <div class="input-group"><label>ป้ายกำกับ (เช่น จบแล้ว, EP.01)</label><input type="text" id="badge"></div>
-                <div class="input-group"><label>เรื่องย่อ</label><textarea id="desc" rows="3"></textarea></div>
+                <div class="input-group"><label>ชื่อเรื่อง</label><input type="text" id="title" placeholder="ชื่อซีรีส์..." required></div>
+                <div class="input-group"><label>URL รูปโปสเตอร์</label><input type="url" id="poster" placeholder="https://..." required></div>
+                <div class="input-group"><label>URL วิดีโอ (YouTube Embed)</label><input type="text" id="link" placeholder="https://www.youtube.com/embed/..." required></div>
+                <div class="input-group"><label>ป้ายกำกับ (เช่น EP.01, จบแล้ว)</label><input type="text" id="badge" placeholder="HD"></div>
+                <div class="input-group"><label>เรื่องย่อ</label><textarea id="desc" rows="3" placeholder="เขียนเรื่องย่อสั้นๆ..."></textarea></div>
+                
                 <button type="submit" class="btn btn-primary" id="submitBtn">บันทึกข้อมูล</button>
+                <button type="button" class="btn btn-cancel" id="cancelBtn" onclick="resetForm()">ยกเลิกการแก้ไข</button>
             </form>
         </div>
-        <div id="movieList"></div>
+
+        <div class="movie-list-container">
+            <h3>รายการทั้งหมดในระบบ</h3>
+            <div id="movieList"></div>
+        </div>
     </div>
 </div>
 
@@ -67,6 +107,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
 <script>
+    // Config โปรเจกต์ Classic
     const firebaseConfig = {
         apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
         authDomain: "classic-e8ab7.firebaseapp.com",
@@ -76,19 +117,22 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
-    const ADMIN_EMAIL = "duy.kan1234@gmail.com"; // ตรวจสอบว่าตรงกับเมลคุณ
 
+    const ADMIN_EMAIL = "duy.kan1234@gmail.com"; 
+
+    // ระบบ Login
     async function loginWithGoogle() {
         const provider = new firebase.auth.GoogleAuthProvider();
         try {
             const result = await auth.signInWithPopup(provider);
             if (result.user.email !== ADMIN_EMAIL) {
-                alert("สิทธิ์ไม่ถูกต้อง");
+                alert("ขออภัย คุณไม่มีสิทธิ์เข้าถึงหน้านี้");
                 await auth.signOut();
             }
         } catch (e) { alert(e.message); }
     }
 
+    // ตรวจสอบสถานะการล็อกอิน
     auth.onAuthStateChanged(user => {
         if (user && user.email === ADMIN_EMAIL) {
             document.getElementById('loginSection').style.display = 'none';
@@ -100,31 +144,44 @@
         }
     });
 
+    // ระบบบันทึกข้อมูล (เพิ่ม/แก้ไข)
     document.getElementById('movieForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const id = document.getElementById('editId').value;
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerText = "กำลังบันทึก...";
+
         const data = {
             category: document.getElementById('category').value,
             title: document.getElementById('title').value,
             poster: document.getElementById('poster').value,
             link: document.getElementById('link').value,
-            badge: document.getElementById('badge').value,
+            badge: document.getElementById('badge').value || 'HD',
             desc: document.getElementById('desc').value,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        if (id) {
-            await db.collection('movies').doc(id).update(data);
-        } else {
-            data.viewCount = 0;
-            data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-            await db.collection('movies').add(data);
+        try {
+            if (id) {
+                await db.collection('movies').doc(id).update(data);
+                alert("แก้ไขข้อมูลเรียบร้อย!");
+            } else {
+                data.viewCount = 0;
+                data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                await db.collection('movies').add(data);
+                alert("เพิ่มซีรีส์ใหม่เรียบร้อย!");
+            }
+            resetForm();
+        } catch (err) {
+            alert("เกิดข้อผิดพลาด: " + err.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "บันทึกข้อมูล";
         }
-        alert("สำเร็จ!");
-        document.getElementById('movieForm').reset();
-        document.getElementById('editId').value = '';
     });
 
+    // โหลดรายการหนังมาแสดง
     function loadData() {
         db.collection('movies').orderBy('createdAt', 'desc').onSnapshot(snap => {
             const list = document.getElementById('movieList');
@@ -133,15 +190,53 @@
                 const m = doc.data();
                 list.innerHTML += `
                     <div class="movie-item">
-                        <img src="${m.poster}">
-                        <div style="flex-grow:1"><strong>${m.title}</strong></div>
-                        <button onclick="deleteDoc('${doc.id}')" style="color:red; background:none; border:none; cursor:pointer;">ลบ</button>
+                        <img src="${m.poster}" onerror="this.src='logo.png'">
+                        <div class="movie-info">
+                            <strong>${m.title}</strong>
+                            <span>${m.category === 'vertical' ? 'ซีรีส์แนวตั้ง' : 'พากย์ไทย'} | ${m.viewCount || 0} views</span>
+                        </div>
+                        <div class="action-btns">
+                            <button class="edit-btn" onclick="editDoc('${doc.id}')" title="แก้ไข"><i class="fas fa-edit"></i></button>
+                            <button class="delete-btn" onclick="deleteDoc('${doc.id}')" title="ลบ"><i class="fas fa-trash"></i></button>
+                        </div>
                     </div>`;
             });
         });
     }
 
-    async function deleteDoc(id) { if(confirm('ลบไหม?')) await db.collection('movies').doc(id).delete(); }
+    // ฟังก์ชันดึงข้อมูลมาแก้ไข
+    async function editDoc(id) {
+        const doc = await db.collection('movies').doc(id).get();
+        if (doc.exists) {
+            const m = doc.data();
+            document.getElementById('editId').value = id;
+            document.getElementById('category').value = m.category;
+            document.getElementById('title').value = m.title;
+            document.getElementById('poster').value = m.poster;
+            document.getElementById('link').value = m.link;
+            document.getElementById('badge').value = m.badge;
+            document.getElementById('desc').value = m.desc;
+
+            document.getElementById('adminTitle').innerText = "กำลังแก้ไข: " + m.title;
+            document.getElementById('cancelBtn').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+
+    // ล้างฟอร์ม
+    function resetForm() {
+        document.getElementById('movieForm').reset();
+        document.getElementById('editId').value = '';
+        document.getElementById('adminTitle').innerText = "เพิ่มซีรีส์ใหม่";
+        document.getElementById('cancelBtn').style.display = 'none';
+    }
+
+    // ลบข้อมูล
+    async function deleteDoc(id) {
+        if(confirm('คุณแน่ใจหรือไม่ที่จะลบรายการนี้? ไม่สามารถย้อนกลับได้')) {
+            await db.collection('movies').doc(id).delete();
+        }
+    }
 </script>
 </body>
 </html>
