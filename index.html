@@ -1,573 +1,192 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DUYDODEE-HD | ดูซีรีส์จีน พากย์ไทย 2026</title>
+    <meta name="description" content="ดูซีรีส์จีนพากย์ไทย ซีรีส์สั้นแนวตั้ง อัปเดตใหม่ทุกวัน ฟรี ที่ DUYDODEE-HD">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --bg-dark: #050507;
+            --bg-card: #121216;
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --nav-h: 70px;
+        }
 
-<title>DUYDODEE-HD | ดูซีรีส์จีน พากย์ไทย 2026</title>
+        * { box-sizing: border-box; outline: none; }
+        body { 
+            margin: 0; font-family: 'Prompt', sans-serif; 
+            background: var(--bg-dark); color: var(--text-main); 
+            overflow-x: hidden; 
+        }
 
-<meta name="description" content="ดูซีรีส์จีนพากย์ไทย ซีรีส์สั้นแนวตั้ง อัปเดตใหม่ทุกวัน คมชัดระดับ HD–4K ฟรี ที่ DUYDODEE-HD">
-<meta property="og:title" content="DUYDODEE-HD | Chinese Streaming">
-<meta property="og:description" content="ศูนย์รวมซีรีส์จีนพากย์ไทย & ซีรีส์สั้นยอดนิยม">
-<meta property="og:image" content="duycode.jpg">
-<meta property="og:type" content="website">
-<meta property="og:locale" content="th_TH">
+        /* Nav */
+        nav {
+            position: fixed; top: 0; width: 100%; height: var(--nav-h);
+            padding: 0 5%; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 7, 0.9); backdrop-filter: blur(15px); z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .logo { font-size: 24px; font-weight: 800; color: var(--primary); text-decoration: none; text-transform: uppercase; }
+        .nav-links { display: flex; gap: 25px; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 14px; transition: 0.3s; }
+        .nav-links a:hover { color: var(--primary); }
 
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="duycode.jpg">
+        /* Hero */
+        .hero {
+            height: 70vh; background: linear-gradient(to right, #050507 30%, transparent), url('duycode.jpg') center/cover;
+            display: flex; align-items: center; padding: 0 5%; margin-bottom: 30px;
+        }
+        .hero-content { max-width: 550px; }
+        .hero h1 { font-size: clamp(32px, 5vw, 55px); margin: 10px 0; line-height: 1.1; }
+        .hero p { color: var(--text-muted); margin-bottom: 25px; }
+        .btn { 
+            padding: 12px 30px; background: var(--primary); color: #000; 
+            text-decoration: none; border-radius: 50px; font-weight: 700; 
+            display: inline-block; box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        /* Grid */
+        .section { padding: 20px 5%; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
 
-<style>
-:root {
-    --primary: #00f2ff;
-    --primary-dim: rgba(0, 242, 255, 0.1);
-    --secondary: #2d62ff;
-    --accent: #ff0055;
-    --bg-dark: #050507;
-    --bg-surface: #121216;
-    --text-main: #ffffff;
-    --text-muted: #9ca3af;
-    --card-radius: 12px;
-    --nav-height: 70px;
-    --gradient-glow: linear-gradient(135deg, #00f2ff 0%, #2d62ff 100%);
-}
+        /* Card */
+        .movie-card { 
+            background: var(--bg-card); border-radius: 12px; overflow: hidden; 
+            position: relative; cursor: pointer; transition: 0.4s;
+        }
+        .movie-card:hover { transform: translateY(-8px); border: 1px solid var(--primary); }
+        .poster { position: relative; width: 100%; aspect-ratio: 2/3; }
+        .poster.vertical { aspect-ratio: 9/16; }
+        .poster img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .badge { position: absolute; top: 10px; right: 10px; background: #ff0055; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+        .card-info { 
+            position: absolute; bottom: 0; width: 100%; padding: 15px 10px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+        }
+        .m-title { font-size: 14px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .m-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 5px; }
 
-* {
-    box-sizing: border-box;
-    outline: none;
-}
+        /* Loader */
+        #loader { position: fixed; inset: 0; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        .spin { width: 40px; height: 40px; border: 3px solid #222; border-top-color: var(--primary); border-radius: 50%; animation: s 0.8s linear infinite; }
+        @keyframes s { 100% { transform: rotate(360deg); } }
 
-body {
-    margin: 0;
-    font-family: 'Prompt', sans-serif;
-    background-color: var(--bg-dark);
-    color: var(--text-main);
-    line-height: 1.6;
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-}
-
-/* ===== Custom Scrollbar ===== */
-::-webkit-scrollbar {
-    width: 6px;
-}
-::-webkit-scrollbar-track {
-    background: var(--bg-dark);
-}
-::-webkit-scrollbar-thumb {
-    background: #333;
-    border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: var(--primary);
-}
-
-/* ===== NAV ===== */
-nav {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: var(--nav-height);
-    padding: 0 5%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(5, 5, 7, 0.85);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    z-index: 1000;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    transition: 0.3s;
-}
-
-.logo-text {
-    font-size: 24px;
-    font-weight: 800;
-    text-transform: uppercase;
-    background: var(--gradient-glow);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
-    text-decoration: none;
-    letter-spacing: 1px;
-}
-
-.nav-links {
-    display: flex;
-    gap: 30px;
-}
-
-.nav-links a {
-    color: var(--text-muted);
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.nav-links a:hover, .nav-links a.active {
-    color: var(--primary);
-    text-shadow: 0 0 10px var(--primary-dim);
-}
-
-/* ===== HERO ===== */
-.hero {
-    position: relative;
-    height: 80vh;
-    min-height: 600px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 0 5%;
-    overflow: hidden;
-    margin-bottom: 40px;
-}
-
-/* Background Image with Overlay */
-.hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    /* ใช้รูป duycode.jpg ตามที่ขอครับ */
-    background: url('duycode.jpg') center/cover no-repeat;
-    filter: brightness(0.6);
-    z-index: -2;
-    transform: scale(1.05); /* Slight zoom for effect */
-}
-
-.hero::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to right, #050507 0%, rgba(5, 5, 7, 0.6) 50%, transparent 100%),
-                linear-gradient(to top, #050507 0%, transparent 40%);
-    z-index: -1;
-}
-
-.hero-content {
-    max-width: 600px;
-    z-index: 1;
-    margin-top: var(--nav-height);
-}
-
-.hero-tag {
-    display: inline-block;
-    padding: 4px 12px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 50px;
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 15px;
-    backdrop-filter: blur(5px);
-    color: var(--primary);
-}
-
-.hero-content h1 {
-    font-size: clamp(36px, 6vw, 64px);
-    font-weight: 800;
-    line-height: 1.1;
-    margin: 0 0 20px 0;
-    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-}
-
-.hero-content p {
-    color: var(--text-muted);
-    font-size: 16px;
-    margin-bottom: 30px;
-    max-width: 450px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-}
-
-.hero-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 30px;
-    background: var(--gradient-glow);
-    color: #fff;
-    text-decoration: none;
-    border-radius: 50px;
-    font-weight: 700;
-    font-size: 15px;
-    transition: 0.3s;
-    box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
-}
-
-.hero-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(0, 242, 255, 0.5);
-}
-
-/* ===== SECTIONS ===== */
-.content-section {
-    padding: 20px 5%;
-    margin-bottom: 40px;
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 25px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    padding-bottom: 15px;
-}
-
-.section-header h2 {
-    font-size: 24px;
-    margin: 0;
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.section-header h2::before {
-    content: '';
-    display: block;
-    width: 4px;
-    height: 24px;
-    background: var(--primary);
-    border-radius: 2px;
-    box-shadow: 0 0 10px var(--primary);
-}
-
-.see-more {
-    color: var(--text-muted);
-    text-decoration: none;
-    font-size: 13px;
-    transition: 0.3s;
-}
-
-.see-more:hover {
-    color: var(--primary);
-}
-
-/* ===== GRID & CARDS ===== */
-.movie-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 20px;
-}
-
-.movie-card {
-    background: var(--bg-surface);
-    border-radius: var(--card-radius);
-    overflow: hidden;
-    position: relative;
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    cursor: pointer;
-    border: 1px solid rgba(255, 255, 255, 0.03);
-}
-
-.movie-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
-    border-color: rgba(0, 242, 255, 0.3);
-}
-
-.poster-box {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-}
-
-/* Standard Poster */
-.poster-box {
-    aspect-ratio: 2 / 3;
-}
-/* Vertical Short Series */
-.poster-box.vertical {
-    aspect-ratio: 9 / 16;
-}
-
-.poster-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s ease;
-}
-
-.movie-card:hover .poster-box img {
-    transform: scale(1.15);
-}
-
-/* Gradient Overlay inside Card */
-.card-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 40px 12px 12px 12px;
-    background: linear-gradient(to top, rgba(0,0,0,0.95) 10%, rgba(0,0,0,0.6) 50%, transparent 100%);
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    pointer-events: none;
-}
-
-.badge-tag {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: var(--accent);
-    color: #fff;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 10px;
-    font-weight: 700;
-    z-index: 2;
-    box-shadow: 0 2px 8px rgba(255, 0, 85, 0.4);
-}
-
-.movie-title {
-    font-size: 14px;
-    font-weight: 500;
-    margin: 0 0 6px 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: #fff;
-}
-
-.movie-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 11px;
-    color: var(--text-muted);
-}
-
-.movie-meta i {
-    margin-right: 4px;
-}
-
-.rating-star {
-    color: #ffd700;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-}
-
-/* ===== FOOTER ===== */
-footer {
-    padding: 60px 5%;
-    background: #020203;
-    text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    margin-top: 60px;
-}
-
-.social-icons {
-    margin: 25px 0;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.social-icons i {
-    font-size: 20px;
-    color: var(--text-muted);
-    transition: 0.3s;
-    cursor: pointer;
-}
-
-.social-icons i:hover {
-    color: var(--primary);
-    transform: scale(1.2);
-}
-
-/* ===== LOADER ===== */
-#loader {
-    position: fixed;
-    inset: 0;
-    background: var(--bg-dark);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    transition: opacity 0.5s ease;
-}
-
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 3px solid rgba(255, 255, 255, 0.05);
-    border-top: 3px solid var(--primary);
-    border-right: 3px solid var(--secondary);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
-}
-
-@keyframes spin { 100% { transform: rotate(360deg); } }
-
-/* ===== RESPONSIVE ===== */
-@media(max-width: 768px) {
-    .nav-links { display: none; }
-    
-    .hero h1 { font-size: 32px; }
-    .hero { height: 60vh; }
-    
-    .movie-grid {
-        grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile */
-        gap: 12px;
-    }
-    
-    .poster-box.vertical {
-        aspect-ratio: 9 / 15; /* Slightly adjusted for mobile screens */
-    }
-}
-</style>
+        @media(max-width: 768px) {
+            .nav-links { display: none; }
+            .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .hero { height: 50vh; }
+        }
+    </style>
 </head>
-
 <body>
 
-<!-- Loader -->
-<div id="loader">
-  <div class="spinner"></div>
-  <p style="margin-top:20px; font-size:12px; letter-spacing:3px; color: var(--text-muted); text-transform: uppercase;">Loading Duydodee</p>
-</div>
+<div id="loader"><div class="spin"></div></div>
 
-<!-- Navigation -->
 <nav>
-  <a href="index.html" class="logo-text">DUY<span style="color:#fff; -webkit-text-fill-color: initial;">DODEE</span></a>
-  <div class="nav-links">
-    <a href="#vertical-section" class="active"><i class="fas fa-mobile-alt"></i> ซีรีส์สั้น</a>
-    <a href="#series-section"><i class="fas fa-tv"></i> พากย์ไทย</a>
-    <a href="#"><i class="fas fa-search"></i> ค้นหา</a>
-  </div>
-  <a href="#" style="color:var(--text-main); font-size:18px; display:none;"><i class="fas fa-bars"></i></a> <!-- Mobile Menu Icon Placeholder -->
+    <a href="index.html" class="logo">DUY<span style="color:#fff">DODEE</span></a>
+    <div class="nav-links">
+        <a href="#v-sec">ซีรีส์สั้น</a>
+        <a href="#s-sec">พากย์ไทย</a>
+        <a href="admin.html" style="opacity:0.3"><i class="fas fa-lock"></i></a>
+    </div>
 </nav>
 
-<!-- Hero Section -->
 <header class="hero">
-  <div class="hero-content">
-    <span class="hero-tag">NEW UPDATE 2026</span>
-    <h1><span style="color:var(--primary); text-shadow:0 0 20px rgba(0,242,255,0.4);">CHINESE</span><br>STREAMING</h1>
-    <p>ศูนย์รวมความบันเทิงระดับ 4K ซีรีส์จีนพากย์ไทยและซีรีส์สั้นแนวตั้งยอดนิยม อัปเดตตอนใหม่ทุกวัน ดูฟรีไม่มีสะดุด</p>
-    <a href="#series-section" class="hero-btn">
-       <i class="fas fa-play"></i> เริ่มรับชมเลย
-    </a>
-  </div>
+    <div class="hero-content">
+        <h1 style="color:var(--primary)">DUYDODEE-HD</h1>
+        <h1>CHINESE STREAMING</h1>
+        <p>รวมซีรีส์จีนพากย์ไทยและซีรีส์สั้นแนวตั้งยอดนิยม อัปเดตใหม่ 2026</p>
+        <a href="#s-sec" class="btn"><i class="fas fa-play"></i> รับชมเลย</a>
+    </div>
 </header>
 
 <main>
-  <!-- Vertical Series Section -->
-  <section class="content-section" id="vertical-section">
-    <div class="section-header">
-      <h2>ซีรีส์สั้นแนวตั้ง <span style="font-size:12px; font-weight:400; color:var(--text-muted); margin-left:10px; opacity:0.7;">(ยอดนิยม)</span></h2>
-      <a href="#" class="see-more">ดูทั้งหมด <i class="fas fa-chevron-right" style="font-size:10px;"></i></a>
-    </div>
-    <div class="movie-grid" id="grid-vertical"></div>
-  </section>
+    <section class="section" id="v-sec">
+        <div class="section-header">
+            <h3>ซีรีส์สั้นแนวตั้ง</h3>
+            <span style="font-size:12px; color:var(--text-muted)">ยอดนิยม</span>
+        </div>
+        <div class="movie-grid" id="grid-v"></div>
+    </section>
 
-  <!-- Standard Series Section -->
-  <section class="content-section" id="series-section">
-    <div class="section-header">
-      <h2>ซีรีส์พากย์ไทย <span style="font-size:12px; font-weight:400; color:var(--text-muted); margin-left:10px; opacity:0.7;">(แนะนำ)</span></h2>
-      <a href="#" class="see-more">ดูทั้งหมด <i class="fas fa-chevron-right" style="font-size:10px;"></i></a>
-    </div>
-    <div class="movie-grid" id="grid-series"></div>
-  </section>
+    <section class="section" id="s-sec">
+        <div class="section-header">
+            <h3>ซีรีส์พากย์ไทย</h3>
+            <span style="font-size:12px; color:var(--text-muted)">มาใหม่</span>
+        </div>
+        <div class="movie-grid" id="grid-s"></div>
+    </section>
 </main>
 
-<!-- Footer -->
-<footer>
-  <h2 class="logo-text" style="font-size: 32px;">DUY<span style="color:#fff; -webkit-text-fill-color: initial;">DODEE</span></h2>
-  <div class="social-icons">
-    <i class="fab fa-facebook"></i>
-    <i class="fab fa-tiktok"></i>
-    <i class="fab fa-youtube"></i>
-    <i class="fab fa-instagram"></i>
-  </div>
-  <p style="font-size:12px; color:var(--text-muted); opacity:0.5;">
-    &copy; 2026 DUYDODEE-HD. All Rights Reserved. <br>
-    Disclaimer: This site does not store any files on its server. All contents are provided by non-affiliated third parties.
-  </p>
+<footer style="text-align:center; padding:50px; border-top:1px solid #111; color:var(--text-muted); font-size:12px;">
+    <p>&copy; 2026 DUYDODEE-HD. All Rights Reserved.</p>
 </footer>
 
-<!-- Firebase Scripts (NO CHANGES) -->
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
 <script>
-// CONFIG เดิม ไม่แตะต้อง
+// ฐานข้อมูลเดิม 100%
 const firebaseConfig = {
-  apiKey:"AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
-  authDomain:"classic-e8ab7.firebaseapp.com",
-  projectId:"classic-e8ab7",
-  appId:"1:596308927760:web:63043fd2786459082cb195"
+    apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
+    authDomain: "classic-e8ab7.firebaseapp.com",
+    projectId: "classic-e8ab7",
+    appId: "1:596308927760:web:63043fd2786459082cb195"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// Function Create Card (ปรับแค่ HTML Structure เพื่อความสวยงาม แต่ใช้ Data เดิม)
-function createMovieCard(id, data){
-  const card = document.createElement('div');
-  card.className = 'movie-card';
-  card.onclick = () => window.location.href = `watch.html?id=${id}`;
+function createCard(id, m) {
+    const div = document.createElement('div');
+    div.className = 'movie-card';
+    div.onclick = () => window.location.href = `watch.html?id=${id}`;
+    
+    const isV = m.category === 'vertical';
+    const view = m.viewCount >= 1000 ? (m.viewCount/1000).toFixed(1)+'K' : (m.viewCount || 0);
 
-  const posterClass = data.category === 'vertical' ? 'poster-box vertical' : 'poster-box';
-  
-  // Format View Count (e.g. 1.2K)
-  const formattedView = data.viewCount >= 1000 
-    ? (data.viewCount/1000).toFixed(1) + 'K' 
-    : data.viewCount || 0;
-
-  card.innerHTML = `
-    ${data.badge ? `<span class="badge-tag">${data.badge}</span>` : ''}
-    <div class="${posterClass}">
-      <img src="${data.poster}" alt="${data.title}" onerror="this.src='https://via.placeholder.com/400x600/1a1a1e/ffffff?text=No+Image'" loading="lazy">
-    </div>
-    <div class="card-overlay">
-      <p class="movie-title">${data.title}</p>
-      <div class="movie-meta">
-        <span><i class="far fa-play-circle" style="color:var(--primary)"></i> ${formattedView}</span>
-        <span style="font-weight:600;"><i class="fas fa-star rating-star"></i> ${data.rating || 'N/A'}</span>
-      </div>
-    </div>
-  `;
-  return card;
+    div.innerHTML = `
+        ${m.badge ? `<div class="badge">${m.badge}</div>` : ''}
+        <div class="poster ${isV ? 'vertical' : ''}">
+            <img src="${m.poster}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x600?text=No+Image'">
+        </div>
+        <div class="card-info">
+            <p class="m-title">${m.title}</p>
+            <div class="m-meta">
+                <span><i class="fas fa-play" style="color:var(--primary); font-size:10px"></i> ${view}</span>
+                <span><i class="fas fa-star" style="color:#ffd700"></i> ${m.rating || '8.5'}</span>
+            </div>
+        </div>
+    `;
+    return div;
 }
 
-// Main Load Function (Logic เดิม 100%)
-async function loadContent(){
-  try {
-    const snap = await db.collection('artifacts').orderBy('createdAt','desc').get();
-    const gridVertical = document.getElementById('grid-vertical');
-    const gridSeries = document.getElementById('grid-series');
-    
-    gridVertical.innerHTML = '';
-    gridSeries.innerHTML = '';
-    
-    snap.forEach(doc => {
-      const m = doc.data();
-      const card = createMovieCard(doc.id, m);
-      
-      if(m.category === 'vertical') {
-        gridVertical.appendChild(card);
-      } else {
-        gridSeries.appendChild(card);
-      }
-    });
-  } catch(err) {
-    console.error("Error loading content:", err);
-  } finally {
-    const loader = document.getElementById('loader');
-    loader.style.opacity = '0';
-    setTimeout(() => loader.style.display = 'none', 500);
-  }
+async function load() {
+    try {
+        const snap = await db.collection('artifacts').orderBy('createdAt', 'desc').get();
+        const gV = document.getElementById('grid-v');
+        const gS = document.getElementById('grid-s');
+        
+        snap.forEach(doc => {
+            const m = doc.data();
+            const card = createCard(doc.id, m);
+            if(m.category === 'vertical') gV.appendChild(card);
+            else gS.appendChild(card);
+        });
+    } catch(e) { console.error(e); }
+    finally { 
+        document.getElementById('loader').style.display = 'none'; 
+    }
 }
 
-window.onload = loadContent;
+window.onload = load;
 </script>
 </body>
 </html>
+
