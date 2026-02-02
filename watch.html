@@ -164,7 +164,7 @@
             padding-top: 20px;
         }
 
-        /* --- Suggestions (Right Side) --- */
+        /* --- Suggestions --- */
         .suggest-section { margin-top: 40px; }
         
         .grid-suggest {
@@ -223,37 +223,14 @@
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- Desktop Sidebar --- */
         @media (min-width: 1100px) {
-            .player-layout {
-                display: grid;
-                grid-template-columns: 1fr 380px;
-                gap: 40px;
-            }
+            .player-layout { display: grid; grid-template-columns: 1fr 380px; gap: 40px; }
             .suggest-section { margin-top: 0; }
             .grid-suggest { grid-template-columns: 1fr; }
-            .suggest-card { 
-                display: flex; 
-                height: 110px; 
-                background: transparent;
-                border: none;
-            }
+            .suggest-card { display: flex; height: 110px; background: transparent; border: none; }
             .suggest-card:hover { background: rgba(255,255,255,0.03); transform: translateX(10px); }
             .suggest-card img { width: 80px; height: 110px; border-radius: 12px; }
-            .suggest-card p { 
-                align-self: center; 
-                white-space: normal; 
-                font-size: 14px; 
-                padding-left: 20px;
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                -webkit-box-orient: vertical;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .player-layout { padding: 0 4% 40px 4%; margin-top: 80px; }
-            .movie-header { padding: 20px; }
+            .suggest-card p { align-self: center; white-space: normal; font-size: 14px; padding-left: 20px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
         }
     </style>
 </head>
@@ -273,12 +250,10 @@
     <div class="player-layout">
         <main>
             <div class="main-player-section">
-                <div class="video-container" id="video-box">
-                </div>
+                <div class="video-container" id="video-box"></div>
             </div>
 
-            <div class="ep-list" id="ep-list-box">
-            </div>
+            <div class="ep-list" id="ep-list-box"></div>
 
             <div class="movie-header">
                 <h1 id="m-title">กำลังโหลดข้อมูล...</h1>
@@ -288,13 +263,15 @@
                     <span><i class="far fa-calendar-alt"></i> <span id="m-date">อัปเดตล่าสุด</span></span>
                     <span style="color: #ffc107;"><i class="fas fa-star"></i> 8.9 คะแนน</span>
                 </div>
-                <div class="description" id="m-desc">
-                    เรื่องย่อกำลังเดินทางมาถึง... กรุณารอสักครู่
-                </div>
+                <div class="description" id="m-desc">เรื่องย่อกำลังโหลด...</div>
                 
                 <div style="margin-top: 30px; display: flex; gap: 15px;">
-                    <button class="ep-btn" style="border-radius: 50px;"><i class="fas fa-share-alt"></i> แชร์</button>
-                    <button class="ep-btn" style="border-radius: 50px;"><i class="fas fa-plus"></i> รายการของฉัน</button>
+                    <button class="ep-btn" style="border-radius: 50px;" onclick="shareMovie()">
+                        <i class="fas fa-share-alt"></i> แชร์
+                    </button>
+                    <button class="ep-btn" style="border-radius: 50px;" onclick="addToMyList()">
+                        <i class="fas fa-plus"></i> รายการของฉัน
+                    </button>
                 </div>
             </div>
         </main>
@@ -303,8 +280,7 @@
             <h3 style="font-size: 18px; margin-bottom: 25px; font-weight: 600; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 5px;">
                 <i class="fas fa-fire-alt" style="color: var(--accent);"></i> เรื่องที่คุณอาจสนใจ
             </h3>
-            <div class="grid-suggest" id="suggest-box">
-            </div>
+            <div class="grid-suggest" id="suggest-box"></div>
         </aside>
     </div>
 
@@ -325,6 +301,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const movieId = urlParams.get('id');
 
+        // --- ฟังก์ชันช่วยเหลือ ---
         function getEmbedUrl(url) {
             if (!url) return "";
             let videoId = "";
@@ -341,13 +318,13 @@
             return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0` : url;
         }
 
+        // --- ฟังก์ชันหลัก: โหลดเนื้อหา ---
         async function loadContent() {
             if(!movieId) { window.location.href = 'index.html'; return; }
 
             try {
-                // แก้ไขจุดนี้: เปลี่ยนจาก movies เป็น artifacts และเพิ่มบรรทัด await get()
                 const docRef = db.collection('artifacts').doc(movieId);
-                const doc = await docRef.get(); // บรรทัดที่หายไปในโค้ดเดิม
+                const doc = await docRef.get();
                 
                 if(!doc.exists) {
                     document.getElementById('m-title').innerText = "ขออภัย! ไม่พบข้อมูล";
@@ -358,31 +335,25 @@
                 document.getElementById('m-title').innerText = data.title;
                 document.getElementById('m-badge').innerText = data.badge || 'HD';
                 document.getElementById('m-views').innerText = (data.viewCount || 0).toLocaleString();
-                document.getElementById('m-desc').innerText = data.desc || "ไม่มีเรื่องย่อสำหรับซีรีส์เรื่องนี้";
+                document.getElementById('m-desc').innerText = data.desc || "ไม่มีเรื่องย่อ";
                 
-                if(data.createdAt) {
-                    const date = new Date(data.createdAt.seconds * 1000);
+                if(data.updatedAt) {
+                    const date = data.updatedAt.toDate ? data.updatedAt.toDate() : new Date(data.updatedAt);
                     document.getElementById('m-date').innerText = date.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
                 }
 
                 const videoBox = document.getElementById('video-box');
                 const epListBox = document.getElementById('ep-list-box');
                 
-                let allLinks = [];
-                if (data.links && Array.isArray(data.links)) {
-                    allLinks = data.links;
-                } else if (data.link) {
-                    allLinks = [data.link];
-                }
+                let allLinks = Array.isArray(data.links) ? data.links : (data.link ? [data.link] : []);
 
                 if(allLinks.length > 0) {
                     allLinks.forEach((url, index) => {
                         const btn = document.createElement('button');
                         btn.className = 'ep-btn';
-                        btn.innerText = allLinks.length > 1 ? `EP ${index + 1}` : `เริ่มเล่นวิดีโอ`;
-                        
+                        btn.innerText = allLinks.length > 1 ? `ตอนที่ ${index + 1}` : `เริ่มเล่นวิดีโอ`;
                         btn.onclick = () => {
-                            videoBox.innerHTML = `<iframe src="${getEmbedUrl(url)}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+                            videoBox.innerHTML = `<iframe src="${getEmbedUrl(url)}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
                             document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
                             btn.classList.add('active');
                         };
@@ -392,42 +363,57 @@
                 }
 
                 // อัปเดตยอดวิว
-                docRef.update({ viewCount: firebase.firestore.FieldValue.increment(1) }).catch(e => {});
-
-                // โหลดหนังแนะนำ (ใช้ artifacts แทน movies)
-                fetchSuggest(data.genre || ""); 
+                docRef.update({ viewCount: firebase.firestore.FieldValue.increment(1) }).catch(() => {});
+                fetchSuggest(); 
 
             } catch (err) {
                 console.error("Error:", err);
             } finally {
                 const loader = document.getElementById('loader');
-                loader.style.transition = '0.5s';
                 loader.style.opacity = '0';
                 setTimeout(() => loader.style.display = 'none', 500);
             }
         }
 
-        async function fetchSuggest(genre) {
+        async function fetchSuggest() {
             const box = document.getElementById('suggest-box');
             try {
-                // เปลี่ยนจาก movies เป็น artifacts ให้ตรงกับฐานข้อมูล
-                const snap = await db.collection('artifacts')
-                                   .limit(10)
-                                   .get();
-                
+                const snap = await db.collection('artifacts').limit(8).get();
                 snap.forEach(doc => {
                     if(doc.id === movieId) return;
                     const m = doc.data();
                     const card = document.createElement('div');
                     card.className = 'suggest-card';
                     card.onclick = () => window.location.href = `watch.html?id=${doc.id}`;
-                    card.innerHTML = `
-                        <img src="${m.poster}" onerror="this.src='logo.png'">
-                        <p>${m.title}</p>
-                    `;
+                    card.innerHTML = `<img src="${m.poster}" onerror="this.src='logo.png'"><p>${m.title}</p>`;
                     box.appendChild(card);
                 });
             } catch(e) { console.log(e); }
+        }
+
+        // --- ฟังก์ชันแชร์ (Share) ---
+        function shareMovie() {
+            const title = document.getElementById('m-title').innerText;
+            if (navigator.share) {
+                navigator.share({ title: title, url: window.location.href })
+                .catch(console.error);
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('คัดลอกลิงก์แล้ว!');
+            }
+        }
+
+        // --- ฟังก์ชันรายการของฉัน (Bookmark) ---
+        function addToMyList() {
+            let list = JSON.parse(localStorage.getItem('myList')) || [];
+            const title = document.getElementById('m-title').innerText;
+            if (!list.some(i => i.id === movieId)) {
+                list.push({ id: movieId, title: title });
+                localStorage.setItem('myList', JSON.stringify(list));
+                alert('เพิ่มลงรายการโปรดแล้ว!');
+            } else {
+                alert('มีเรื่องนี้อยู่แล้ว');
+            }
         }
 
         window.onload = loadContent;
