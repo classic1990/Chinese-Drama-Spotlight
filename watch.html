@@ -197,7 +197,7 @@
         <main>
             <div class="main-player-section">
                 <div class="video-container" id="video-box">
-                    <!-- ล้างเนื้อหา 404 ออก และเตรียมรอโหลด Iframe -->
+                    <!-- พื้นที่แสดงวิดีโอ -->
                 </div>
             </div>
 
@@ -246,6 +246,7 @@
             }
 
             try {
+                // ดึงข้อมูลหนัง (สิทธิ์ READ: allow ตามกฎข้อที่ 1)
                 const doc = await db.collection('movies').doc(movieId).get();
                 
                 if(!doc.exists) {
@@ -259,7 +260,7 @@
                 
                 // อัปเดต UI
                 document.getElementById('m-title').innerText = data.title || "ไม่มีชื่อเรื่อง";
-                document.getElementById('m-badge').innerText = data.category === 'vertical' ? 'ซีรีส์แนวตั้ง' : (data.badge || 'HD');
+                document.getElementById('m-badge').innerText = data.badge || 'HD';
                 document.getElementById('m-views').innerText = (data.views || 0).toLocaleString();
                 document.getElementById('m-desc').innerText = data.description || "รับชมความสนุกระดับ HD ได้ที่นี่ พากย์ไทยคมชัด";
                 
@@ -271,11 +272,10 @@
                 }
 
                 // จัดการวิดีโอ
-                const videoUrl = data.url || data.videoUrl;
+                const videoUrl = data.videoUrl || data.url;
                 const videoBox = document.getElementById('video-box');
                 
                 if(videoUrl && videoUrl.trim() !== "") {
-                    // สร้าง Iframe ใหม่เพื่อเลี่ยงปัญหา 404 ตกค้างในหน้าจอ
                     videoBox.innerHTML = ''; 
                     const iframe = document.createElement('iframe');
                     iframe.src = videoUrl;
@@ -289,14 +289,10 @@
                 // โหลดหนังแนะนำ
                 fetchSuggest(data.category);
 
-                // เพิ่มยอดวิว (ตอนนี้ Rules ใหม่จะยอมให้ผ่านแล้ว)
-                try {
-                    await db.collection('movies').doc(movieId).update({
-                        views: firebase.firestore.FieldValue.increment(1)
-                    });
-                } catch (vErr) {
-                    console.log("View tracking issue:", vErr.message);
-                }
+                /* หมายเหตุเรื่องความปลอดภัย: 
+                   ส่วนการเพิ่มยอดวิว (update views) ถูกนำออกตามความต้องการที่เน้นความปลอดภัยสูงสุด 
+                   เนื่องจากกฎ Firestore Rules ในปัจจุบันอนุญาตการแก้ไขข้อมูล (update) ให้กับแอดมินเท่านั้น
+                */
 
             } catch (err) {
                 console.error("Critical Error:", err);
@@ -309,7 +305,7 @@
         async function fetchSuggest(cat) {
             const box = document.getElementById('suggest-box');
             try {
-                const snap = await db.collection('movies').where('category', '==', cat || 'thai').limit(10).get();
+                const snap = await db.collection('movies').where('category', '==', cat || 'movie').limit(10).get();
                 if(snap.empty) return;
 
                 snap.forEach(doc => {
