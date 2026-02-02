@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin AI Dashboard | DUYDODEE-HD</title>
+    <title>Admin Dashboard | DUYDODEE-HD</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -20,119 +20,45 @@
             --glass-border: rgba(255, 255, 255, 0.1);
         }
 
-        body {
-            margin: 0;
-            font-family: 'Prompt', sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-main);
-            min-height: 100vh;
-        }
-
-        #aiLoading {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--ai-color);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            z-index: 1000;
-            display: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        body { margin: 0; font-family: 'Prompt', sans-serif; background: var(--bg-dark); color: var(--text-main); }
         
-        .form-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 25px; }
-        @media (max-width: 900px) { .form-grid { grid-template-columns: 1fr; } }
+        #aiLoading { position: fixed; top: 20px; right: 20px; background: var(--ai-color); color: white; padding: 10px 20px; border-radius: 30px; z-index: 1000; display: none; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
 
-        .card {
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 20px;
-            border: 1px solid var(--glass-border);
-        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+        .form-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; }
+        @media (max-width: 850px) { .form-grid { grid-template-columns: 1fr; } }
 
-        .input-group { margin-bottom: 20px; }
-        .input-group label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            color: var(--text-dim);
-            font-size: 13px;
-        }
-
+        .card { background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid var(--glass-border); }
+        
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-dim); font-size: 13px; }
+        
         .input-group input, .input-group select, .input-group textarea {
-            width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            border: 1px solid var(--glass-border);
-            background: var(--input-bg);
-            color: #fff;
-            box-sizing: border-box;
-            font-family: 'Prompt', sans-serif;
+            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--glass-border);
+            background: var(--input-bg); color: #fff; box-sizing: border-box; font-family: 'Prompt';
         }
 
-        .ai-btn {
-            background: var(--ai-color);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 11px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: 0.2s;
-        }
-        .ai-btn:hover { opacity: 0.8; }
+        .ai-btn { background: var(--ai-color); color: white; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; }
 
-        .main-save-btn {
-            background: var(--primary);
-            color: #000;
-            padding: 15px;
-            border-radius: 12px;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            font-size: 16px;
-        }
+        .main-save-btn { background: var(--primary); color: #000; padding: 15px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; width: 100%; margin-top: 10px; }
 
-        .episodes-area {
-            background: rgba(0,0,0,0.2);
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px dashed #444;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .episode-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-            background: var(--card-bg);
-            padding: 8px;
-            border-radius: 8px;
-            align-items: center;
-        }
+        .episodes-area { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; border: 1px dashed #444; max-height: 250px; overflow-y: auto; }
+        .episode-row { display: flex; gap: 8px; margin-bottom: 8px; background: var(--card-bg); padding: 5px; border-radius: 8px; align-items: center; }
 
         .movie-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
         .movie-row { background: var(--card-bg); }
-        .movie-row td { padding: 15px; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
-        .poster-mini { width: 45px; height: 65px; object-fit: cover; border-radius: 6px; }
+        .movie-row td { padding: 12px; border-top: 1px solid var(--glass-border); }
+        .poster-mini { width: 40px; height: 55px; object-fit: cover; border-radius: 4px; }
     </style>
 </head>
 <body>
 
-<div id="aiLoading"><i class="fas fa-magic fa-spin"></i> AI กำลังประมวลผล...</div>
+<div id="aiLoading"><i class="fas fa-magic fa-spin"></i> AI Processing...</div>
 
 <div class="container">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-        <h2><i class="fas fa-robot" style="color:var(--ai-color)"></i> ระบบจัดการซีรีส์ (Admin)</h2>
-        <button onclick="auth.signOut()" style="background:var(--error); color:white; border:none; padding:8px 15px; border-radius:8px; cursor:pointer;">ออกจากระบบ</button>
+        <h2><i class="fas fa-robot" style="color:var(--ai-color)"></i> Dashboard</h2>
+        <a href="index.html" style="color:var(--text-dim); text-decoration:none;"><i class="fas fa-external-link-alt"></i> ดูหน้าเว็บ</a>
     </div>
 
     <form id="movieForm">
@@ -140,24 +66,17 @@
             <div class="card">
                 <input type="hidden" id="editId">
                 <div class="input-group">
-                    <label><span>ชื่อเรื่อง</span></label>
-                    <input type="text" id="title" placeholder="พิมพ์ชื่อเรื่องเพื่อเริ่ม..." required>
+                    <label>ชื่อเรื่อง</label>
+                    <input type="text" id="title" required>
                 </div>
                 <div class="input-group">
-                    <label>
-                        <span>เรื่องย่อ</span>
-                        <button type="button" class="ai-btn" onclick="aiGenerateDesc()">
-                            <i class="fas fa-sparkles"></i> AI เขียนเรื่องย่อ
-                        </button>
-                    </label>
-                    <textarea id="desc" rows="6" placeholder="ใช้ AI ช่วยแต่งเรื่องย่อที่น่าดึงดูด..."></textarea>
+                    <label>เรื่องย่อ <button type="button" class="ai-btn" onclick="aiAction('desc')">AI เจนให้</button></label>
+                    <textarea id="desc" rows="5"></textarea>
                 </div>
                 <div class="input-group">
-                    <label>จัดการตอน (ลิงก์วิดีโอ)</label>
+                    <label>ลิงก์วิดีโอ (ใส่ทีละตอน)</label>
                     <div id="episodesContainer" class="episodes-area"></div>
-                    <button type="button" class="ai-btn" style="width:100%; margin-top:10px; background:var(--primary); color:#000; justify-content: center;" onclick="addEpisodeInput()">
-                        <i class="fas fa-plus"></i> เพิ่มตอนใหม่
-                    </button>
+                    <button type="button" class="ai-btn" style="width:100%; margin-top:10px; background:#444;" onclick="addEpisodeInput()">+ เพิ่มตอน</button>
                 </div>
             </div>
 
@@ -165,31 +84,26 @@
                 <div class="input-group">
                     <label>หมวดหมู่</label>
                     <select id="category">
-                        <option value="vertical">📱 ซีรีส์จีนแนวตั้ง</option>
-                        <option value="series">🎬 ซีรีส์จีนพากย์ไทย</option>
+                        <option value="vertical">📱 แนวตั้ง</option>
+                        <option value="series">🎬 พากย์ไทย</option>
                     </select>
                 </div>
                 <div class="input-group">
                     <label>URL รูปโปสเตอร์</label>
-                    <input type="url" id="poster" placeholder="https://..." required>
+                    <input type="url" id="poster" required>
                 </div>
                 <div class="input-group">
-                    <label>
-                        <span>ป้ายกำกับ (Badge)</span>
-                        <button type="button" class="ai-btn" onclick="aiSuggestBadge()">
-                            <i class="fas fa-brain"></i> AI แนะนำ
-                        </button>
-                    </label>
-                    <input type="text" id="badge" placeholder="เช่น HD, จบแล้ว, แนะนำ">
+                    <label>ป้ายกำกับ <button type="button" class="ai-btn" onclick="aiAction('badge')">AI แนะนำ</button></label>
+                    <input type="text" id="badge" placeholder="เช่น HD, จบแล้ว">
                 </div>
                 <button type="submit" class="main-save-btn" id="submitBtn">บันทึกข้อมูล</button>
-                <button type="button" id="cancelBtn" onclick="resetForm()" style="display:none; width:100%; margin-top:10px; background:transparent; color:#fff; border:1px solid #444; padding:10px; border-radius:10px; cursor:pointer;">ยกเลิกการแก้ไข</button>
+                <button type="button" id="cancelBtn" onclick="resetForm()" style="display:none; width:100%; margin-top:10px; background:none; color:white; border:none; cursor:pointer;">ยกเลิก</button>
             </div>
         </div>
     </form>
 
     <div style="margin-top:40px;">
-        <h3>รายการซีรีส์ทั้งหมดในฐานข้อมูล</h3>
+        <h3>รายการซีรีส์ (${COLLECTION_NAME})</h3>
         <table class="movie-table">
             <tbody id="movieList"></tbody>
         </table>
@@ -198,7 +112,6 @@
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
 <script>
     const firebaseConfig = {
@@ -209,66 +122,42 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    const auth = firebase.auth();
+    const COLLECTION_NAME = "artifacts";
+    const geminiKey = "AQ.Ab8RN6I36WcxxlrCTmyr6ChGTr0mpGkfaBMq9nJyVNIqzX90ww";
 
-    // ส่วนสำคัญ: ชื่อ Collection ต้องตรงกับหน้า watch.html
-    const COLLECTION_NAME = "artifacts"; 
-    const ADMIN_EMAIL = "duy.kan1234@gmail.com";
-    
-    // API Key สำหรับ Gemini (กรุณาใช้คีย์จริงของคุณ)
-    const geminiKey = "AQ.Ab8RN6I36WcxxlrCTmyr6ChGTr0mpGkfaBMq9nJyVNIqzX90ww"; 
-
-    // AI Helper
-    async function askGemini(prompt) {
+    // AI Function (Gemini)
+    async function aiAction(type) {
+        const title = document.getElementById('title').value;
+        if(!title) return alert("ใส่ชื่อเรื่องก่อนครับ");
+        
         document.getElementById('aiLoading').style.display = 'block';
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`;
+        const prompt = type === 'desc' ? `ขอเรื่องย่อซีรีส์จีนเรื่อง ${title} สั้นๆ 2 บรรทัด` : `ขอป้ายกำกับ 1 คำสำหรับเรื่อง ${title}`;
         
         try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
+                method: 'POST', body: JSON.stringify({contents: [{parts: [{text: prompt}]}]})
             });
-            const data = await response.json();
-            return data.candidates[0].content.parts[0].text;
-        } catch (error) {
-            console.error(error);
-            alert("AI Error: ตรวจสอบ API Key หรือการเชื่อมต่อ");
-            return "";
-        } finally {
-            document.getElementById('aiLoading').style.display = 'none';
-        }
+            const data = await res.json();
+            const result = data.candidates[0].content.parts[0].text.trim();
+            if(type === 'desc') document.getElementById('desc').value = result;
+            else document.getElementById('badge').value = result.replace(/[^\u0E00-\u0E7F]/g, "");
+        } catch(e) { alert("AI Error"); }
+        finally { document.getElementById('aiLoading').style.display = 'none'; }
     }
 
-    async function aiGenerateDesc() {
-        const title = document.getElementById('title').value;
-        if (!title) return alert("กรุณาใส่ชื่อเรื่องก่อน");
-        const res = await askGemini(`เขียนเรื่องย่อซีรีส์จีนเรื่อง "${title}" ให้น่าตื่นเต้น สั้นๆ 3 ประโยค ภาษาไทย`);
-        if (res) document.getElementById('desc').value = res.trim();
-    }
-
-    async function aiSuggestBadge() {
-        const title = document.getElementById('title').value;
-        if (!title) return;
-        const res = await askGemini(`จากซีรีส์ "${title}" ขอคำป้ายกำกับสั้นๆ 1 คำ เช่น จบแล้ว หรือ พากย์ไทย ตอบแค่คำนั้น`);
-        if (res) document.getElementById('badge').value = res.replace(/[^\u0E00-\u0E7F]/g, "").trim();
-    }
-
-    // Episodes Management
+    // Episode Management
     function addEpisodeInput(value = "") {
         const container = document.getElementById('episodesContainer');
-        const count = container.children.length + 1;
         const div = document.createElement('div');
         div.className = 'episode-row';
         div.innerHTML = `
-            <span style="min-width:40px; font-size:12px; color:var(--primary)">EP ${count}</span>
-            <input type="text" class="ep-link-input" placeholder="วางลิงก์วิดีโอที่นี่" value="${value}" required>
-            ${count > 1 ? '<button type="button" onclick="this.parentElement.remove()" style="background:none; border:none; color:var(--error); cursor:pointer;"><i class="fas fa-times"></i></button>' : ''}
+            <input type="text" class="ep-link-input" placeholder="ลิงก์วิดีโอ" value="${value}" required>
+            <button type="button" onclick="this.parentElement.remove()" style="color:var(--error); background:none; border:none; cursor:pointer;">×</button>
         `;
         container.appendChild(div);
     }
 
-    // Firebase Operations
+    // Form Submit
     document.getElementById('movieForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const id = document.getElementById('editId').value;
@@ -281,24 +170,20 @@
             poster: document.getElementById('poster').value,
             badge: document.getElementById('badge').value || "HD",
             links: links,
-            link: links[0], // สำหรับรองรับระบบเก่า
+            link: links[0], // Support single link systems
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
         try {
-            if (id) {
-                await db.collection(COLLECTION_NAME).doc(id).update(data);
-                alert("อัปเดตข้อมูลสำเร็จ!");
-            } else {
+            if(id) await db.collection(COLLECTION_NAME).doc(id).update(data);
+            else {
                 data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                 data.viewCount = 0;
                 await db.collection(COLLECTION_NAME).add(data);
-                alert("เพิ่มซีรีส์ใหม่สำเร็จ!");
             }
+            alert("บันทึกสำเร็จ!");
             resetForm();
-        } catch (err) {
-            alert("Error: " + err.message);
-        }
+        } catch(e) { alert(e.message); }
     });
 
     function loadData() {
@@ -309,14 +194,11 @@
                 const m = doc.data();
                 list.innerHTML += `
                     <tr class="movie-row">
-                        <td width="60"><img src="${m.poster}" class="poster-mini" onerror="this.src='https://via.placeholder.com/50x70'"></td>
-                        <td>
-                            <b>${m.title}</b><br>
-                            <small style="color:var(--text-dim)">${m.category === 'vertical' ? 'แนวตั้ง' : 'พากย์ไทย'} | ${m.links?.length || 1} ตอน</small>
-                        </td>
+                        <td><img src="${m.poster}" class="poster-mini"></td>
+                        <td><b>${m.title}</b><br><small>${m.links?.length || 1} ตอน</small></td>
                         <td align="right">
-                            <button onclick="editDoc('${doc.id}')" style="background:none; border:none; color:var(--primary); cursor:pointer; font-size:18px;"><i class="fas fa-edit"></i></button>
-                            <button onclick="deleteDoc('${doc.id}')" style="background:none; border:none; color:var(--error); cursor:pointer; margin-left:15px; font-size:18px;"><i class="fas fa-trash"></i></button>
+                            <i class="fas fa-edit" onclick="editDoc('${doc.id}')" style="color:var(--primary); cursor:pointer; margin-right:15px;"></i>
+                            <i class="fas fa-trash" onclick="deleteDoc('${doc.id}')" style="color:var(--error); cursor:pointer;"></i>
                         </td>
                     </tr>`;
             });
@@ -332,18 +214,12 @@
         document.getElementById('category').value = m.category;
         document.getElementById('poster').value = m.poster;
         document.getElementById('badge').value = m.badge || '';
-        
-        const container = document.getElementById('episodesContainer');
-        container.innerHTML = '';
-        if (m.links && Array.isArray(m.links)) {
-            m.links.forEach(l => addEpisodeInput(l));
-        } else {
-            addEpisodeInput(m.link || "");
-        }
+        document.getElementById('episodesContainer').innerHTML = '';
+        if(m.links) m.links.forEach(l => addEpisodeInput(l));
+        else addEpisodeInput(m.link);
         
         document.getElementById('submitBtn').innerText = "อัปเดตข้อมูล";
         document.getElementById('cancelBtn').style.display = 'block';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function resetForm() {
@@ -356,22 +232,11 @@
     }
 
     async function deleteDoc(id) {
-        if(confirm('ยืนยันที่จะลบซีรีส์เรื่องนี้ออกจากระบบ?')) {
-            await db.collection(COLLECTION_NAME).doc(id).delete();
-        }
+        if(confirm('ลบรายการนี้?')) await db.collection(COLLECTION_NAME).doc(id).delete();
     }
 
-    // Auth & Init
-    auth.onAuthStateChanged(user => {
-        if (user && user.email === ADMIN_EMAIL) {
-            loadData();
-            resetForm();
-        } else {
-            // ส่งกลับหน้าล็อคอินถ้าจำเป็น
-            console.log("Unauthorized Access");
-        }
-    });
+    loadData();
+    resetForm();
 </script>
-
 </body>
 </html>
