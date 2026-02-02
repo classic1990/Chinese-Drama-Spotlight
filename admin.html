@@ -10,54 +10,24 @@
         :root { --primary: #00aeff; --bg: #0f0f0f; --card: #1a1a1a; }
         body { margin: 0; font-family: 'Prompt', sans-serif; background: var(--bg); color: #fff; padding: 20px; }
         .container { max-width: 900px; margin: 0 auto; }
-        
-        /* Login Section */
-        #loginSection { 
-            background: var(--card); padding: 50px 20px; border-radius: 20px; 
-            text-align: center; margin-top: 15vh; box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-        }
-        .google-btn {
-            background: #fff; color: #444; border: none; padding: 12px 25px;
-            border-radius: 10px; font-weight: 600; cursor: pointer;
-            display: inline-flex; align-items: center; gap: 10px; font-size: 16px;
-            transition: 0.3s; box-shadow: 0 4px 15px rgba(255,255,255,0.1);
-        }
-        .google-btn:hover { transform: translateY(-2px); background: #f1f1f1; }
-
-        /* Admin Content */
+        #loginSection { background: var(--card); padding: 50px 20px; border-radius: 20px; text-align: center; margin-top: 15vh; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .google-btn { background: #fff; color: #444; border: none; padding: 12px 25px; border-radius: 10px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; transition: 0.3s; }
         #adminContent { display: none; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 15px; }
-        
         .form-card { background: var(--card); padding: 25px; border-radius: 15px; border: 1px solid #333; margin-bottom: 40px; }
-        .form-card.edit-mode { border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 174, 255, 0.2); }
-        .edit-label { display: none; color: var(--primary); font-weight: 600; margin-bottom: 10px; }
-        .form-card.edit-mode .edit-label { display: block; }
-
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; margin-bottom: 8px; color: #aaa; font-size: 14px; }
-        .input-group input, .input-group textarea, .input-group select { 
-            box-sizing: border-box; width: 100%; padding: 12px; border-radius: 10px; 
-            border: 1px solid #333; background: #222; color: #fff; font-size: 16px; font-family: 'Prompt', sans-serif; 
-        }
-
-        .btn { padding: 12px 25px; border-radius: 10px; border: none; cursor: pointer; font-size: 16px; font-weight: 600; width: 100%; transition: 0.3s; }
+        .input-group input, .input-group textarea, .input-group select { box-sizing: border-box; width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #333; background: #222; color: #fff; font-size: 16px; font-family: 'Prompt'; }
+        .btn { padding: 12px 25px; border-radius: 10px; border: none; cursor: pointer; font-size: 16px; font-weight: 600; width: 100%; }
         .btn-primary { background: var(--primary); color: #000; }
-        .btn-secondary { background: #333; color: #fff; margin-top: 10px; }
-        
-        /* Movie List */
         .movie-item { display: flex; align-items: center; gap: 15px; background: var(--card); padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #222; }
         .movie-item img { width: 50px; height: 70px; object-fit: cover; border-radius: 6px; }
-        .movie-item-info { flex-grow: 1; }
-        .btn-edit { background: #ffcc00; color: #000; padding: 8px 15px; border-radius: 8px; border:none; cursor:pointer; margin-right:5px; }
-        .btn-danger { background: #ff4444; color: #fff; padding: 8px 15px; border-radius: 8px; border:none; cursor:pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="loginSection">
-        <h1 style="color: var(--primary); margin-bottom: 30px;">ADMIN ACCESS</h1>
-        <p style="color: #888; margin-bottom: 30px;">เฉพาะแอดมินที่มีสิทธิ์เท่านั้นที่สามารถเข้าถึงได้</p>
+        <h1 style="color: var(--primary);">ADMIN LOGIN</h1>
         <button class="google-btn" onclick="loginWithGoogle()">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
             เข้าสู่ระบบด้วย Google
@@ -65,16 +35,12 @@
     </div>
 
     <div id="adminContent">
-        <div class="header">
-            <div>
-                <h2 style="margin:0;">จัดการเนื้อหา</h2>
-                <small id="userEmail" style="color:var(--primary)"></small>
-            </div>
-            <button onclick="auth.signOut()" style="background:none; border:1px solid #444; color:#aaa; cursor:pointer; padding:8px 15px; border-radius:8px;">ออกจากระบบ</button>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2>จัดการเนื้อหา (Collection: movies)</h2>
+            <button onclick="auth.signOut()" style="background:none; color:#ff4444; border:none; cursor:pointer;">Logout</button>
         </div>
 
-        <div class="form-card" id="formCard">
-            <div class="edit-label"><i class="fas fa-edit"></i> กำลังแก้ไขข้อมูล...</div>
+        <div class="form-card">
             <form id="movieForm">
                 <input type="hidden" id="editId">
                 <div class="input-group">
@@ -82,32 +48,17 @@
                     <select id="category" required>
                         <option value="vertical">📱 ซีรีส์จีนแนวตั้ง</option>
                         <option value="series">🎬 ซีรีส์จีนพากย์ไทย</option>
-                        <option value="movie">🎥 ภาพยนตร์แนะนำ</option>
                     </select>
                 </div>
-                <div class="input-group">
-                    <label>ชื่อเรื่อง</label>
-                    <input type="text" id="title" placeholder="ระบุชื่อเรื่อง" required>
-                </div>
-                <div class="input-group">
-                    <label>URL รูปโปสเตอร์</label>
-                    <input type="url" id="poster" required placeholder="https://...">
-                </div>
-                <div class="input-group">
-                    <label>URL วิดีโอ (YouTube/Embed)</label>
-                    <input type="text" id="videoUrl" required placeholder="ลิงก์ YouTube หรือ Code ฝัง">
-                </div>
-                <div class="input-group">
-                    <label>เรื่องย่อ</label>
-                    <textarea id="desc" rows="4" placeholder="ระบุรายละเอียด..."></textarea>
-                </div>
+                <div class="input-group"><label>ชื่อเรื่อง</label><input type="text" id="title" required></div>
+                <div class="input-group"><label>URL รูปโปสเตอร์</label><input type="url" id="poster" required></div>
+                <div class="input-group"><label>URL วิดีโอ (YouTube)</label><input type="text" id="link" required></div>
+                <div class="input-group"><label>ป้ายกำกับ (เช่น จบแล้ว, EP.01)</label><input type="text" id="badge"></div>
+                <div class="input-group"><label>เรื่องย่อ</label><textarea id="desc" rows="3"></textarea></div>
                 <button type="submit" class="btn btn-primary" id="submitBtn">บันทึกข้อมูล</button>
-                <button type="button" class="btn btn-secondary" id="cancelBtn" style="display:none;" onclick="resetForm()">ยกเลิกการแก้ไข</button>
             </form>
         </div>
-
-        <h3>รายการทั้งหมด</h3>
-        <div id="movieListContainer">กำลังโหลดข้อมูล...</div>
+        <div id="movieList"></div>
     </div>
 </div>
 
@@ -120,38 +71,28 @@
         apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
         authDomain: "classic-e8ab7.firebaseapp.com",
         projectId: "classic-e8ab7",
-        storageBucket: "classic-e8ab7.firebasestorage.app",
-        messagingSenderId: "596308927760",
         appId: "1:596308927760:web:63043fd2786459082cb195"
     };
-    
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
+    const ADMIN_EMAIL = "duy.kan1234@gmail.com"; // ตรวจสอบว่าตรงกับเมลคุณ
 
-    // อีเมลแอดมินที่อนุญาต (แก้ไขเป็นอีเมลของคุณ)
-    const ADMIN_EMAIL = "duy.kan1234@gmail.com"; 
-
-    // ฟังก์ชันล็อกอิน
     async function loginWithGoogle() {
         const provider = new firebase.auth.GoogleAuthProvider();
         try {
             const result = await auth.signInWithPopup(provider);
             if (result.user.email !== ADMIN_EMAIL) {
-                alert("สิทธิ์ไม่ถูกต้อง: อีเมลนี้ไม่ได้รับอนุญาตให้เข้าหน้าแอดมิน");
+                alert("สิทธิ์ไม่ถูกต้อง");
                 await auth.signOut();
             }
-        } catch (error) {
-            alert("เกิดข้อผิดพลาด: " + error.message);
-        }
+        } catch (e) { alert(e.message); }
     }
 
-    // ติดตามสถานะการล็อกอิน
     auth.onAuthStateChanged(user => {
         if (user && user.email === ADMIN_EMAIL) {
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('adminContent').style.display = 'block';
-            document.getElementById('userEmail').innerText = "Logged in as: " + user.email;
             loadData();
         } else {
             document.getElementById('loginSection').style.display = 'block';
@@ -159,106 +100,48 @@
         }
     });
 
-    // ฟังก์ชันจัดรูปแบบ URL วิดีโอ
-    function formatVideoUrl(url) {
-        if (!url) return "";
-        let videoId = "";
-        if (url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1].split('?')[0];
-        else if (url.includes('v=')) videoId = url.split('v=')[1].split('&')[0];
-        else if (url.includes('/shorts/')) videoId = url.split('/shorts/')[1].split('?')[0];
-        else if (url.includes('embed/')) return url;
-        
-        return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : url;
-    }
-
-    // บันทึก/อัปเดตข้อมูล
     document.getElementById('movieForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const editId = document.getElementById('editId').value;
-        const btn = document.getElementById('submitBtn');
-        btn.disabled = true;
-        btn.innerText = "กำลังบันทึก...";
-
+        const id = document.getElementById('editId').value;
         const data = {
             category: document.getElementById('category').value,
             title: document.getElementById('title').value,
             poster: document.getElementById('poster').value,
-            videoUrl: formatVideoUrl(document.getElementById('videoUrl').value),
-            description: document.getElementById('desc').value,
+            link: document.getElementById('link').value,
+            badge: document.getElementById('badge').value,
+            desc: document.getElementById('desc').value,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        try {
-            if (editId) {
-                await db.collection('movies').doc(editId).update(data);
-                alert("อัปเดตข้อมูลเรียบร้อย!");
-            } else {
-                data.views = 0;
-                data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                await db.collection('movies').add(data);
-                alert("เพิ่มข้อมูลใหม่สำเร็จ!");
-            }
-            resetForm();
-        } catch (err) {
-            alert("Error: " + err.message);
-        } finally {
-            btn.disabled = false;
+        if (id) {
+            await db.collection('movies').doc(id).update(data);
+        } else {
+            data.viewCount = 0;
+            data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+            await db.collection('movies').add(data);
         }
+        alert("สำเร็จ!");
+        document.getElementById('movieForm').reset();
+        document.getElementById('editId').value = '';
     });
 
-    // โหลดรายการหนัง
     function loadData() {
         db.collection('movies').orderBy('createdAt', 'desc').onSnapshot(snap => {
-            const container = document.getElementById('movieListContainer');
-            container.innerHTML = '';
+            const list = document.getElementById('movieList');
+            list.innerHTML = '';
             snap.forEach(doc => {
                 const m = doc.data();
-                const div = document.createElement('div');
-                div.className = 'movie-item';
-                div.innerHTML = `
-                    <img src="${m.poster}" onerror="this.src='logo.png'">
-                    <div class="movie-item-info">
-                        <strong>${m.title}</strong><br>
-                        <small style="color:#888">${m.category} | 👀 ${m.views || 0}</small>
-                    </div>
-                    <div>
-                        <button class="btn-edit" onclick='prepareEdit("${doc.id}", ${JSON.stringify(m).replace(/'/g, "&apos;")})'>แก้ไข</button>
-                        <button class="btn-danger" onclick="deleteItem('${doc.id}')">ลบ</button>
-                    </div>
-                `;
-                container.appendChild(div);
+                list.innerHTML += `
+                    <div class="movie-item">
+                        <img src="${m.poster}">
+                        <div style="flex-grow:1"><strong>${m.title}</strong></div>
+                        <button onclick="deleteDoc('${doc.id}')" style="color:red; background:none; border:none; cursor:pointer;">ลบ</button>
+                    </div>`;
             });
         });
     }
 
-    // เตรียมแก้ไข
-    window.prepareEdit = (id, data) => {
-        document.getElementById('editId').value = id;
-        document.getElementById('category').value = data.category;
-        document.getElementById('title').value = data.title;
-        document.getElementById('poster').value = data.poster;
-        document.getElementById('videoUrl').value = data.videoUrl;
-        document.getElementById('desc').value = data.description || '';
-        
-        document.getElementById('submitBtn').innerText = "อัปเดตข้อมูล";
-        document.getElementById('cancelBtn').style.display = "block";
-        document.getElementById('formCard').classList.add('edit-mode');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    function resetForm() {
-        document.getElementById('movieForm').reset();
-        document.getElementById('editId').value = '';
-        document.getElementById('submitBtn').innerText = "บันทึกข้อมูล";
-        document.getElementById('cancelBtn').style.display = "none";
-        document.getElementById('formCard').classList.remove('edit-mode');
-    }
-
-    window.deleteItem = async (id) => {
-        if (confirm("ยืนยันว่าจะลบข้อมูลนี้อย่างถาวร?")) {
-            await db.collection('movies').doc(id).delete();
-        }
-    };
+    async function deleteDoc(id) { if(confirm('ลบไหม?')) await db.collection('movies').doc(id).delete(); }
 </script>
 </body>
 </html>
