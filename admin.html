@@ -247,17 +247,37 @@
         icon.style.display = 'inline-block';
     });
 
-    function formatVideoUrl(url) {
-        if (!url) return "";
-        if (url.includes('youtube.com/watch?v=')) {
-            const videoId = url.split('v=')[1].split('&')[0];
-            return `https://www.youtube.com/embed/${videoId}`;
-        } else if (url.includes('youtu.be/')) {
-            const videoId = url.split('youtu.be/')[1].split('?')[0];
-            return `https://www.youtube.com/embed/${videoId}`;
+function formatVideoUrl(url) {
+    if (!url) return "";
+
+    // กรณีที่ 1: ถ้าผู้ใช้ก๊อปปี้ "โค้ดสำหรับฝัง" (Iframe) มาทั้งชุด
+    if (url.includes('<iframe')) {
+        const match = url.match(/src=["']([^"']+)["']/);
+        if (match && match[1]) {
+            url = match[1]; // ดึงเอาเฉพาะลิงก์ใน src ออกมา
         }
-        return url;
     }
+
+    // กรณีที่ 2: ถ้าเป็นลิงก์ YouTube Shorts
+    if (url.includes('/shorts/')) {
+        const videoId = url.split('/shorts/')[1].split('?')[0];
+        return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    }
+
+    // กรณีที่ 3: ถ้าเป็นลิงก์ YouTube ปกติ
+    if (url.includes('youtube.com/watch?v=')) {
+        const videoId = url.split('v=')[1].split('&')[0];
+        return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    } 
+    
+    // กรณีที่ 4: ถ้าเป็นลิงก์ย่อ youtu.be
+    if (url.includes('youtu.be/')) {
+        const videoId = url.split('youtu.be/')[1].split('?')[0];
+        return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    }
+
+    return url; // ถ้าเป็นลิงก์ embed อยู่แล้วหรือลิงก์อื่นๆ ให้ส่งคืนค่าเดิม
+}
 
     auth.onAuthStateChanged(user => {
         if (user) {
