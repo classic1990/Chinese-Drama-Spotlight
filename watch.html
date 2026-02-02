@@ -5,196 +5,300 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>กำลังรับชม | DUYDODEE-HD</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <style>
+        /* ===== THEME VARIABLES (Same as index.html) ===== */
         :root {
-            --primary: #00e5ff;
-            --accent: #ff3d00;
-            --bg-dark: #0a0a0c;
-            --card-bg: #1a1a1e;
+            --primary: #00f2ff;
+            --primary-dim: rgba(0, 242, 255, 0.1);
+            --secondary: #2d62ff;
+            --accent: #ff0055;
+            --bg-dark: #050507;
+            --bg-surface: #121216;
             --text-main: #ffffff;
-            --text-dim: #b0b0b0;
-            --gradient: linear-gradient(135deg, #00e5ff 0%, #007bff 100%);
+            --text-muted: #9ca3af;
+            --card-radius: 12px;
+            --nav-height: 70px;
+            --gradient-glow: linear-gradient(135deg, #00f2ff 0%, #2d62ff 100%);
         }
+
+        * { box-sizing: border-box; outline: none; }
 
         body {
             margin: 0;
             font-family: 'Prompt', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
+            line-height: 1.6;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* --- Navigation --- */
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* ===== NAVIGATION ===== */
         nav {
             position: fixed;
-            top: 0; width: 100%;
-            padding: 15px 6%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(10, 10, 12, 0.9);
-            backdrop-filter: blur(20px);
+            top: 0; width: 100%; height: var(--nav-height);
+            padding: 0 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 7, 0.85);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             z-index: 1000;
-            box-sizing: border-box;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .logo-text {
-            font-size: 24px;
-            font-weight: 800;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-decoration: none;
+            font-size: 24px; font-weight: 800; text-transform: uppercase;
+            background: var(--gradient-glow); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
+            text-decoration: none; letter-spacing: 1px;
         }
 
-        /* --- Layout --- */
+        .nav-back {
+            color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500;
+            display: flex; align-items: center; gap: 8px; transition: 0.3s;
+        }
+        .nav-back:hover { color: var(--primary); transform: translateX(-5px); }
+
+        /* ===== LAYOUT ===== */
         .player-layout {
-            margin-top: 100px;
-            padding: 0 6% 50px 6%;
+            margin-top: calc(var(--nav-height) + 30px);
+            padding: 0 5% 60px 5%;
             max-width: 1600px;
-            margin-left: auto;
-            margin-right: auto;
+            margin-left: auto; margin-right: auto;
+            display: grid;
+            grid-template-columns: 1fr 350px; /* Default Desktop */
+            gap: 40px;
         }
 
+        /* ===== MAIN PLAYER SECTION ===== */
         .main-player-section {
             width: 100%;
             background: #000;
-            border-radius: 20px;
+            border-radius: var(--card-radius);
             overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), 0 0 2px rgba(0, 242, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             position: relative;
         }
 
         .video-container {
             position: relative;
-            padding-bottom: 56.25%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
             height: 0;
+            background: #000;
         }
 
         .video-container iframe {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            border: none;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;
         }
 
-        /* --- Episode List --- */
-        .ep-list {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
+        /* ===== EPISODE LIST ===== */
+        .ep-list-container {
             margin-top: 25px;
+        }
+        .ep-list-header {
+            font-size: 16px; margin-bottom: 15px; color: var(--text-main); font-weight: 600;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .ep-list-header::before {
+            content: ''; width: 4px; height: 18px; background: var(--primary); border-radius: 2px;
+        }
+
+        .ep-list {
+            display: flex; gap: 10px; flex-wrap: wrap;
         }
 
         .ep-btn {
-            background: var(--card-bg);
-            color: var(--text-dim);
-            border: 1px solid rgba(255,255,255,0.05);
-            padding: 10px 20px;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 18px;
+            border-radius: 8px;
             cursor: pointer;
-            font-family: 'Prompt';
-            transition: 0.3s;
+            font-family: 'Prompt'; font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .ep-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .ep-btn.active {
-            background: var(--gradient);
-            color: #000;
+            background: var(--gradient-glow);
+            color: #fff;
+            border: 1px solid transparent;
             font-weight: 600;
-            box-shadow: 0 5px 15px rgba(0, 229, 255, 0.4);
-            border: none;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
         }
 
-        /* --- Movie Info --- */
+        /* ===== MOVIE INFO ===== */
         .movie-header {
             margin-top: 30px;
-            background: rgba(255,255,255,0.02);
+            background: var(--bg-surface);
             padding: 30px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: var(--card-radius);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .movie-title-row {
+            display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;
+        }
+
+        .movie-header h1 {
+            font-size: 28px; margin: 0; font-weight: 700; line-height: 1.3;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
         .meta-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            color: var(--text-dim);
-            font-size: 14px;
-            margin: 20px 0;
+            display: flex; flex-wrap: wrap; gap: 15px;
+            color: var(--text-muted); font-size: 13px; margin: 15px 0; align-items: center;
         }
 
         .badge {
-            background: var(--accent);
-            padding: 4px 12px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 800;
+            background: var(--accent); color: #fff; padding: 2px 10px; border-radius: 4px;
+            font-size: 11px; font-weight: 700; box-shadow: 0 2px 8px rgba(255, 0, 85, 0.3);
         }
 
         .description {
-            color: var(--text-dim);
-            line-height: 1.8;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            padding-top: 20px;
+            color: var(--text-muted); line-height: 1.7; font-size: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 20px; margin-top: 20px;
         }
 
-        /* --- Suggestion Side --- */
-        .suggest-section { margin-top: 40px; }
-        .grid-suggest { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
-        .suggest-card { cursor: pointer; border-radius: 14px; overflow: hidden; transition: 0.3s; }
-        .suggest-card:hover { transform: translateY(-5px); }
-        .suggest-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
-        .suggest-card p { padding: 10px; font-size: 13px; text-align: center; margin: 0; }
+        /* ===== SUGGESTIONS SIDEBAR ===== */
+        .suggest-section h3 {
+            font-size: 18px; margin: 0 0 20px 0;
+            border-left: 4px solid var(--primary); padding-left: 15px;
+            color: #fff;
+        }
 
-        #loader { position: fixed; inset: 0; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 2000; transition: 0.5s; }
-        .spinner { width: 45px; height: 45px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        .grid-suggest {
+            display: flex; flex-direction: column; gap: 15px;
+        }
+
+        .suggest-card {
+            display: flex; gap: 15px;
+            background: var(--bg-surface);
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .suggest-card:hover {
+            transform: translateX(5px);
+            border-color: rgba(0, 242, 255, 0.3);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .suggest-card img {
+            width: 70px; aspect-ratio: 2/3; object-fit: cover; border-radius: 6px;
+        }
+
+        .suggest-info {
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .suggest-info p {
+            margin: 0; font-size: 14px; font-weight: 500; color: #fff;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+        
+        .suggest-info span {
+            font-size: 11px; color: var(--primary); margin-top: 5px;
+        }
+
+        /* ===== LOADER ===== */
+        #loader {
+            position: fixed; inset: 0; background: var(--bg-dark);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 2000; transition: opacity 0.5s ease;
+        }
+        .spinner {
+            width: 50px; height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.05);
+            border-top: 3px solid var(--primary);
+            border-right: 3px solid var(--secondary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        @media (min-width: 1100px) {
-            .player-layout { display: grid; grid-template-columns: 1fr 350px; gap: 40px; }
-            .grid-suggest { grid-template-columns: 1fr; }
-            .suggest-card { display: flex; gap: 15px; background: rgba(255,255,255,0.02); }
-            .suggest-card img { width: 80px; height: 110px; }
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .player-layout { grid-template-columns: 1fr; }
+            .grid-suggest { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+            .suggest-card { flex-direction: column; padding: 0; gap: 0; background: transparent; border: none; }
+            .suggest-card img { width: 100%; border-radius: 8px; margin-bottom: 8px; }
+            .suggest-card:hover { transform: translateY(-5px); background: transparent; }
+            .suggest-info p { font-size: 13px; text-align: center; }
+            .suggest-info span { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <div id="loader"><div class="spinner"></div></div>
+    <!-- Loader -->
+    <div id="loader">
+        <div class="spinner"></div>
+        <p style="margin-top:20px; font-size:12px; letter-spacing:3px; color: var(--text-muted); text-transform: uppercase;">Loading Player</p>
+    </div>
 
+    <!-- Navigation -->
     <nav>
-        <a href="index.html" class="logo-text">DUYDODEE</a>
-        <a href="index.html" style="color:var(--text-main); text-decoration:none; font-size:14px;"><i class="fas fa-arrow-left"></i> กลับ</a>
+        <a href="index.html" class="logo-text">DUY<span style="color:#fff; -webkit-text-fill-color: initial;">DODEE</span></a>
+        <a href="index.html" class="nav-back"><i class="fas fa-chevron-left"></i> กลับหน้าหลัก</a>
     </nav>
 
+    <!-- Main Content -->
     <div class="player-layout">
         <main>
             <div class="main-player-section">
-                <div class="video-container" id="video-box"></div>
+                <div class="video-container" id="video-box">
+                    <!-- Iframe will be inserted here -->
+                </div>
             </div>
-            <div class="ep-list" id="ep-list-box"></div>
+
+            <div class="ep-list-container">
+                <div class="ep-list-header">เลือกตอน</div>
+                <div class="ep-list" id="ep-list-box"></div>
+            </div>
 
             <div class="movie-header">
-                <h1 id="m-title">กำลังโหลด...</h1>
+                <div class="movie-title-row">
+                    <h1 id="m-title">กำลังโหลดข้อมูล...</h1>
+                </div>
+                
                 <div class="meta-tags">
                     <span class="badge" id="m-badge">HD</span>
-                    <span><i class="far fa-play-circle" style="color:var(--primary)"></i> <span id="m-views">0</span> วิว</span>
-                    <span id="m-date"><i class="far fa-calendar-alt"></i> อัปเดตล่าสุด</span>
+                    <span><i class="far fa-eye" style="color:var(--primary)"></i> <span id="m-views">0</span> การรับชม</span>
+                    <span><i class="far fa-clock" style="margin-left:10px"></i> อัปเดตล่าสุด</span>
                 </div>
-                <div class="description" id="m-desc"></div>
+                
+                <div class="description" id="m-desc">
+                    กำลังโหลดเนื้อเรื่องย่อ...
+                </div>
             </div>
         </main>
 
         <aside class="suggest-section">
-            <h3 style="font-size: 16px; border-bottom: 2px solid var(--primary); padding-bottom: 5px;">แนะนำสำหรับคุณ</h3>
+            <h3>แนะนำสำหรับคุณ</h3>
             <div class="grid-suggest" id="suggest-box"></div>
         </aside>
     </div>
 
+    <!-- Firebase Scripts (Logic เดิม) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
@@ -230,12 +334,11 @@
                 document.getElementById('m-title').innerText = data.title;
                 document.getElementById('m-badge').innerText = data.badge || 'HD';
                 document.getElementById('m-views').innerText = (data.viewCount || 0).toLocaleString();
-                document.getElementById('m-desc').innerText = data.desc || "ไม่มีเรื่องย่อ";
+                document.getElementById('m-desc').innerText = data.desc || "ยังไม่มีเนื้อเรื่องย่อสำหรับเรื่องนี้";
 
                 const videoBox = document.getElementById('video-box');
                 const epListBox = document.getElementById('ep-list-box');
                 
-                // รวม link และ links เข้าด้วยกันเพื่อป้องกันความผิดพลาด
                 let allLinks = Array.isArray(data.links) ? data.links : (data.link ? [data.link] : []);
 
                 allLinks.forEach((url, index) => {
@@ -272,7 +375,15 @@
                 const card = document.createElement('div');
                 card.className = 'suggest-card';
                 card.onclick = () => window.location.href = `watch.html?id=${doc.id}`;
-                card.innerHTML = `<img src="${m.poster}"><p>${m.title}</p>`;
+                
+                // ปรับ HTML ให้เข้ากับดีไซน์ใหม่
+                card.innerHTML = `
+                    <img src="${m.poster}" onerror="this.src='https://via.placeholder.com/150x225?text=No+Image'">
+                    <div class="suggest-info">
+                        <p>${m.title}</p>
+                        <span><i class="fas fa-play"></i> รับชมเลย</span>
+                    </div>
+                `;
                 box.appendChild(card);
             });
         }
