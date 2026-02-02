@@ -23,127 +23,110 @@
         body { 
             margin: 0; font-family: 'Prompt', sans-serif; 
             background: var(--bg-dark); color: var(--text-main);
-            background-image: radial-gradient(circle at 0% 0%, rgba(0, 229, 255, 0.05) 0%, transparent 40%);
-            min-height: 100vh; line-height: 1.6;
+            min-height: 100vh;
         }
         
-        #aiLoading { 
-            position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
-            background: var(--ai-color); color: white; padding: 12px 25px; 
-            border-radius: 50px; z-index: 2000; display: none; 
-            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.4);
-            font-weight: 600; font-size: 14px;
+        /* Login Overlay */
+        #loginOverlay { 
+            position: fixed; inset: 0; background: var(--bg-dark); 
+            display: flex; justify-content: center; align-items: center; 
+            z-index: 3000; flex-direction: column; 
+        }
+        .btn-google { 
+            background: #fff; color: #000; padding: 12px 24px; border-radius: 8px; 
+            border: none; font-weight: 700; cursor: pointer; display: flex; 
+            align-items: center; gap: 10px; font-size: 16px; 
         }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; display: none; }
         .header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        
-        /* YouTube Fetcher */
-        .fetch-card { background: #1c101e; border: 1px solid var(--ai-color); margin-bottom: 25px; padding: 20px; border-radius: 16px; }
-        .fetch-group { display: flex; gap: 10px; margin-top: 10px; }
+        .user-info { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text-dim); }
+        .user-info img { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--primary); }
 
+        .card { background: var(--card-bg); padding: 25px; border-radius: 16px; border: 1px solid var(--glass-border); margin-bottom: 20px; }
+        .card-title { color: var(--primary); font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        
         .form-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; }
         @media (max-width: 850px) { .form-grid { grid-template-columns: 1fr; } }
 
-        .card { 
-            background: var(--card-bg); padding: 25px; border-radius: 16px; 
-            border: 1px solid var(--glass-border); 
+        input, select, textarea { 
+            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--glass-border); 
+            background: var(--input-bg); color: #fff; font-family: 'Prompt'; margin-bottom: 15px; 
         }
-        .card-title { color: var(--primary); font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
-
-        .input-group { margin-bottom: 18px; }
-        .input-group label { display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-dim); font-size: 14px; }
         
-        input, select, textarea {
-            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--glass-border);
-            background: var(--input-bg); color: #fff; font-family: 'Prompt'; font-size: 14px; transition: 0.3s;
-        }
-        input:focus { border-color: var(--primary); background: #25252b; }
-
-        .ai-btn { background: rgba(168, 85, 247, 0.1); color: var(--ai-color); border: 1px solid var(--ai-color); padding: 2px 10px; border-radius: 5px; cursor: pointer; font-size: 11px; transition: 0.2s; }
-        .ai-btn:hover { background: var(--ai-color); color: #fff; }
-
-        .btn-submit { background: var(--primary); color: #000; padding: 14px; border-radius: 10px; border: none; font-weight: 700; width: 100%; cursor: pointer; font-size: 16px; transition: 0.2s; margin-top: 10px; }
-        .btn-submit:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 229, 255, 0.3); }
-
-        .episodes-area { background: #000; padding: 12px; border-radius: 10px; max-height: 250px; overflow-y: auto; border: 1px solid #222; }
-        .ep-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
-
-        .movie-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .movie-row { background: var(--card-bg); border-bottom: 8px solid var(--bg-dark); transition: 0.3s; }
-        .movie-row:hover { background: #1c1c21; }
-        .movie-row td { padding: 15px; }
-        .poster-mini { width: 45px; height: 60px; border-radius: 6px; object-fit: cover; border: 1px solid #333; }
-        .action-btn { padding: 10px; cursor: pointer; border-radius: 8px; font-size: 16px; transition: 0.2s; }
-        .action-btn:hover { background: rgba(255,255,255,0.05); }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        .ai-btn { background: rgba(168, 85, 247, 0.1); color: var(--ai-color); border: 1px solid var(--ai-color); padding: 2px 10px; border-radius: 5px; cursor: pointer; font-size: 11px; }
+        .btn-submit { background: var(--primary); color: #000; padding: 14px; border-radius: 10px; border: none; font-weight: 700; width: 100%; cursor: pointer; font-size: 16px; }
+        
+        .ep-row { display: flex; gap: 8px; margin-bottom: 8px; }
+        .movie-table { width: 100%; border-collapse: collapse; }
+        .movie-row { background: var(--card-bg); border-bottom: 8px solid var(--bg-dark); }
+        .movie-row td { padding: 12px; }
+        .poster-mini { width: 45px; height: 60px; border-radius: 5px; object-fit: cover; }
+        
+        #aiLoading { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--ai-color); color: #fff; padding: 10px 20px; border-radius: 20px; display: none; z-index: 4000; }
     </style>
 </head>
 <body>
 
+<div id="loginOverlay">
+    <h1 style="color:var(--primary); margin-bottom:10px;">DUYDODEE ADMIN</h1>
+    <p style="color:var(--text-dim); margin-bottom:25px;">กรุณาเข้าสู่ระบบเพื่อจัดการเนื้อหา</p>
+    <button class="btn-google" id="btnLogin">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
+        เข้าสู่ระบบด้วย Google
+    </button>
+    <p id="loginError" style="color:var(--error); margin-top:20px; display:none; font-size:14px;">❌ อีเมลนี้ไม่มีสิทธิ์เข้าใช้งานระบบ</p>
+</div>
+
 <div id="aiLoading">กำลังประมวลผล...</div>
 
-<div class="container">
+<div class="container" id="mainContent">
     <div class="header-box">
-        <h2 style="margin:0;"><i class="fas fa-magic" style="color:var(--ai-color)"></i> ระบบจัดการซีรีส์ DUYDODEE</h2>
-        <a href="index.html" style="color:var(--primary); text-decoration:none; font-size: 14px;"><i class="fas fa-external-link-alt"></i> ดูหน้าเว็บหลัก</a>
-    </div>
-
-    <div class="fetch-card">
-        <div class="card-title" style="color:var(--ai-color)"><i class="fab fa-youtube"></i> ดึงข้อมูลด่วนจาก YouTube</div>
-        <div class="fetch-group">
-            <input type="text" id="ytUrl" placeholder="วางลิงก์ YouTube ที่นี่เพื่อดึงชื่อและรูปภาพ...">
-            <button type="button" class="ai-btn" style="padding:0 20px; font-size:14px;" id="btnFetch">ดึงข้อมูล</button>
-        </div>
+        <h2 style="margin:0;"><i class="fas fa-shield-alt" style="color:var(--primary)"></i> ระบบจัดการซีรีส์</h2>
+        <div class="user-info" id="userInfo"></div>
     </div>
 
     <form id="movieForm">
         <input type="hidden" id="editId">
         <div class="form-grid">
             <div class="card">
-                <div class="card-title"><i class="fas fa-file-alt"></i> ข้อมูลเนื้อหา</div>
-                <div class="input-group">
-                    <label>ชื่อเรื่อง</label>
-                    <input type="text" id="title" required placeholder="ชื่อซีรีส์">
+                <div class="card-title"><i class="fas fa-edit"></i> ข้อมูลวิดีโอ</div>
+                <input type="text" id="title" required placeholder="ชื่อเรื่อง">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="font-size:14px; color:var(--text-dim);">เรื่องย่อ</span>
+                    <button type="button" class="ai-btn" onclick="runAI('desc')">AI ช่วยเขียน</button>
                 </div>
-                <div class="input-group">
-                    <label>เรื่องย่อ <button type="button" class="ai-btn" onclick="runAI('desc')">AI ช่วยเขียน</button></label>
-                    <textarea id="desc" rows="5" placeholder="ระบุเรื่องย่อ..."></textarea>
-                </div>
-                <div class="input-group">
-                    <label>จัดการตอน (Links)</label>
-                    <div id="epContainer" class="episodes-area"></div>
-                    <button type="button" class="ai-btn" style="width:100%; margin-top:10px; padding:10px;" onclick="addEpField()">+ เพิ่มตอน (Episode)</button>
+                <textarea id="desc" rows="4" placeholder="ระบุเรื่องย่อ..."></textarea>
+                
+                <div style="margin-top:10px;">
+                    <label style="font-size:14px; color:var(--text-dim);">ลิงก์แต่ละตอน</label>
+                    <div id="epContainer" style="margin-top:10px;"></div>
+                    <button type="button" class="ai-btn" style="width:100%; padding:10px; margin-top:10px;" onclick="addEpField()">+ เพิ่มตอนใหม่</button>
                 </div>
             </div>
 
             <div class="card">
-                <div class="card-title"><i class="fas fa-cog"></i> ตั้งค่าระบบ</div>
-                <div class="input-group">
-                    <label>หมวดหมู่</label>
-                    <select id="category">
-                        <option value="vertical">ซีรีส์สั้น (แนวตั้ง)</option>
-                        <option value="series">ซีรีส์ยาว (พากย์ไทย)</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>URL รูปโปสเตอร์</label>
-                    <input type="url" id="poster" required placeholder="https://...">
-                </div>
-                <div class="input-group">
-                    <label>ป้ายกำกับ <button type="button" class="ai-btn" onclick="runAI('badge')">AI สุ่มคำ</button></label>
-                    <input type="text" id="badge" placeholder="เช่น พากย์ไทย, จบแล้ว">
-                </div>
-                <button type="submit" class="btn-submit" id="submitBtn">บันทึกข้อมูล</button>
-                <button type="button" id="cancelBtn" onclick="resetForm()" style="display:none; width:100%; margin-top:12px; background:none; color:var(--text-dim); border:none; cursor:pointer; font-size:13px;">ยกเลิกการแก้ไข</button>
+                <div class="card-title"><i class="fas fa-cog"></i> การตั้งค่า</div>
+                <label style="font-size:14px; color:var(--text-dim);">หมวดหมู่</label>
+                <select id="category">
+                    <option value="vertical">ซีรีส์สั้น (แนวตั้ง)</option>
+                    <option value="series">ซีรีส์ยาว (พากย์ไทย)</option>
+                </select>
+                <label style="font-size:14px; color:var(--text-dim);">URL รูปหน้าปก</label>
+                <input type="url" id="poster" required placeholder="https://...">
+                <label style="font-size:14px; color:var(--text-dim);">ป้ายกำกับ</label>
+                <input type="text" id="badge" placeholder="เช่น จบแล้ว, พากย์ไทย">
+                
+                <button type="submit" class="btn-submit" id="submitBtn">บันทึกข้อมูลลงระบบ</button>
+                <button type="button" id="cancelBtn" onclick="resetForm()" style="display:none; width:100%; background:none; color:var(--text-dim); border:none; margin-top:10px; cursor:pointer;">ยกเลิกการแก้ไข</button>
+                
+                <button type="button" onclick="logout()" style="width:100%; margin-top:50px; color:var(--error); background:none; border:none; cursor:pointer; font-size:13px;">ออกจากระบบ</button>
             </div>
         </div>
     </form>
 
     <div style="margin-top:40px;">
-        <h3 style="color:var(--text-dim); font-weight: 400; border-left: 3px solid var(--primary); padding-left: 10px;">รายการในระบบ</h3>
+        <h3 style="color:var(--text-dim); border-left:4px solid var(--primary); padding-left:15px;">รายการทั้งหมด</h3>
         <table class="movie-table">
             <tbody id="movieList"></tbody>
         </table>
@@ -153,8 +136,8 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
     import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
-    // Config เชื่อมต่อกับฐานข้อมูลหลัก
     const firebaseConfig = {
         apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
         authDomain: "classic-e8ab7.firebaseapp.com",
@@ -164,73 +147,63 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    // Path: 'artifacts' (เพื่อให้หน้าบ้านมองเห็น)
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
     const colPath = collection(db, 'artifacts');
 
-    // --- YouTube Fetch Logic ---
-    document.getElementById('btnFetch').onclick = async () => {
-        const url = document.getElementById('ytUrl').value;
-        if (!url) return alert("กรุณาวางลิงก์ YouTube ก่อน");
-        
-        let vId = "";
-        if (url.includes("v=")) vId = new URLSearchParams(new URL(url).search).get('v');
-        else if (url.includes("youtu.be/")) vId = url.split("youtu.be/")[1].split(/[?#]/)[0];
+    // อีเมลที่อนุญาตตาม Rules ของคุณ
+    const ADMIN_EMAIL = "duy.kan1234@gmail.com";
 
-        if (vId) {
-            document.getElementById('poster').value = `https://img.youtube.com/vi/${vId}/maxresdefault.jpg`;
-            try {
-                const res = await fetch(`https://noembed.com/embed?url=${url}`);
-                const data = await res.json();
-                if(data.title) document.getElementById('title').value = data.title;
-            } catch(e) {}
-            
-            document.getElementById('epContainer').innerHTML = "";
-            window.addEpField(url);
+    // --- ระบบตรวจสอบสิทธิ์ ---
+    window.logout = () => signOut(auth);
+    document.getElementById('btnLogin').onclick = () => signInWithPopup(auth, provider);
+
+    onAuthStateChanged(auth, (user) => {
+        const overlay = document.getElementById('loginOverlay');
+        const main = document.getElementById('mainContent');
+        const error = document.getElementById('loginError');
+
+        if (user) {
+            if (user.email === ADMIN_EMAIL) {
+                overlay.style.display = 'none';
+                main.style.display = 'block';
+                document.getElementById('userInfo').innerHTML = `
+                    <span>${user.displayName}</span>
+                    <img src="${user.photoURL}">
+                `;
+            } else {
+                error.style.display = 'block';
+                signOut(auth);
+            }
         } else {
-            alert("ลิงก์ YouTube ไม่ถูกต้อง");
+            overlay.style.display = 'flex';
+            main.style.display = 'none';
         }
-    };
+    });
 
-    // --- AI Gemini Helper ---
+    // --- AI Helper ---
     window.runAI = async (type) => {
         const title = document.getElementById('title').value;
-        if(!title) return alert("กรุณาใส่ชื่อเรื่องก่อนใช้ AI");
-        
-        const loader = document.getElementById('aiLoading');
-        loader.style.display = 'block';
-        
-        // ใส่ API Key ของคุณที่นี่
-        const apiKey = "YOUR_GEMINI_API_KEY"; 
-        const prompt = type === 'desc' 
-            ? `เขียนเรื่องย่อซีรีส์เรื่อง ${title} แบบสั้นๆ 2 บรรทัดให้น่าสนใจ` 
-            : `ขอคำสั้นๆ 1 คำ (เช่น พากย์ไทย, จบแล้ว, แนะนำ) สำหรับเรื่อง ${title}`;
-        
+        if(!title) return alert("กรุณาใส่ชื่อเรื่องก่อน");
+        document.getElementById('aiLoading').style.display = 'block';
         try {
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=YOUR_API_KEY`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                body: JSON.stringify({ contents: [{ parts: [{ text: `สรุปเรื่องย่อซีรีส์เรื่อง ${title} เป็นภาษาไทย 2 บรรทัด` }] }] })
             });
             const data = await res.json();
-            const text = data.candidates?.[0]?.content?.parts?.[0]?.text.trim();
-            if(type === 'desc') document.getElementById('desc').value = text;
-            else document.getElementById('badge').value = text.replace(/[".]/g, "").substring(0, 10);
-        } catch (err) {
-            console.error("AI Error:", err);
-            alert("AI ไม่ตอบสนอง กรุณาเช็ค API Key");
-        } finally {
-            loader.style.display = 'none';
-        }
+            document.getElementById('desc').value = data.candidates[0].content.parts[0].text;
+        } catch (e) { alert("AI ไม่พร้อมใช้งาน"); }
+        finally { document.getElementById('aiLoading').style.display = 'none'; }
     };
 
-    // --- UI Helpers ---
+    // --- ระบบจัดการข้อมูล (CRUD) ---
     window.addEpField = (val = "") => {
         const div = document.createElement('div');
         div.className = 'ep-row';
-        div.innerHTML = `
-            <input type="text" class="ep-link" placeholder="วางลิงก์วิดีโอ (YouTube/MP4)" value="${val}" required>
-            <button type="button" onclick="this.parentElement.remove()" style="color:var(--error); background:none; border:none; cursor:pointer; font-size:18px;"><i class="fas fa-minus-circle"></i></button>
-        `;
+        div.innerHTML = `<input type="text" class="ep-link" value="${val}" required placeholder="ลิงก์วิดีโอ">
+                         <button type="button" onclick="this.parentElement.remove()" style="color:var(--error); background:none; border:none; cursor:pointer; font-size:20px;">&times;</button>`;
         document.getElementById('epContainer').appendChild(div);
     };
 
@@ -238,17 +211,15 @@
         document.getElementById('movieForm').reset();
         document.getElementById('editId').value = '';
         document.getElementById('epContainer').innerHTML = '';
-        document.getElementById('submitBtn').innerText = 'บันทึกข้อมูล';
+        document.getElementById('submitBtn').innerText = 'บันทึกข้อมูลลงระบบ';
         document.getElementById('cancelBtn').style.display = 'none';
-        window.addEpField();
+        addEpField();
     };
 
-    // --- CRUD ---
     document.getElementById('movieForm').onsubmit = async (e) => {
         e.preventDefault();
         const id = document.getElementById('editId').value;
         const links = Array.from(document.querySelectorAll('.ep-link')).map(i => i.value);
-        
         const data = {
             title: document.getElementById('title').value,
             desc: document.getElementById('desc').value,
@@ -268,7 +239,8 @@
                 await addDoc(colPath, data);
             }
             resetForm();
-        } catch (err) { alert("Error: " + err.message); }
+            alert("ดำเนินการสำเร็จ!");
+        } catch (err) { alert("เกิดข้อผิดพลาด: " + err.message); }
     };
 
     window.editItem = (id, jsonStr) => {
@@ -279,46 +251,38 @@
         document.getElementById('category').value = item.category;
         document.getElementById('poster').value = item.poster;
         document.getElementById('badge').value = item.badge || '';
-        
         document.getElementById('epContainer').innerHTML = '';
-        if(item.links) item.links.forEach(l => window.addEpField(l));
-        
-        document.getElementById('submitBtn').innerText = 'อัปเดตข้อมูลเดี๋ยวนี้';
+        if(item.links) item.links.forEach(l => addEpField(l));
+        document.getElementById('submitBtn').innerText = 'อัปเดตข้อมูล';
         document.getElementById('cancelBtn').style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     window.deleteItem = async (id) => {
-        if(confirm("คุณแน่ใจนะว่าจะลบรายการนี้?")) {
-            await deleteDoc(doc(db, 'artifacts', id));
-        }
+        if(confirm("ต้องการลบรายการนี้ใช่ไหม?")) await deleteDoc(doc(db, 'artifacts', id));
     };
 
-    // --- Real-time List ---
     onSnapshot(query(colPath, orderBy('createdAt', 'desc')), (snap) => {
         const list = document.getElementById('movieList');
         list.innerHTML = '';
         snap.forEach(d => {
             const item = d.data();
-            const jsonStr = encodeURIComponent(JSON.stringify(item));
-            list.innerHTML += `
-                <tr class="movie-row">
-                    <td width="60"><img src="${item.poster}" class="poster-mini"></td>
-                    <td>
-                        <div style="font-weight:600; color:var(--primary);">${item.title}</div>
-                        <div style="font-size:12px; color:var(--text-dim);">${item.category === 'vertical' ? 'แนวตั้ง' : 'พากย์ไทย'} • ${item.links ? item.links.length : 0} ตอน</div>
-                    </td>
-                    <td align="right">
-                        <i class="fas fa-edit action-btn" style="color:var(--primary)" onclick="editItem('${d.id}', '${jsonStr}')"></i>
-                        <i class="fas fa-trash-alt action-btn" style="color:var(--error)" onclick="deleteItem('${d.id}')"></i>
-                    </td>
-                </tr>
-            `;
+            const str = encodeURIComponent(JSON.stringify(item));
+            list.innerHTML += `<tr class="movie-row">
+                <td width="60"><img src="${item.poster}" class="poster-mini"></td>
+                <td>
+                    <div style="font-weight:600;">${item.title}</div>
+                    <div style="font-size:12px; color:var(--text-dim);">${item.category === 'vertical' ? 'แนวตั้ง' : 'พากย์ไทย'} • ${item.links ? item.links.length : 0} ตอน</div>
+                </td>
+                <td align="right">
+                    <i class="fas fa-edit" onclick="editItem('${d.id}', '${str}')" style="color:var(--primary); cursor:pointer; margin-right:15px;"></i>
+                    <i class="fas fa-trash-alt" onclick="deleteItem('${d.id}')" style="color:var(--error); cursor:pointer;"></i>
+                </td>
+            </tr>`;
         });
     });
 
-    // เริ่มต้นระบบ
-    window.addEpField();
+    addEpField();
 </script>
 </body>
 </html>
