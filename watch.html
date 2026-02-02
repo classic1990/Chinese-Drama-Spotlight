@@ -89,6 +89,7 @@
         .movie-header h1 {
             font-size: clamp(22px, 4vw, 30px);
             margin-bottom: 10px;
+            color: var(--primary);
         }
 
         .meta-tags {
@@ -101,7 +102,7 @@
         }
 
         .badge {
-            background: var(--primary);
+            background: var(--accent-red);
             color: white;
             padding: 2px 10px;
             border-radius: 4px;
@@ -137,10 +138,13 @@
             overflow: hidden;
             cursor: pointer;
             transition: 0.3s;
+            display: flex;
+            flex-direction: column;
         }
 
         .suggest-card:hover {
-            transform: scale(1.05);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,174,255,0.3);
         }
 
         .suggest-card img {
@@ -150,10 +154,9 @@
         }
 
         .suggest-card p {
-            padding: 8px;
-            font-size: 12px;
+            padding: 10px;
+            font-size: 13px;
             margin: 0;
-            text-align: center;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -170,14 +173,14 @@
         @media (min-width: 1024px) {
             .player-layout {
                 display: grid;
-                grid-template-columns: 1fr 300px;
+                grid-template-columns: 1fr 350px;
                 gap: 30px;
             }
             .suggest-section { margin-top: 0; }
             .grid-suggest { grid-template-columns: 1fr; }
-            .suggest-card { display: flex; height: 80px; }
-            .suggest-card img { width: 60px; aspect-ratio: auto; }
-            .suggest-card p { display: flex; align-items: center; text-align: left; }
+            .suggest-card { flex-direction: row; height: 100px; }
+            .suggest-card img { width: 70px; aspect-ratio: auto; }
+            .suggest-card p { flex-grow: 1; align-self: center; white-space: normal; }
         }
     </style>
 </head>
@@ -201,20 +204,20 @@
             </div>
 
             <div class="movie-header">
-                <h1 id="m-title">โหลดข้อมูล...</h1>
+                <h1 id="m-title">กำลังโหลด...</h1>
                 <div class="meta-tags">
-                    <span class="badge" id="m-badge">Movie</span>
+                    <span class="badge" id="m-badge">HD</span>
                     <span><i class="far fa-eye"></i> <span id="m-views">0</span> วิว</span>
                     <span><i class="far fa-calendar"></i> <span id="m-date">-</span></span>
                 </div>
                 <div class="description" id="m-desc">
-                    กำลังดึงข้อมูลจากเซิร์ฟเวอร์...
+                    กำลังดึงข้อมูลเรื่องย่อ...
                 </div>
             </div>
         </main>
 
         <aside class="suggest-section">
-            <h3 style="font-size: 18px; margin-bottom: 20px;"><i class="fas fa-layer-group" style="color: var(--primary);"></i> เรื่องที่คุณอาจสนใจ</h3>
+            <h3 style="font-size: 18px; margin-bottom: 20px;"><i class="fas fa-play-circle" style="color: var(--primary);"></i> เรื่องที่คุณอาจสนใจ</h3>
             <div class="grid-suggest" id="suggest-box"></div>
         </aside>
     </div>
@@ -223,15 +226,12 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // อัปเดตข้อมูลเป็นโปรเจกต์ใหม่ classic-e8ab7 (Classic)
+        // Config สำหรับโปรเจกต์ Classic
         const firebaseConfig = {
             apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
             authDomain: "classic-e8ab7.firebaseapp.com",
             projectId: "classic-e8ab7",
-            storageBucket: "classic-e8ab7.firebasestorage.app",
-            messagingSenderId: "596308927760",
-            appId: "1:596308927760:web:63043fd2786459082cb195",
-            measurementId: "G-RCDSPGQ5LE"
+            appId: "1:596308927760:web:63043fd2786459082cb195"
         };
         
         firebase.initializeApp(firebaseConfig);
@@ -247,57 +247,45 @@
             }
 
             try {
-                // ดึงข้อมูลหนังจากคอลเลกชัน movies
-                const doc = await db.collection('movies').doc(movieId).get();
+                // ดึงข้อมูลจากคอลเลกชัน movies
+                const docRef = db.collection('movies').doc(movieId);
+                const doc = await docRef.get();
                 
                 if(!doc.exists) {
                     document.getElementById('m-title').innerText = "ไม่พบเนื้อหา";
-                    document.getElementById('video-box').innerHTML = `<div style="padding:50px; text-align:center;">ขออภัย ไม่พบข้อมูลหนังเรื่องนี้ในระบบ</div>`;
-                    document.getElementById('loader').style.display = 'none';
                     return;
                 }
 
                 const data = doc.data();
                 
-                // อัปเดต UI ด้วยข้อมูลใหม่
-                document.getElementById('m-title').innerText = data.title || "ไม่มีชื่อเรื่อง";
+                // อัปเดตข้อมูลบนหน้าเว็บ
+                document.getElementById('m-title').innerText = data.title;
                 document.getElementById('m-badge').innerText = data.badge || 'HD';
-                document.getElementById('m-views').innerText = (data.views || 0).toLocaleString();
-                document.getElementById('m-desc').innerText = data.description || "รับชมความสนุกระดับ HD ได้ที่นี่ พากย์ไทยคมชัด";
+                document.getElementById('m-views').innerText = (data.viewCount || 0).toLocaleString();
+                document.getElementById('m-desc').innerText = data.desc || "ไม่มีเรื่องย่อสำหรับซีรีส์เรื่องนี้";
                 
                 if(data.createdAt) {
                     const date = new Date(data.createdAt.seconds * 1000);
                     document.getElementById('m-date').innerText = date.toLocaleDateString('th-TH');
-                } else {
-                    document.getElementById('m-date').innerText = new Date().toLocaleDateString('th-TH');
                 }
 
-                // จัดการการแสดงผลวิดีโอ
-                const videoUrl = data.videoUrl;
-                const videoBox = document.getElementById('video-box');
-                
-                if(videoUrl && videoUrl.trim() !== "") {
-                    videoBox.innerHTML = ''; 
-                    const iframe = document.createElement('iframe');
-                    iframe.src = videoUrl;
-                    iframe.allow = "autoplay; encrypted-media";
-                    iframe.allowFullscreen = true;
-                    videoBox.appendChild(iframe);
-                } else {
-                    videoBox.innerHTML = `<div style="padding:50px; text-align:center; color:#ff4444;">ขออภัย ลิงก์วิดีโอไม่ถูกต้องหรือยังไม่ถูกอัปโหลด</div>`;
+                // ใส่ Iframe วิดีโอ (ใช้ฟิลด์ link)
+                if(data.link) {
+                    document.getElementById('video-box').innerHTML = `
+                        <iframe src="${data.link}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    `;
                 }
 
-                // อัปเดตยอดวิว
-                db.collection('movies').doc(movieId).update({
-                    views: firebase.firestore.FieldValue.increment(1)
-                }).catch(e => console.log("View count update skipped"));
+                // --- อัปเดตยอดวิว (+1) ไปที่ฟิลด์ viewCount ---
+                docRef.update({
+                    viewCount: firebase.firestore.FieldValue.increment(1)
+                }).catch(e => console.log("Update view count failed"));
 
-                // โหลดหนังแนะนำในหมวดหมู่เดียวกัน
+                // โหลดหนังแนะนำ
                 fetchSuggest(data.category);
 
             } catch (err) {
-                console.error("Critical Error:", err);
-                document.getElementById('m-title').innerText = "เกิดข้อผิดพลาดในการโหลด";
+                console.error("Error:", err);
             } finally {
                 document.getElementById('loader').style.display = 'none';
             }
@@ -306,29 +294,25 @@
         async function fetchSuggest(cat) {
             const box = document.getElementById('suggest-box');
             try {
-                // ดึงหนัง 10 เรื่องล่าสุดในหมวดหมู่เดียวกันมาแนะนำ
+                // ดึงข้อมูลหนังในหมวดหมู่เดียวกัน 6 เรื่อง
                 const snap = await db.collection('movies')
-                                   .where('category', '==', cat || 'vertical')
-                                   .limit(10)
+                                   .where('category', '==', cat)
+                                   .limit(7)
                                    .get();
                 
-                if(snap.empty) return;
-
                 snap.forEach(doc => {
-                    if(doc.id === movieId) return; // ไม่แสดงเรื่องที่กำลังดูอยู่
+                    if(doc.id === movieId) return; // ไม่เอาเรื่องที่ดูอยู่มาแนะนำ
                     const m = doc.data();
                     const card = document.createElement('div');
                     card.className = 'suggest-card';
                     card.onclick = () => window.location.href = `watch.html?id=${doc.id}`;
                     card.innerHTML = `
-                        <img src="${m.poster || 'logo.png'}" onerror="this.src='logo.png'">
+                        <img src="${m.poster}" onerror="this.src='logo.png'">
                         <p>${m.title}</p>
                     `;
                     box.appendChild(card);
                 });
-            } catch(e) {
-                console.error("Suggestions failed:", e);
-            }
+            } catch(e) { console.log(e); }
         }
 
         window.onload = loadContent;
