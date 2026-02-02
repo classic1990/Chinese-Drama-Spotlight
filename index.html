@@ -5,14 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>DUYDODEE-HD | ดูซีรีส์จีน พากย์ไทย ซีรีส์แนวตั้ง ยอดนิยม</title>
-    <meta name="description" content="แหล่งรวมซีรีส์จีนพากย์ไทยยอดนิยม ซีรีส์แนวตั้งสุดฮิต และภาพยนตร์แนะนำ ดูฟรี คมชัดระดับ HD ที่ DUYDODEE-HD">
-    <meta name="keywords" content="ดูซีรีส์จีน, ซีรีส์พากย์ไทย, ซีรีส์แนวตั้ง, ดูหนังออนไลน์, DUYDODEE">
-    <meta name="author" content="DUYDODEE-HD">
-
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://classic1990.github.io/Chinese-Drama-Spotlight/">
+    <meta name="description" content="แหล่งรวมซีรีส์จีนพากย์ไทยยอดนิยม ซีรีส์แนวตั้งสุดฮิต ดูฟรี คมชัดระดับ HD ที่ DUYDODEE-HD">
+    
     <meta property="og:title" content="DUYDODEE-HD | ดูซีรีส์จีน พากย์ไทย ยอดนิยม">
-    <meta property="og:description" content="ดูซีรีส์จีนพากย์ไทย ซีรีส์แนวตั้ง คมชัดระดับ HD โหลดไว ดูลื่น">
     <meta property="og:image" content="logo.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
@@ -45,7 +40,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.95), transparent);
+            background: rgba(7, 7, 7, 0.9);
             z-index: 1000;
             box-sizing: border-box;
             backdrop-filter: blur(10px);
@@ -62,252 +57,138 @@
             text-transform: uppercase;
         }
 
-        .nav-links {
-            display: flex;
-            gap: 25px;
-        }
-
         .nav-links a {
             color: var(--text-main);
             text-decoration: none;
+            margin-left: 20px;
             font-size: 15px;
             transition: 0.3s;
-            opacity: 0.8;
-            font-weight: 300;
         }
 
-        .nav-links a:hover {
-            color: var(--primary);
-            opacity: 1;
-        }
+        .nav-links a:hover { color: var(--primary); }
 
-        /* Hero Section */
+        /* Hero */
         .hero {
-            position: relative;
-            height: 85vh;
-            background: linear-gradient(to bottom, rgba(7,7,7,0.2) 0%, rgba(7,7,7,0.8) 80%, var(--bg-dark) 100%), 
-                        url('logo.png'); 
-            background-size: cover;
+            height: 70vh;
+            background: linear-gradient(to bottom, rgba(7,7,7,0.3), var(--bg-dark)), url('logo.png');
+            background-size: contain;
+            background-repeat: no-repeat;
             background-position: center;
             display: flex;
-            align-items: flex-end;
-            padding: 0 5% 100px;
-            border-bottom: 2px solid var(--primary);
-        }
-
-        .hero-content {
-            max-width: 800px;
-            position: relative;
-            z-index: 10;
-        }
-
-        .hero-content h1 {
-            font-size: clamp(32px, 8vw, 64px);
-            margin-bottom: 10px;
-            line-height: 1.1;
-            font-weight: 700;
-            text-shadow: 2px 2px 20px rgba(0,0,0,0.8);
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .btn-play {
-            padding: 14px 40px;
-            background: var(--accent-gradient);
-            border: none;
-            border-radius: 8px;
-            color: #fff;
-            font-weight: 600;
-            font-size: 18px;
-            cursor: pointer;
-            transition: 0.3s;
-            text-decoration: none;
-            display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            text-align: center;
+            padding-top: 80px;
         }
 
-        /* Movie Card */
-        .content-section { padding: 60px 5% 20px; }
+        .hero h1 { font-size: clamp(30px, 5vw, 60px); margin: 0; text-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+
+        /* Movie Grid */
+        .content-section { padding: 40px 5%; }
+        .section-header { margin-bottom: 25px; border-left: 4px solid var(--primary); padding-left: 15px; }
         .movie-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
         }
 
         .movie-card {
             background: var(--card-bg);
-            border-radius: 12px;
+            border-radius: 10px;
             overflow: hidden;
-            transition: 0.4s ease;
+            transition: 0.3s;
             cursor: pointer;
             position: relative;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
 
-        .movie-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 35px rgba(0,174,255,0.2);
-        }
+        .movie-card:hover { transform: translateY(-8px); }
 
-        .poster-box {
-            position: relative;
-            aspect-ratio: 2/3;
-            overflow: hidden;
-        }
+        .poster-box { aspect-ratio: 2/3; overflow: hidden; position: relative; }
+        .poster-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        .poster-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .badge-tag {
+            position: absolute; top: 8px; left: 8px;
+            background: var(--accent-red); color: #fff;
+            padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
         }
 
         .overlay-card {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%;
-            padding: 20px 15px 15px;
-            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 50%, transparent 100%);
-            box-sizing: border-box;
+            padding: 12px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
         }
 
-        .movie-title {
-            font-size: 14px;
-            margin: 0 0 5px 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: #fff;
-            font-weight: 400;
-        }
-
-        .movie-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 11px;
-            color: var(--text-dim);
-        }
-
-        .view-tag {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            color: var(--primary);
-        }
-
-        .badge-tag {
-            position: absolute;
-            top: 12px; left: 12px;
-            background: var(--accent-red);
-            color: #fff;
-            padding: 3px 10px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            z-index: 2;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-
-        footer {
-            padding: 80px 5% 40px;
-            text-align: center;
-            background: #000;
-            color: var(--text-dim);
-        }
+        .movie-title { font-size: 14px; margin: 0 0 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .movie-meta { font-size: 11px; color: var(--text-dim); display: flex; justify-content: space-between; }
 
         #loader {
-            position: fixed;
-            top:0; left:0; width:100%; height:100%;
-            background: var(--bg-dark);
-            display:flex; justify-content:center; align-items:center;
-            z-index: 9999;
-            transition: 0.5s;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 9999;
         }
 
-        @media (max-width: 768px) {
-            .hero { height: 60vh; padding-bottom: 50px; }
-            .nav-links { display: none; }
-            .movie-grid { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 15px; }
+        footer { padding: 50px; text-align: center; opacity: 0.6; font-size: 13px; }
+
+        @media (max-width: 600px) {
+            .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
         }
     </style>
 </head>
 <body>
 
     <div id="loader">
-        <div style="width:60px;height:60px;border:4px solid rgba(0,174,255,0.1);border-top:4px solid var(--primary);border-radius:50%;animation:spin 1s linear infinite"></div>
+        <div style="width:50px;height:50px;border:3px solid #222;border-top:3px solid var(--primary);border-radius:50%;animation:spin 1s linear infinite"></div>
     </div>
     <style>@keyframes spin {100%{transform:rotate(360deg)}}</style>
 
     <nav>
         <a href="index.html" class="logo-text">DUYDODEE HD</a>
         <div class="nav-links">
-            <a href="index.html">หน้าแรก</a>
-            <a href="#vertical-section">ซีรีส์แนวตั้ง</a>
+            <a href="#vertical-section">แนวตั้ง</a>
             <a href="#series-section">พากย์ไทย</a>
         </div>
-        <div style="color:var(--primary)"><i class="fas fa-search"></i></div>
     </nav>
 
     <header class="hero">
-        <div class="hero-content">
-            <h1>พรีเมียมซีรีส์ และภาพยนตร์ HD</h1>
-            <p>คมชัด โหลดไว ดูฟรีทุกที่ทุกเวลา</p>
-            <div class="btn-group">
-                <a href="#vertical-section" class="btn-play"><i class="fas fa-play"></i> เริ่มรับชม</a>
-            </div>
+        <div>
+            <h1>ดูซีรีส์จีนที่ดีที่สุด</h1>
+            <p style="color:var(--primary)">อัปเดตใหม่ทุกวัน คมชัดระดับ Full HD</p>
         </div>
     </header>
 
     <main>
         <section class="content-section" id="vertical-section">
-            <div class="section-header">
-                <h2><i class="fas fa-bolt"></i> ซีรีส์แนวตั้งยอดนิยม</h2>
-            </div>
+            <div class="section-header"><h2><i class="fas fa-mobile-alt"></i> ซีรีส์จีนแนวตั้ง</h2></div>
             <div class="movie-grid" id="grid-vertical"></div>
         </section>
 
         <section class="content-section" id="series-section">
-            <div class="section-header">
-                <h2><i class="fas fa-fire"></i> ซีรีส์จีนพากย์ไทย</h2>
-            </div>
+            <div class="section-header"><h2><i class="fas fa-film"></i> ซีรีส์พากย์ไทย</h2></div>
             <div class="movie-grid" id="grid-series"></div>
         </section>
     </main>
 
     <footer>
-        <img src="logo.png" alt="Logo" style="height: 50px; margin-bottom: 20px; border-radius: 8px;">
-        <p>&copy; 2026 DUYDODEE-HD. All Rights Reserved.</p>
+        <p>&copy; 2026 DUYDODEE-HD | ดูซีรีส์จีนออนไลน์ฟรี</p>
     </footer>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // ข้อมูลเชื่อมต่อโปรเจกต์ใหม่ Classic
         const firebaseConfig = {
             apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
             authDomain: "classic-e8ab7.firebaseapp.com",
             projectId: "classic-e8ab7",
-            storageBucket: "classic-e8ab7.firebasestorage.app",
-            messagingSenderId: "596308927760",
-            appId: "1:596308927760:web:63043fd2786459082cb195",
-            measurementId: "G-RCDSPGQ5LE"
+            appId: "1:596308927760:web:63043fd2786459082cb195"
         };
         
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // ฟังก์ชันสร้าง Card หนัง
         function createMovieCard(id, data) {
             const card = document.createElement('div');
             card.className = 'movie-card';
             card.onclick = () => window.location.href = `watch.html?id=${id}`;
             
-            // ปรับยอดวิวให้ดูง่าย (เช่น 1500 เป็น 1.5K)
             const formatViews = (num) => {
                 if(!num) return '0';
                 return num >= 1000 ? (num/1000).toFixed(1) + 'K' : num;
@@ -321,32 +202,26 @@
                 <div class="overlay-card">
                     <p class="movie-title">${data.title}</p>
                     <div class="movie-meta">
-                        <span class="view-tag"><i class="fas fa-eye"></i> ${formatViews(data.views)}</span>
-                        <span>HD</span>
+                        <span><i class="fas fa-eye"></i> ${formatViews(data.viewCount)}</span>
+                        <span style="color:var(--primary)">ดูเลย</span>
                     </div>
                 </div>
             `;
             return card;
         }
 
-        // โหลดเนื้อหาจาก Firestore
         async function loadContent() {
             try {
-                // ดึงข้อมูลเรียงตามวันที่สร้างล่าสุด (Descending)
+                // ดึงข้อมูลจากคอลเลกชัน movies
                 const snap = await db.collection('movies').orderBy('createdAt', 'desc').get();
                 
                 const gridVertical = document.getElementById('grid-vertical');
                 const gridSeries = document.getElementById('grid-series');
 
-                // ล้างข้อมูลเก่า
-                gridVertical.innerHTML = '';
-                gridSeries.innerHTML = '';
-
                 snap.forEach(doc => {
                     const m = doc.data();
                     const card = createMovieCard(doc.id, m);
                     
-                    // แยกหมวดหมู่ตามข้อมูลในฟิลด์ category
                     if(m.category === 'vertical') {
                         gridVertical.appendChild(card);
                     } else {
@@ -355,14 +230,9 @@
                 });
 
             } catch (err) {
-                console.error("Error loading content:", err);
+                console.error(err);
             } finally {
-                // ปิด Loader เมื่อโหลดเสร็จ
-                const loader = document.getElementById('loader');
-                if(loader) {
-                    loader.style.opacity = '0';
-                    setTimeout(() => loader.style.display = 'none', 500);
-                }
+                document.getElementById('loader').style.display = 'none';
             }
         }
 
