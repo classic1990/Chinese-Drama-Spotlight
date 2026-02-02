@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>DUYDODEE-HD | ดูซีรีส์จีน พากย์ไทย ซีรีส์แนวตั้ง ยอดนิยม 2026</title>
-    <meta name="description" content="ศูนย์รวมซีรีส์จีนพากย์ไทยและซีรีส์แนวตั้งที่ใหญ่ที่สุด อัปเดตตอนใหม่ทุกวัน ดูฟรีผ่านมือถือ คมชัดระดับ HD">
-    <meta name="keywords" content="ดูซีรีส์จีน, ซีรีส์จีนพากย์ไทย, ซีรีส์แนวตั้ง, ซีรีส์สั้น, ดูหนังออนไลน์">
+    <title>DUYDODEE-HD | ดูซีรีส์จีน พากย์ไทย แนวนอน Full HD 2026</title>
+    <meta name="description" content="ศูนย์รวมซีรีส์จีนพากย์ไทยและซีรีส์สั้น อัปเดตตอนใหม่ทุกวัน ดูฟรีผ่านมือถือ คมชัดระดับ HD">
+    <meta name="keywords" content="ดูซีรีส์จีน, ซีรีส์จีนพากย์ไทย, ซีรีส์แนวนอน, ซีรีส์สั้น, ดูหนังออนไลน์">
     <meta name="author" content="DUYDODEE-HD">
     
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://yourdomain.com/"> <meta property="og:title" content="DUYDODEE-HD | ดูซีรีส์จีน พากย์ไทย ยอดนิยม">
+    <meta property="og:url" content="https://yourdomain.com/"> 
+    <meta property="og:title" content="DUYDODEE-HD | ดูซีรีส์จีน พากย์ไทย ยอดนิยม">
     <meta property="og:description" content="อัปเดตซีรีส์จีนใหม่ล่าสุด คมชัดระดับ HD ดูฟรีทุกที่ทุกเวลา">
     <meta property="og:image" content="logo.png">
 
@@ -59,14 +60,15 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: linear-gradient(to bottom, rgba(7, 7, 7, 1), rgba(7, 7, 7, 0));
+            background: rgba(7, 7, 7, 0.8);
             z-index: 1000;
             box-sizing: border-box;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
         .logo-text {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 800;
             background: var(--accent-gradient);
             -webkit-background-clip: text;
@@ -87,23 +89,22 @@
 
         .nav-links a:hover { color: var(--primary); }
 
-        /* Hero Section ปรับใหม่ให้สวยงาม */
+        /* Hero Section */
         .hero {
-            height: 80vh; /* เพิ่มความสูงให้ดูเต็มตา */
+            height: 70vh;
             position: relative;
-            background: url('logo.png') center/cover no-repeat; /* เปลี่ยนเป็น cover */
+            background: url('logo.png') center/cover no-repeat;
             display: flex;
-            align-items: flex-end; /* จัดตัวหนังสือไว้ด้านล่างเล็กน้อย */
-            padding-bottom: 10vh;
+            align-items: flex-end;
+            padding-bottom: 8vh;
             justify-content: center;
         }
 
-        /* เพิ่ม Overlay ซ้อนเลเยอร์ให้รูปดูละมุนและอ่านง่าย */
         .hero::before {
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(7,7,7,0.2) 0%, rgba(7,7,7,0.8) 70%, var(--bg-dark) 100%);
+            background: linear-gradient(to bottom, rgba(7,7,7,0.1) 0%, rgba(7,7,7,0.7) 60%, var(--bg-dark) 100%);
         }
 
         .hero-content {
@@ -115,20 +116,19 @@
         }
 
         .hero h1 { 
-            font-size: clamp(35px, 6vw, 70px); 
+            font-size: clamp(30px, 5vw, 60px); 
             margin: 0; 
             font-weight: 600;
             text-shadow: 0 5px 30px rgba(0,0,0,0.8);
-            line-height: 1.1;
         }
 
         .hero p {
-            font-size: clamp(16px, 2vw, 22px);
-            margin-top: 15px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            font-size: clamp(14px, 2vw, 20px);
+            margin-top: 10px;
+            color: #ddd;
         }
 
-        /* Movie Grid */
+        /* Movie Grid - ปรับให้กว้างขึ้นสำหรับรูปแนวนอน */
         .content-section { padding: 40px 5%; position: relative; z-index: 5; }
         .section-header { 
             margin-bottom: 25px; 
@@ -141,49 +141,77 @@
 
         .movie-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            /* ปรับขนาดขั้นต่ำเป็น 280px เพื่อให้แนวนอนดูสวย */
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 25px;
         }
 
-        /* การ์ดหนังปรับแต่งให้ดูแพง */
+        /* การ์ดหนังฉบับแก้ไขเป็นแนวนอน */
         .movie-card {
             background: var(--card-bg);
             border-radius: 12px;
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.4s ease;
             cursor: pointer;
             border: 1px solid rgba(255,255,255,0.05);
         }
 
         .movie-card:hover { 
-            transform: scale(1.05);
+            transform: translateY(-8px);
             border-color: var(--primary);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
         }
 
-        .poster-box { aspect-ratio: 2/3; overflow: hidden; position: relative; }
-        .poster-box img { width: 100%; height: 100%; object-fit: cover; }
+        /* กำหนดสัดส่วนเป็น 16:9 */
+        .poster-box { 
+            aspect-ratio: 16 / 9; 
+            overflow: hidden; 
+            position: relative; 
+            background: #1a1a1a;
+        }
+        .poster-box img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; /* ตัดส่วนที่เกินออกเพื่อให้เต็มกรอบแนวนอน */
+        }
 
         .badge-tag {
             position: absolute; top: 10px; left: 10px;
             background: var(--accent-red); color: #fff;
-            padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;
+            padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;
             z-index: 2;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
 
         .overlay-card { padding: 15px; background: var(--card-bg); }
-        .movie-title { font-size: 15px; margin: 0 0 10px 0; font-weight: 400; color: #eee; height: 42px; overflow: hidden; }
-        .movie-meta { font-size: 12px; color: var(--text-dim); display: flex; justify-content: space-between; }
+        .movie-title { 
+            font-size: 15px; 
+            margin: 0 0 10px 0; 
+            font-weight: 400; 
+            color: #eee; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+        }
+        .movie-meta { font-size: 12px; color: var(--text-dim); display: flex; justify-content: space-between; align-items: center;}
 
+        /* Loader */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 9999;
         }
 
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Responsive */
         @media (max-width: 600px) {
-            .hero { height: 50vh; }
-            .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            .hero { height: 45vh; }
+            .movie-grid { 
+                /* มือถือแสดงแถวละ 1 หรือ 2 รูปตามขนาดหน้าจอ */
+                grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); 
+                gap: 15px; 
+            }
+            nav { padding: 10px 5%; }
+            .logo-text { font-size: 20px; }
         }
     </style>
 </head>
@@ -192,12 +220,11 @@
     <div id="loader">
         <div style="width:40px;height:40px;border:3px solid #1a1a1a;border-top:3px solid var(--primary);border-radius:50%;animation:spin 1s linear infinite"></div>
     </div>
-    <style>@keyframes spin {100%{transform:rotate(360deg)}}</style>
 
     <nav>
         <a href="index.html" class="logo-text">DUYDODEE HD</a>
         <div class="nav-links">
-            <a href="#vertical-section">แนวตั้ง</a>
+            <a href="#vertical-section">ซีรีส์ยอดนิยม</a>
             <a href="#series-section">พากย์ไทย</a>
             <a href="admin.html" style="opacity: 0.3;"><i class="fas fa-cog"></i></a>
         </div>
@@ -213,7 +240,7 @@
     <main>
         <section class="content-section" id="vertical-section">
             <div class="section-header">
-                <h2><i class="fas fa-mobile-alt" style="color: var(--primary);"></i> ซีรีส์จีนแนวตั้ง</h2>
+                <h2><i class="fas fa-star" style="color: var(--primary);"></i> ซีรีส์แนะนำ</h2>
                 <span style="color: var(--text-dim); font-size: 13px;">ยอดนิยม</span>
             </div>
             <div class="movie-grid" id="grid-vertical"></div>
@@ -267,8 +294,8 @@
                 <div class="overlay-card">
                     <p class="movie-title">${data.title}</p>
                     <div class="movie-meta">
-                        <span><i class="far fa-eye"></i> ${formatViews(data.viewCount)}</span>
-                        <span style="color:var(--primary)">ดูเลย <i class="fas fa-play-circle"></i></span>
+                        <span><i class="far fa-eye"></i> ${formatViews(data.viewCount)} วิว</span>
+                        <span style="color:var(--primary); font-weight:600;">เล่นเลย <i class="fas fa-play-circle"></i></span>
                     </div>
                 </div>
             `;
@@ -281,9 +308,15 @@
                 const gridVertical = document.getElementById('grid-vertical');
                 const gridSeries = document.getElementById('grid-series');
 
+                // ล้างข้อมูลเก่าก่อนโหลด (ถ้ามี)
+                gridVertical.innerHTML = '';
+                gridSeries.innerHTML = '';
+
                 snap.forEach(doc => {
                     const m = doc.data();
                     const card = createMovieCard(doc.id, m);
+                    
+                    // จัดกลุ่มตามหมวดหมู่
                     if(m.category === 'vertical') {
                         gridVertical.appendChild(card);
                     } else {
@@ -291,7 +324,7 @@
                     }
                 });
             } catch (err) {
-                console.error(err);
+                console.error("Error loading movies:", err);
             } finally {
                 document.getElementById('loader').style.display = 'none';
             }
