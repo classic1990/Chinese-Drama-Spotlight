@@ -137,7 +137,6 @@
             border-color: rgba(0,229,255,0.3);
         }
 
-        /* ปรับเป็นแนวตั้งแบบหนังโรง (2:3) หรือเปลี่ยนเป็น 16/9 ตามชอบ */
         .poster-box {
             aspect-ratio: 2 / 3;
             overflow: hidden;
@@ -207,11 +206,10 @@
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- Responsive --- */
         @media (max-width: 768px) {
             .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
             .hero { height: 50vh; }
-            .nav-links { display: none; } /* ซ่อนเมนูในมือถือเพื่อความคลีน */
+            .nav-links { display: none; }
         }
     </style>
 </head>
@@ -270,7 +268,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // ใช้ Config เดิมของคุณ
         const firebaseConfig = {
             apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
             authDomain: "classic-e8ab7.firebaseapp.com",
@@ -306,16 +303,22 @@
 
         async function loadContent() {
             try {
-                const snap = await db.collection('movies').orderBy('createdAt', 'desc').get();
+                // แก้จาก movies เป็น artifacts ให้ตรงกับ Firebase
+                const snap = await db.collection('artifacts').orderBy('createdAt', 'desc').get();
                 const gridVertical = document.getElementById('grid-vertical');
                 const gridSeries = document.getElementById('grid-series');
 
                 gridVertical.innerHTML = '';
                 gridSeries.innerHTML = '';
 
+                if (snap.empty) {
+                    console.log("No documents found in 'artifacts' collection.");
+                }
+
                 snap.forEach(doc => {
                     const m = doc.data();
                     const card = createMovieCard(doc.id, m);
+                    // ตรวจสอบเงื่อนไขหมวดหมู่
                     if(m.category === 'vertical') {
                         gridVertical.appendChild(card);
                     } else {
@@ -323,9 +326,8 @@
                     }
                 });
             } catch (err) {
-                console.error("Error:", err);
+                console.error("Error fetching documents:", err);
             } finally {
-                // ค่อยๆ จางหายไปแทนการปิดทันที
                 const loader = document.getElementById('loader');
                 loader.style.transition = '0.5s';
                 loader.style.opacity = '0';
