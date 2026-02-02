@@ -24,8 +24,8 @@
             background: rgba(5, 5, 7, 0.9); backdrop-filter: blur(15px); z-index: 1000;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
-        .logo { font-size: 24px; font-weight: 800; color: var(--primary); text-decoration: none; text-transform: uppercase; }
-        .nav-back { color: var(--text-muted); text-decoration: none; font-size: 14px; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .logo { font-size: 24px; font-weight: 800; color: var(--primary); cursor: pointer; text-decoration: none; text-transform: uppercase; }
+        .nav-back { color: var(--text-muted); cursor: pointer; text-decoration: none; font-size: 14px; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
         .nav-back:hover { color: var(--primary); transform: translateX(-5px); }
 
         /* Layout */
@@ -49,14 +49,15 @@
         .info-card { margin-top: 30px; background: var(--bg-surf); padding: 30px; border-radius: 12px; }
         .m-title { font-size: clamp(20px, 4vw, 28px); margin: 0; font-weight: 700; }
         .meta { display: flex; flex-wrap: wrap; gap: 20px; font-size: 13px; color: var(--text-muted); margin: 20px 0; align-items: center; }
-        .badge { background: #ff0055; color: #fff; padding: 2px 10px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
-        .desc { font-size: 14px; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; }
+        .badge { background: #ff0055; color: #fff; padding: 2px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+        .desc { font-size: 14px; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; white-space: pre-line; }
 
         /* Sidebar Suggestions */
         .side-title { font-size: 18px; margin-bottom: 20px; border-left: 4px solid var(--primary); padding-left: 15px; }
         .suggest-card { display: flex; gap: 15px; background: var(--bg-surf); padding: 10px; border-radius: 10px; cursor: pointer; transition: 0.3s; margin-bottom: 15px; border: 1px solid transparent; }
         .suggest-card:hover { transform: translateX(5px); background: #1a1a1e; border-color: rgba(0, 242, 255, 0.2); }
         .suggest-card img { width: 75px; aspect-ratio: 2/3; object-fit: cover; border-radius: 6px; }
+        .suggest-card img.vertical { aspect-ratio: 9/16; width: 65px; }
         .suggest-info p { margin: 0; font-size: 14px; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .suggest-info span { font-size: 11px; color: var(--primary); display: block; margin-top: 5px; }
 
@@ -79,8 +80,8 @@
 </div>
 
 <nav>
-    <a href="index.html" class="logo">DUY<span style="color:#fff">DODEE</span></a>
-    <a href="index.html" class="nav-back"><i class="fas fa-chevron-left"></i> กลับหน้าหลัก</a>
+    <div class="logo" onclick="goHome()">DUY<span style="color:#fff">DODEE</span></div>
+    <div class="nav-back" onclick="goHome()"><i class="fas fa-chevron-left"></i> กลับหน้าหลัก</div>
 </nav>
 
 <div class="player-layout">
@@ -97,7 +98,7 @@
             <div class="meta">
                 <span class="badge" id="m-badge">HD</span>
                 <span><i class="far fa-eye" style="color:var(--primary)"></i> <span id="m-views">0</span> วิว</span>
-                <span><i class="far fa-calendar-alt"></i> อัปเดตล่าสุด</span>
+                <span><i class="fas fa-star" style="color:#ffd700"></i> <span id="m-rating">8.5</span></span>
             </div>
             <div class="desc" id="m-desc">...</div>
         </div>
@@ -109,11 +110,12 @@
     </aside>
 </div>
 
-<!-- Firebase Logic -->
+<!-- Firebase Logic (คงเดิมตามที่คุณกำหนด) -->
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
 <script>
+    // การตั้งค่า Firebase เดิมของคุณ
     const firebaseConfig = {
         apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
         authDomain: "classic-e8ab7.firebaseapp.com",
@@ -122,6 +124,18 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+
+    // ระบบจัดการ URL เพื่อป้องกัน Error ใน Sandbox
+    function goHome() {
+        // เปลี่ยนกลับไปยังหน้าหลัก index.html
+        window.location.href = 'index.html';
+    }
+
+    function watchMovie(id) {
+        // เปลี่ยนไปดูหนังเรื่องใหม่
+        window.location.href = `watch.html?id=${id}`;
+    }
+
     const movieId = new URLSearchParams(window.location.search).get('id');
 
     function getEmbed(u) {
@@ -142,8 +156,7 @@
     async function init() {
         if(!movieId) { 
             const loader = document.getElementById('loader');
-            loader.innerHTML = '<p style="color:red">ไม่พบรหัสวิดีโอ กำลังกลับหน้าหลัก...</p>';
-            setTimeout(() => location.href='index.html', 2000); 
+            loader.innerHTML = '<p style="color:var(--primary); font-size: 14px;">กรุณาเลือกวิดีโอจากหน้าหลัก</p>';
             return; 
         }
         
@@ -152,8 +165,7 @@
             const doc = await docRef.get();
             
             if(!doc.exists) {
-                alert("ไม่พบข้อมูลเรื่องนี้");
-                location.href='index.html';
+                document.getElementById('loader').innerHTML = '<p style="color:red">ไม่พบข้อมูลเรื่องนี้</p>';
                 return;
             }
 
@@ -163,16 +175,20 @@
             document.getElementById('m-title').innerText = d.title;
             document.getElementById('m-badge').innerText = d.badge || 'HD';
             document.getElementById('m-views').innerText = (d.viewCount || 0).toLocaleString();
+            document.getElementById('m-rating').innerText = d.rating || '8.5';
             document.getElementById('m-desc').innerText = d.desc || "ไม่มีข้อมูลเรื่องย่อ";
 
             const pBox = document.getElementById('player-box');
             const eList = document.getElementById('ep-list');
             
-            // รองรับทั้งโครงสร้างใหม่ (links: []) และโครงสร้างเก่า (link: string)
+            // ใช้โครงสร้างข้อมูลเดิม (links หรือ link)
             let links = Array.isArray(d.links) ? d.links : (d.link ? [d.link] : []);
 
             if(links.length === 0) {
-                pBox.innerHTML = `<div style="padding: 50px; text-align:center; color:gray;">ขออภัย ไม่พบลิงก์วิดีโอสำหรับเรื่องนี้</div>`;
+                pBox.innerHTML = `<div style="padding: 100px 20px; text-align:center; color:gray;">
+                    <i class="fas fa-exclamation-circle" style="font-size:40px; margin-bottom:15px;"></i>
+                    <p>ขออภัย ไม่พบลิงก์วิดีโอสำหรับเรื่องนี้</p>
+                </div>`;
             } else {
                 links.forEach((url, i) => {
                     const b = document.createElement('button');
@@ -188,9 +204,9 @@
                 });
             }
 
-            // เพิ่มยอดวิวแบบ Real-time
+            // อัปเดตยอดวิว
             docRef.update({ viewCount: firebase.firestore.FieldValue.increment(1) });
-            fetchSuggest();
+            fetchSuggest(d.category);
             
         } catch(e) { 
             console.error("Error loading movie:", e); 
@@ -201,26 +217,48 @@
         }
     }
 
-    async function fetchSuggest() {
+    async function fetchSuggest(currentCategory) {
         const box = document.getElementById('suggest-box');
         try {
-            const snap = await db.collection('artifacts').limit(8).get();
+            const snap = await db.collection('artifacts')
+                .where('category', '==', currentCategory)
+                .limit(6)
+                .get();
+            
+            let count = 0;
             snap.forEach(doc => {
-                if(doc.id === movieId) return;
+                if(doc.id === movieId || count >= 5) return;
                 const m = doc.data();
-                const c = document.createElement('div');
-                c.className = 'suggest-card';
-                c.onclick = () => location.href = `watch.html?id=${doc.id}`;
-                c.innerHTML = `
-                    <img src="${m.poster}" onerror="this.src='https://via.placeholder.com/150x225?text=No+Image'">
-                    <div class="suggest-info">
-                        <p>${m.title}</p>
-                        <span><i class="fas fa-play-circle"></i> รับชมเลย</span>
-                    </div>
-                `;
-                box.appendChild(c);
+                addSuggestCard(box, doc.id, m);
+                count++;
             });
+
+            if(count < 5) {
+                const extraSnap = await db.collection('artifacts').limit(8).get();
+                extraSnap.forEach(doc => {
+                    if(doc.id === movieId || count >= 6) return;
+                    if(!box.querySelector(`[data-id="${doc.id}"]`)) {
+                        addSuggestCard(box, doc.id, doc.data());
+                        count++;
+                    }
+                });
+            }
         } catch(e) { console.error("Error suggestions:", e); }
+    }
+
+    function addSuggestCard(container, id, m) {
+        const c = document.createElement('div');
+        c.className = 'suggest-card';
+        c.setAttribute('data-id', id);
+        c.onclick = () => watchMovie(id);
+        c.innerHTML = `
+            <img src="${m.poster}" class="${m.category === 'vertical' ? 'vertical' : ''}" onerror="this.src='https://via.placeholder.com/150x225?text=No+Image'">
+            <div class="suggest-info">
+                <p>${m.title}</p>
+                <span><i class="fas fa-play-circle"></i> ${m.category === 'vertical' ? 'ซีรีส์สั้น' : 'พากย์ไทย'}</span>
+            </div>
+        `;
+        container.appendChild(c);
     }
 
     window.onload = init;
