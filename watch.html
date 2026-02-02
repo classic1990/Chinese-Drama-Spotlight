@@ -5,18 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>กำลังรับชม | DUYDODEE-HD</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
             --primary: #00aeff;
+            --primary-glow: rgba(0, 174, 255, 0.4);
             --accent-red: #ff3c00;
-            --bg-dark: #070707;
-            --card-bg: #121212;
-            --text-main: #ffffff;
-            --text-dim: #a0a0a0;
-            --accent-gradient: linear-gradient(45deg, #00aeff, #ff3c00);
+            --bg-dark: #0a0a0b;
+            --card-bg: #161618;
+            --card-hover: #1c1c1e;
+            --text-main: #f5f5f7;
+            --text-dim: #8e8e93;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent-gradient: linear-gradient(135deg, #00aeff, #0076ff);
         }
 
         body {
@@ -25,46 +29,78 @@
             background-color: var(--bg-dark);
             color: var(--text-main);
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
+
+        /* Scrollbar Customization */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
         /* Navigation */
         nav {
             position: fixed;
             top: 0; width: 100%;
-            padding: 15px 5%;
+            padding: 0 5%;
+            height: 70px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(7, 7, 7, 0.95);
+            background: rgba(10, 10, 11, 0.8);
             z-index: 1000;
             box-sizing: border-box;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
         }
 
         .logo-text {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
             background: var(--accent-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-decoration: none;
-            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        /* Player Container */
+        .nav-link {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--primary);
+        }
+
+        /* Player Layout */
         .player-layout {
-            margin-top: 80px;
+            margin-top: 90px;
             padding: 20px 5%;
+            max-width: 1600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .main-player-section {
             width: 100%;
             background: #000;
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 1px solid var(--glass-border);
+            position: relative;
         }
 
         .video-container {
@@ -84,168 +120,252 @@
         /* Episode Selector */
         .ep-list {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
-            margin-top: 20px;
-            padding: 10px 0;
+            margin-top: 25px;
+            padding: 5px 0;
         }
 
         .ep-btn {
-            background: #222;
-            color: #fff;
-            border: 1px solid #333;
-            padding: 8px 16px;
-            border-radius: 6px;
+            background: var(--card-bg);
+            color: var(--text-dim);
+            border: 1px solid var(--glass-border);
+            padding: 10px 20px;
+            border-radius: 10px;
             cursor: pointer;
             font-family: 'Prompt';
-            transition: 0.3s;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 14px;
         }
 
-        .ep-btn:hover { border-color: var(--primary); }
+        .ep-btn:hover {
+            border-color: var(--primary);
+            color: var(--text-main);
+            transform: translateY(-2px);
+            background: var(--card-hover);
+        }
+
         .ep-btn.active {
             background: var(--primary);
             color: #000;
             border-color: var(--primary);
             font-weight: 600;
+            box-shadow: 0 0 20px var(--primary-glow);
         }
 
         /* Info Section */
-        .movie-header { margin-top: 25px; }
+        .movie-header { 
+            margin-top: 30px; 
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
         .movie-header h1 {
-            font-size: clamp(22px, 4vw, 30px);
-            margin-bottom: 10px;
-            color: var(--primary);
+            font-size: clamp(24px, 5vw, 36px);
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-main);
+            line-height: 1.2;
         }
 
         .meta-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            align-items: center;
+            gap: 20px;
             color: var(--text-dim);
             font-size: 14px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .badge {
             background: var(--accent-red);
             color: white;
-            padding: 2px 10px;
-            border-radius: 4px;
+            padding: 4px 12px;
+            border-radius: 6px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
+            text-transform: uppercase;
         }
 
         .description {
-            background: rgba(255,255,255,0.03);
-            padding: 20px;
-            border-radius: 10px;
-            color: #ccc;
-            line-height: 1.7;
-            border-left: 3px solid var(--primary);
-            min-height: 50px;
+            background: var(--glass);
+            padding: 25px;
+            border-radius: 16px;
+            color: #c1c1c6;
+            line-height: 1.8;
+            border: 1px solid var(--glass-border);
+            font-weight: 300;
+            font-size: 15px;
         }
 
-        /* Suggestion Grid */
+        /* Suggestion Section */
         .suggest-section { margin-top: 40px; }
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .grid-suggest {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
         }
 
         .suggest-card {
             background: var(--card-bg);
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
             cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            flex-direction: column;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border: 1px solid var(--glass-border);
+            position: relative;
         }
 
         .suggest-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,174,255,0.3);
+            transform: scale(1.05);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 1;
+        }
+
+        .suggest-card .img-wrapper {
+            position: relative;
+            aspect-ratio: 2/3;
+            overflow: hidden;
         }
 
         .suggest-card img {
             width: 100%;
-            aspect-ratio: 2/3;
+            height: 100%;
             object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .suggest-card:hover img {
+            transform: scale(1.1);
         }
 
         .suggest-card p {
-            padding: 10px;
-            font-size: 13px;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 500;
             margin: 0;
+            color: var(--text-main);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
+        /* Loader */
         #loader {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-dark);
-            display: flex; justify-content: center; align-items: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
             z-index: 2000;
+            gap: 20px;
         }
 
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.05);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Responsive Desktop */
         @media (min-width: 1024px) {
             .player-layout {
                 display: grid;
-                grid-template-columns: 1fr 350px;
-                gap: 30px;
+                grid-template-columns: 1fr 380px;
+                gap: 40px;
+                align-items: start;
             }
             .suggest-section { margin-top: 0; }
             .grid-suggest { grid-template-columns: 1fr; }
-            .suggest-card { flex-direction: row; height: 100px; }
-            .suggest-card img { width: 70px; aspect-ratio: auto; }
-            .suggest-card p { flex-grow: 1; align-self: center; white-space: normal; }
+            
+            .suggest-card { 
+                flex-direction: row; 
+                display: flex; 
+                height: 110px; 
+            }
+            .suggest-card .img-wrapper { 
+                width: 80px; 
+                min-width: 80px;
+                aspect-ratio: auto; 
+            }
+            .suggest-card p { 
+                white-space: normal; 
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                padding: 15px;
+                align-self: center;
+            }
         }
     </style>
 </head>
 <body>
 
     <div id="loader">
-        <div style="width:40px;height:40px;border:4px solid #222;border-top:4px solid var(--primary);border-radius:50%;animation:spin 1s linear infinite"></div>
+        <div class="spinner"></div>
+        <div style="font-size: 14px; letter-spacing: 2px; color: var(--primary);">DUYDODEE</div>
     </div>
-    <style>@keyframes spin{100%{transform:rotate(360deg)}}</style>
 
     <nav>
         <a href="index.html" class="logo-text">DUYDODEE HD</a>
-        <a href="index.html" style="color:white; text-decoration:none; font-size:14px;"><i class="fas fa-home"></i> หน้าหลัก</a>
+        <a href="index.html" class="nav-link">
+            <i class="fas fa-home"></i> หน้าหลัก
+        </a>
     </nav>
 
     <div class="player-layout">
         <main>
+            <!-- Video Player -->
             <div class="main-player-section">
                 <div class="video-container" id="video-box">
-                    </div>
+                    <!-- Iframe will be injected here -->
+                </div>
             </div>
 
+            <!-- Episodes -->
             <div class="ep-list" id="ep-list-box"></div>
 
+            <!-- Info -->
             <div class="movie-header">
-                <h1 id="m-title">กำลังโหลด...</h1>
+                <h1 id="m-title">กำลังโหลดข้อมูล...</h1>
                 <div class="meta-tags">
                     <span class="badge" id="m-badge">HD</span>
-                    <span><i class="far fa-eye"></i> <span id="m-views">0</span> วิว</span>
-                    <span><i class="far fa-calendar"></i> <span id="m-date">-</span></span>
+                    <span><i class="fas fa-fire-alt" style="color: var(--accent-red);"></i> <span id="m-views">0</span> วิว</span>
+                    <span><i class="far fa-calendar-alt"></i> <span id="m-date">-</span></span>
                 </div>
                 <div class="description" id="m-desc">
-                    กำลังดึงข้อมูลเรื่องย่อ...
+                    กำลังดึงข้อมูลเรื่องย่อ โปรดรอสักครู่...
                 </div>
             </div>
         </main>
 
+        <!-- Sidebar Suggestions -->
         <aside class="suggest-section">
-            <h3 style="font-size: 18px; margin-bottom: 20px;"><i class="fas fa-play-circle" style="color: var(--primary);"></i> เรื่องที่คุณอาจสนใจ</h3>
+            <div class="section-title">
+                <i class="fas fa-compact-disc fa-spin" style="color: var(--primary);"></i> 
+                <span>เรื่องที่คุณอาจสนใจ</span>
+            </div>
             <div class="grid-suggest" id="suggest-box"></div>
         </aside>
     </div>
 
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
@@ -263,7 +383,6 @@
         const urlParams = new URLSearchParams(window.location.search);
         const movieId = urlParams.get('id');
 
-        // ฟังก์ชันแปลงลิงก์ YouTube เป็น Embed อัตโนมัติ
         function getEmbedUrl(url) {
             if (!url) return "";
             let videoId = "";
@@ -277,14 +396,13 @@
                     return url;
                 }
             } catch (e) { console.error("URL Error", e); }
-            return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0` : url;
+            return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1` : url;
         }
 
         async function loadContent() {
             if(!movieId) { window.location.href = 'index.html'; return; }
 
             try {
-                // อ้างอิงถึง Collection 'movies' ตามโค้ดล่าสุดของคุณ
                 const docRef = db.collection('movies').doc(movieId);
                 const doc = await docRef.get();
                 
@@ -301,14 +419,14 @@
                 
                 if(data.createdAt) {
                     const date = new Date(data.createdAt.seconds * 1000);
-                    document.getElementById('m-date').innerText = date.toLocaleDateString('th-TH');
+                    document.getElementById('m-date').innerText = date.toLocaleDateString('th-TH', {
+                        year: 'numeric', month: 'long', day: 'numeric'
+                    });
                 }
 
-                // ระบบจัดการหลายตอน (Links Array)
                 const videoBox = document.getElementById('video-box');
                 const epListBox = document.getElementById('ep-list-box');
                 
-                // รวมลิงก์จากทั้งระบบเก่า (link) และระบบใหม่ (links array)
                 let allLinks = [];
                 if (data.links && Array.isArray(data.links)) {
                     allLinks = data.links;
@@ -320,21 +438,23 @@
                     allLinks.forEach((url, index) => {
                         const btn = document.createElement('button');
                         btn.className = 'ep-btn';
-                        btn.innerText = allLinks.length > 1 ? `ตอนที่ ${index + 1}` : `เริ่มเล่น`;
+                        btn.innerText = allLinks.length > 1 ? `EP ${index + 1}` : `Play Video`;
                         
                         btn.onclick = () => {
                             videoBox.innerHTML = `<iframe src="${getEmbedUrl(url)}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
                             document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
                             btn.classList.add('active');
+                            // Smooth scroll to player on mobile
+                            if(window.innerWidth < 768) {
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }
                         };
                         epListBox.appendChild(btn);
 
-                        // เล่นตอนแรกทันที
                         if(index === 0) btn.click();
                     });
                 }
 
-                // อัปเดตยอดวิว
                 docRef.update({ viewCount: firebase.firestore.FieldValue.increment(1) })
                       .catch(e => console.log("Update view count failed"));
 
@@ -343,7 +463,12 @@
             } catch (err) {
                 console.error("Error:", err);
             } finally {
-                document.getElementById('loader').style.display = 'none';
+                setTimeout(() => {
+                    document.getElementById('loader').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('loader').style.display = 'none';
+                    }, 500);
+                }, 800);
             }
         }
 
@@ -352,7 +477,7 @@
             try {
                 const snap = await db.collection('movies')
                                    .where('category', '==', cat)
-                                   .limit(7)
+                                   .limit(8)
                                    .get();
                 
                 snap.forEach(doc => {
@@ -362,7 +487,9 @@
                     card.className = 'suggest-card';
                     card.onclick = () => window.location.href = `watch.html?id=${doc.id}`;
                     card.innerHTML = `
-                        <img src="${m.poster}" onerror="this.src='logo.png'">
+                        <div class="img-wrapper">
+                            <img src="${m.poster}" onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'">
+                        </div>
                         <p>${m.title}</p>
                     `;
                     box.appendChild(card);
