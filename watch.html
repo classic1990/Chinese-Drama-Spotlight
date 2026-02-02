@@ -197,8 +197,7 @@
         <main>
             <div class="main-player-section">
                 <div class="video-container" id="video-box">
-                    <!-- พื้นที่แสดงวิดีโอ -->
-                </div>
+                    </div>
             </div>
 
             <div class="movie-header">
@@ -224,13 +223,15 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <script>
+        // อัปเดตข้อมูลเป็นโปรเจกต์ใหม่ classic-e8ab7 (Classic)
         const firebaseConfig = {
-            apiKey: "AIzaSyAcCn0NGbakHmLEa_G47K8OepGaRqTV02Q",
-            authDomain: "duydodeesport.firebaseapp.com",
-            projectId: "duydodeesport",
-            storageBucket: "duydodeesport.appspot.com",
-            messagingSenderId: "435929814225",
-            appId: "1:435929814225:web:fcb01803d9e5b77340e1f0"
+            apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
+            authDomain: "classic-e8ab7.firebaseapp.com",
+            projectId: "classic-e8ab7",
+            storageBucket: "classic-e8ab7.firebasestorage.app",
+            messagingSenderId: "596308927760",
+            appId: "1:596308927760:web:63043fd2786459082cb195",
+            measurementId: "G-RCDSPGQ5LE"
         };
         
         firebase.initializeApp(firebaseConfig);
@@ -246,7 +247,7 @@
             }
 
             try {
-                // ดึงข้อมูลหนัง
+                // ดึงข้อมูลหนังจากคอลเลกชัน movies
                 const doc = await db.collection('movies').doc(movieId).get();
                 
                 if(!doc.exists) {
@@ -258,7 +259,7 @@
 
                 const data = doc.data();
                 
-                // อัปเดต UI
+                // อัปเดต UI ด้วยข้อมูลใหม่
                 document.getElementById('m-title').innerText = data.title || "ไม่มีชื่อเรื่อง";
                 document.getElementById('m-badge').innerText = data.badge || 'HD';
                 document.getElementById('m-views').innerText = (data.views || 0).toLocaleString();
@@ -271,8 +272,8 @@
                     document.getElementById('m-date').innerText = new Date().toLocaleDateString('th-TH');
                 }
 
-                // จัดการวิดีโอ
-                const videoUrl = data.videoUrl || data.url;
+                // จัดการการแสดงผลวิดีโอ
+                const videoUrl = data.videoUrl;
                 const videoBox = document.getElementById('video-box');
                 
                 if(videoUrl && videoUrl.trim() !== "") {
@@ -286,13 +287,12 @@
                     videoBox.innerHTML = `<div style="padding:50px; text-align:center; color:#ff4444;">ขออภัย ลิงก์วิดีโอไม่ถูกต้องหรือยังไม่ถูกอัปโหลด</div>`;
                 }
 
-                // อัปเดตยอดวิว (Increment views)
-                // หมายเหตุ: ต้องตรวจสอบ Firestore Rules ว่าอนุญาตให้ update ฟิลด์ views หรือไม่
+                // อัปเดตยอดวิว
                 db.collection('movies').doc(movieId).update({
                     views: firebase.firestore.FieldValue.increment(1)
-                }).catch(e => console.log("View count update skipped due to permissions"));
+                }).catch(e => console.log("View count update skipped"));
 
-                // โหลดหนังแนะนำ
+                // โหลดหนังแนะนำในหมวดหมู่เดียวกัน
                 fetchSuggest(data.category);
 
             } catch (err) {
@@ -306,17 +306,22 @@
         async function fetchSuggest(cat) {
             const box = document.getElementById('suggest-box');
             try {
-                const snap = await db.collection('movies').where('category', '==', cat || 'movie').limit(10).get();
+                // ดึงหนัง 10 เรื่องล่าสุดในหมวดหมู่เดียวกันมาแนะนำ
+                const snap = await db.collection('movies')
+                                   .where('category', '==', cat || 'vertical')
+                                   .limit(10)
+                                   .get();
+                
                 if(snap.empty) return;
 
                 snap.forEach(doc => {
-                    if(doc.id === movieId) return;
+                    if(doc.id === movieId) return; // ไม่แสดงเรื่องที่กำลังดูอยู่
                     const m = doc.data();
                     const card = document.createElement('div');
                     card.className = 'suggest-card';
                     card.onclick = () => window.location.href = `watch.html?id=${doc.id}`;
                     card.innerHTML = `
-                        <img src="${m.poster || 'logo.png'}" onerror="this.src='https://via.placeholder.com/200x300?text=No+Poster'">
+                        <img src="${m.poster || 'logo.png'}" onerror="this.src='logo.png'">
                         <p>${m.title}</p>
                     `;
                     box.appendChild(card);
