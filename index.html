@@ -8,7 +8,8 @@
     <meta name="description" content="ศูนย์รวมซีรีส์จีนพากย์ไทยและซีรีส์สั้นแนวตั้งยอดนิยม 2026 อัปเดตตอนใหม่ทุกวัน ดูฟรีคมชัดระดับ HD ไม่มีโฆษณาคั่น สนุกได้ทุกที่ที่ DUYDODEE-HD">
     <meta property="og:title" content="DUYDODEE-HD | ดูซีรีส์จีนฟรี">
     <meta property="og:description" content="ระบบสตรีมมิ่งซีรีส์จีนที่ดีที่สุด อัปเดตไว ใช้งานง่าย">
-    <meta property="og:image" content="duycode.jpg"> <meta property="og:type" content="website">
+    <meta property="og:image" content="duycode.jpg"> 
+    <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="duycode.jpg">
 
@@ -77,28 +78,37 @@
 
         .nav-links a:hover { opacity: 1; color: var(--primary); }
 
-        /* --- Hero Section: เปลี่ยนรูปพื้นหลังที่นี่ --- */
+        /* --- Hero Section: ปรับปรุงสัดส่วนใหม่ --- */
         .hero {
-            height: 75vh;
-            background: linear-gradient(to bottom, rgba(10,10,12,0.3) 0%, var(--bg-dark) 100%), 
+            height: 70vh;
+            min-height: 500px;
+            background: linear-gradient(to bottom, rgba(10,10,12,0.2) 0%, var(--bg-dark) 95%), 
                         url('duycode.jpg') center/cover no-repeat;
             display: flex;
-            align-items: flex-end;
+            align-items: flex-end; /* จัดข้อความไว้ด้านล่างรูป */
             justify-content: center;
             text-align: center;
-            padding-bottom: 50px;
+            padding-bottom: 80px; /* เว้นระยะจากขอบล่าง */
         }
 
         .hero-content {
-            max-width: 800px;
+            max-width: 850px;
             padding: 0 20px;
+            z-index: 5;
         }
 
         .hero-content h1 {
-            font-size: clamp(30px, 6vw, 60px);
+            font-size: clamp(32px, 7vw, 65px);
             font-weight: 800;
             margin-bottom: 10px;
-            text-shadow: 0 5px 20px rgba(0,0,0,0.8);
+            text-shadow: 0 5px 30px rgba(0,0,0,0.9), 0 0 20px rgba(0,229,255,0.3);
+            line-height: 1.1;
+        }
+
+        .hero-content p {
+            color: var(--text-dim);
+            font-size: clamp(14px, 2vw, 18px);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
         }
 
         /* --- Content Layout --- */
@@ -192,7 +202,7 @@
 
         @media (max-width: 768px) {
             .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-            .hero { height: 50vh; }
+            .hero { height: 55vh; padding-bottom: 40px; }
             .nav-links { display: none; }
         }
     </style>
@@ -216,7 +226,7 @@
     <header class="hero">
         <div class="hero-content">
             <h1><span style="color:var(--primary)">CHINESE</span> STREAMING</h1>
-            <p style="color: var(--text-dim);">อัปเดตซีรีส์สั้นแนวตั้งและพากย์ไทยยอดนิยม คมชัดระดับ 4K ฟรี 100%</p>
+            <p>อัปเดตซีรีส์สั้นแนวตั้งและพากย์ไทยยอดนิยม คมชัดระดับ 4K ฟรี 100%</p>
         </div>
     </header>
 
