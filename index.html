@@ -5,31 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- SEO & Google Search -->
-    <title>DUYDODEE-HD | ดูซีรีส์จีน พากย์ไทย ซีรีส์แนวนอนระดับพรีเมียม</title>
-    <meta name="description" content="แหล่งรวมซีรีส์จีนพากย์ไทยยอดนิยม ซีรีส์ยอดฮิต และภาพยนตร์แนะนำ ดูฟรี คมชัดระดับ HD ที่ DUYDODEE-HD">
-    <meta name="keywords" content="ดูซีรีส์จีน, ซีรีส์พากย์ไทย, ซีรีส์ออนไลน์, ดูหนังออนไลน์, DUYDODEE">
+    <title>DUYDODEE-HD | ดูซีรีส์จีน พากย์ไทย คุณภาพพรีเมียม</title>
+    <meta name="description" content="แหล่งรวมซีรีส์จีนพากย์ไทยยอดนิยม ดูฟรี คมชัดระดับ HD ที่ DUYDODEE-HD">
     <meta name="author" content="DUYDODEE-HD">
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://classic1990.github.io/Chinese-Drama-Spotlight/">
-    <meta property="og:title" content="DUYDODEE-HD | ดูซีรีส์จีน พากย์ไทย ยอดนิยม">
-    <meta property="og:description" content="ดูซีรีส์จีนพากย์ไทย คมชัดระดับ HD โหลดไว ดูลื่น">
-    <meta property="og:image" content="logo.png">
-
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
         :root {
-            --primary: #00aeff;
-            --accent-red: #ff3c00;
-            --bg-dark: #070707;
-            --card-bg: #1a1a1a;
+            /* ปรับโทนสีตามโลโก้ใหม่ (น้ำเงิน-ส้ม) */
+            --primary-blue: #0076ff;
+            --primary-orange: #ff4e00;
+            --bg-dark: #050505;
+            --card-bg: #111111;
             --text-main: #ffffff;
-            --text-dim: #a0a0a0;
-            --accent-gradient: linear-gradient(45deg, #00aeff, #ff3c00);
-            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --text-dim: #b0b0b0;
+            --accent-gradient: linear-gradient(90deg, #0076ff, #ff4e00);
+            --transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
         body {
@@ -44,26 +37,21 @@
         nav {
             position: fixed;
             top: 0; width: 100%;
-            padding: 15px 5%;
+            padding: 10px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.95), transparent);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
             z-index: 1000;
             box-sizing: border-box;
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .logo-text {
-            font-size: 24px;
-            font-weight: 800;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .nav-logo img {
+            height: 45px;
+            object-fit: contain;
+            border-radius: 4px;
         }
 
         .nav-links {
@@ -76,123 +64,119 @@
             text-decoration: none;
             font-size: 15px;
             transition: var(--transition);
-            opacity: 0.7;
+            opacity: 0.8;
             font-weight: 400;
         }
 
         .nav-links a:hover {
-            color: var(--primary);
+            color: var(--primary-orange);
             opacity: 1;
         }
 
-        /* Hero Section */
+        /* Hero Section - ใช้รูปที่อัปโหลดเป็น Background */
         .hero {
             position: relative;
-            height: 90vh;
-            background: linear-gradient(to bottom, rgba(7,7,7,0.1) 0%, rgba(7,7,7,0.9) 85%, var(--bg-dark) 100%), 
-                        url('https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); 
+            height: 85vh;
+            background: linear-gradient(to bottom, rgba(5,5,5,0.2) 0%, rgba(5,5,5,0.8) 70%, var(--bg-dark) 100%), 
+                        url('logo.jpg'); 
             background-size: cover;
             background-position: center;
             display: flex;
             align-items: flex-end;
-            padding: 0 5% 120px;
+            padding: 0 5% 100px;
+            border-bottom: 3px solid transparent;
+            border-image: var(--accent-gradient);
+            border-image-slice: 1;
         }
 
         .hero-content {
-            max-width: 800px;
+            max-width: 700px;
             position: relative;
             z-index: 10;
         }
 
         .hero-content h1 {
-            font-size: clamp(36px, 10vw, 72px);
+            font-size: clamp(32px, 8vw, 60px);
             margin-bottom: 15px;
-            line-height: 1;
-            font-weight: 700;
-            text-shadow: 0 4px 30px rgba(0,0,0,0.8);
+            line-height: 1.1;
+            font-weight: 800;
+            text-transform: uppercase;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 10px rgba(0,0,0,0.5));
         }
 
         .hero-content p {
             font-size: 18px;
             margin-bottom: 30px;
-            color: #ddd;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 15px;
+            color: #eee;
+            font-weight: 300;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
 
         .btn-play {
-            padding: 14px 45px;
+            padding: 14px 40px;
             background: var(--accent-gradient);
             border: none;
-            border-radius: 50px;
+            border-radius: 4px;
             color: #fff;
             font-weight: 600;
             font-size: 18px;
             cursor: pointer;
             transition: var(--transition);
             text-decoration: none;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 12px;
-            box-shadow: 0 10px 20px rgba(0,174,255,0.3);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
         }
 
         .btn-play:hover {
-            transform: scale(1.05);
-            box-shadow: 0 15px 30px rgba(0,174,255,0.5);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(255,78,0,0.3);
         }
 
-        /* Content Sections */
-        .content-section { 
-            padding: 40px 5% 20px; 
-        }
-
+        /* Movie Grid */
+        .content-section { padding: 50px 5% 20px; }
+        
         .section-header {
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--primary-orange);
+            padding-left: 15px;
         }
 
         .section-header h2 {
-            font-size: 22px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+            font-size: 24px;
+            margin: 0;
+            letter-spacing: 1px;
         }
 
-        .section-header i {
-            color: var(--primary);
-        }
-
-        /* Movie Grid - Landscape Mode */
         .movie-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
         }
 
         .movie-card {
             background: var(--card-bg);
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
             transition: var(--transition);
             cursor: pointer;
             position: relative;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .movie-card:hover {
-            transform: scale(1.03);
-            z-index: 50;
-            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            transform: scale(1.04);
+            border-color: var(--primary-orange);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
 
         .poster-box {
             position: relative;
-            aspect-ratio: 16/9; /* แนวนอนมืออาชีพ */
+            aspect-ratio: 16/9;
             overflow: hidden;
         }
 
@@ -200,7 +184,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.6s ease;
+            transition: 0.6s ease;
         }
 
         .movie-card:hover .poster-box img {
@@ -211,57 +195,38 @@
             position: absolute;
             bottom: 0; left: 0; width: 100%;
             padding: 40px 15px 15px;
-            background: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 60%, transparent 100%);
+            background: linear-gradient(to top, rgba(0,0,0,1) 10%, transparent 100%);
             box-sizing: border-box;
-            opacity: 1;
         }
 
         .movie-title {
-            font-size: 16px;
-            margin: 0 0 8px 0;
+            font-size: 17px;
+            margin: 0 0 5px 0;
+            color: #fff;
+            font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            color: #fff;
-            font-weight: 600;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
 
         .movie-meta {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             font-size: 12px;
             color: var(--text-dim);
         }
 
-        .view-tag {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--primary);
-        }
-
         .badge-tag {
             position: absolute;
-            top: 12px; right: 12px;
-            background: var(--accent-red);
+            top: 15px; right: 15px;
+            background: var(--primary-orange);
             color: #fff;
             padding: 4px 12px;
             border-radius: 4px;
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 800;
             z-index: 10;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            text-transform: uppercase;
-        }
-
-        .quality-tag {
-            background: rgba(255,255,255,0.2);
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 10px;
-            border: 1px solid rgba(255,255,255,0.3);
         }
 
         /* Footer */
@@ -269,8 +234,13 @@
             padding: 80px 5% 40px;
             text-align: center;
             background: #000;
-            color: var(--text-dim);
             border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .footer-logo {
+            height: 60px;
+            margin-bottom: 25px;
+            border-radius: 8px;
         }
 
         /* Loader */
@@ -280,27 +250,22 @@
             background: var(--bg-dark);
             display:flex; justify-content:center; align-items:center;
             z-index: 9999;
-            transition: 0.5s;
         }
 
         .spinner {
             width: 50px; height: 50px;
-            border: 3px solid rgba(0,174,255,0.1);
-            border-top: 3px solid var(--primary);
+            border: 3px solid rgba(255,78,0,0.1);
+            border-top: 3px solid var(--primary-orange);
             border-radius: 50%;
-            animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+            animation: spin 1s linear infinite;
         }
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
         @media (max-width: 768px) {
-            .hero { height: 50vh; padding-bottom: 40px; }
+            .hero { height: 60vh; padding-bottom: 50px; }
             .nav-links { display: none; }
-            .movie-grid { 
-                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
-                gap: 15px; 
-            }
-            .hero-content h1 { font-size: 38px; }
+            .movie-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
         }
     </style>
 </head>
@@ -311,65 +276,47 @@
     </div>
 
     <nav>
-        <a href="index.html" class="logo-text">DUYDODEE HD</a>
+        <a href="index.html" class="nav-logo">
+            <img src="logo.jpg" alt="DUYDODEE HD">
+        </a>
         <div class="nav-links">
-            <a href="index.html">หน้าแรก</a>
-            <a href="#series-section">ซีรีส์จีน</a>
-            <a href="#recommend-section">แนะนำสำหรับคุณ</a>
-            <a href="#">หมวดหมู่</a>
+            <a href="#">หน้าแรก</a>
+            <a href="#">ซีรีส์พากย์ไทย</a>
+            <a href="#">หนังใหม่</a>
+            <a href="#">จัดอันดับ</a>
         </div>
-        <div style="color:var(--primary); font-size: 20px; cursor: pointer;">
-            <i class="fas fa-search"></i>
-        </div>
+        <div style="color:var(--primary-orange); font-size: 20px;"><i class="fas fa-search"></i></div>
     </nav>
 
     <header class="hero">
         <div class="hero-content">
-            <h1>พรีเมียมซีรีส์ และภาพยนตร์ HD</h1>
-            <p>รวมทุกความบันเทิงระดับคุณภาพ ดูฟรีทุกที่ทุกเวลาบนทุกอุปกรณ์</p>
+            <h1>DUYDODEE PREMIUM HD</h1>
+            <p>สัมผัสประสบการณ์การรับชมที่เหนือระดับ คมชัด ลื่นไหล ไม่สะดุด พร้อมซีรีส์ใหม่ล่าสุดส่งตรงถึงหน้าจอคุณ</p>
             <div class="btn-group">
-                <a href="#series-section" class="btn-play"><i class="fas fa-play"></i> รับชมตอนนี้</a>
+                <a href="#main-content" class="btn-play"><i class="fas fa-play-circle"></i> เริ่มดูตอนนี้</a>
             </div>
         </div>
     </header>
 
-    <main>
-        <section class="content-section" id="series-section">
+    <main id="main-content">
+        <section class="content-section">
             <div class="section-header">
-                <h2><i class="fas fa-fire"></i> ซีรีส์มาใหม่พากย์ไทย</h2>
+                <h2>ซีรีส์แนะนำสำหรับคุณ</h2>
             </div>
-            <div class="movie-grid" id="grid-series">
-                <!-- ข้อมูลจะถูกโหลดจาก Firestore ที่นี่ -->
-            </div>
-        </section>
-
-        <section class="content-section" id="recommend-section" style="background: rgba(255,255,255,0.02);">
-            <div class="section-header">
-                <h2><i class="fas fa-star"></i> ซีรีส์ยอดนิยมที่สุด</h2>
-            </div>
-            <div class="movie-grid" id="grid-popular">
-                <!-- ตัวอย่างการแสดงผลแบบ Skeleton หรือ Static หากไม่มีข้อมูล -->
+            <div class="movie-grid" id="grid-content">
+                <!-- ข้อมูลจะโหลดจาก Firebase -->
             </div>
         </section>
     </main>
 
     <footer>
-        <div style="margin-bottom: 30px;">
-            <span class="logo-text">DUYDODEE HD</span>
-        </div>
-        <p style="max-width: 600px; margin: 0 auto 20px; font-size: 14px;">
-            แหล่งรวมซีรีส์จีนพากย์ไทยและภาพยนตร์ออนไลน์คุณภาพสูง อัปเดตใหม่ทุกวัน 
-            ระบบสตรีมมิ่งที่รวดเร็วที่สุดเพื่อประสบการณ์การรับชมที่ดีที่สุดของคุณ
+        <img src="logo.jpg" alt="Logo" class="footer-logo">
+        <p style="color: var(--text-dim); max-width: 500px; margin: 0 auto 20px;">
+            DUYDODEE-HD แพลตฟอร์มรับชมความบันเทิงอันดับหนึ่ง รวมทุกความสนุกที่คุณต้องการไว้ในที่เดียว
         </p>
-        <div style="font-size: 20px; margin-bottom: 20px; display: flex; justify-content: center; gap: 20px;">
-            <i class="fab fa-facebook"></i>
-            <i class="fab fa-telegram"></i>
-            <i class="fab fa-line"></i>
-        </div>
-        <p>&copy; 2026 DUYDODEE-HD. All Rights Reserved.</p>
+        <p style="font-size: 13px; color: #555;">&copy; 2026 DUYDODEE-HD. All Rights Reserved.</p>
     </footer>
 
-    <!-- Firebase SDK (Compat Version) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
@@ -391,23 +338,18 @@
             card.className = 'movie-card';
             card.onclick = () => window.location.href = `watch.html?id=${id}`;
             
-            const formatViews = (num) => {
-                if(!num) return '0';
-                return num >= 1000 ? (num/1000).toFixed(1) + 'K' : num;
-            };
-
-            // หากเป็นแนวนอน เราต้องการใช้รูปที่สัดส่วนกว้าง (data.poster_landscape หรือ data.poster)
-            const displayPoster = data.poster_landscape || data.poster;
+            // ใช้รูปแนวนอน หรือรูปปกติที่มีอยู่
+            const posterImg = data.poster_landscape || data.poster || 'logo.jpg';
 
             card.innerHTML = `
                 ${data.badge ? `<span class="badge-tag">${data.badge}</span>` : ''}
                 <div class="poster-box">
-                    <img src="${displayPoster}" alt="${data.title}" onerror="this.src='https://via.placeholder.com/350x197/1a1a1a/ffffff?text=DUYDODEE+HD'" loading="lazy">
+                    <img src="${posterImg}" alt="${data.title}" onerror="this.src='logo.jpg'">
                     <div class="overlay-card">
                         <p class="movie-title">${data.title}</p>
                         <div class="movie-meta">
-                            <span class="view-tag"><i class="fas fa-eye"></i> ${formatViews(data.views)} วิว</span>
-                            <span class="quality-tag">4K ULTRA HD</span>
+                            <span><i class="fas fa-eye"></i> ${data.views || 0}</span>
+                            <span style="color:var(--primary-orange)">4K ULTRA HD</span>
                         </div>
                     </div>
                 </div>
@@ -417,34 +359,16 @@
 
         async function loadContent() {
             try {
-                const snap = await db.collection('movies').orderBy('createdAt', 'desc').get();
-                const gridSeries = document.getElementById('grid-series');
-                const gridPopular = document.getElementById('grid-popular');
+                const snap = await db.collection('movies').orderBy('createdAt', 'desc').limit(12).get();
+                const grid = document.getElementById('grid-content');
 
-                let count = 0;
                 snap.forEach(doc => {
-                    const m = doc.data();
-                    const card = createMovieCard(doc.id, m);
-                    
-                    // กระจายข้อมูลลง Grid
-                    if(count < 4) {
-                        gridSeries.appendChild(card);
-                    } else {
-                        gridPopular.appendChild(card.cloneNode(true));
-                        // เพิ่ม Event Listener ใหม่เนื่องจาก cloneNode ไม่เอา event ไปด้วย
-                        gridPopular.lastChild.onclick = () => window.location.href = `watch.html?id=${doc.id}`;
-                    }
-                    count++;
+                    grid.appendChild(createMovieCard(doc.id, doc.data()));
                 });
-
             } catch (err) {
-                console.error("Error loading content:", err);
+                console.error("Error:", err);
             } finally {
-                const loader = document.getElementById('loader');
-                if(loader) {
-                    loader.style.opacity = '0';
-                    setTimeout(() => loader.style.display = 'none', 500);
-                }
+                document.getElementById('loader').style.display = 'none';
             }
         }
 
