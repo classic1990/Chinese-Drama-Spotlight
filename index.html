@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DUYDODEE-HD | ดูซีรีส์จีน พากย์ไทย 2026</title>
     
+    <meta name="description" content="รวมซีรีส์จีนพากย์ไทยและซีรีส์สั้นแนวตั้ง อัปเดตใหม่ล่าสุด 2026 ดูฟรีคมชัดระดับ HD">
+    <meta property="og:title" content="DUYDODEE-HD | ดูซีรีส์จีนฟรี">
+    <meta property="og:description" content="ระบบสตรีมมิ่งซีรีส์จีนที่ดีที่สุด อัปเดตไว ใช้งานง่าย">
+    <meta property="og:image" content="duycode.jpg"> <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="duycode.jpg">
+
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -25,6 +32,7 @@
             background-color: var(--bg-dark);
             color: var(--text-main);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
         /* --- Custom Scrollbar --- */
@@ -63,30 +71,34 @@
             text-decoration: none;
             margin-left: 25px;
             font-size: 14px;
-            font-weight: 400;
-            transition: 0.3s;
             opacity: 0.8;
+            transition: 0.3s;
         }
 
         .nav-links a:hover { opacity: 1; color: var(--primary); }
 
-        /* --- Hero Section --- */
+        /* --- Hero Section: เปลี่ยนรูปพื้นหลังที่นี่ --- */
         .hero {
-            height: 80vh;
-            background: linear-gradient(rgba(10,10,12,0.2), var(--bg-dark)), url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=2000') center/cover;
+            height: 75vh;
+            background: linear-gradient(to bottom, rgba(10,10,12,0.3) 0%, var(--bg-dark) 100%), 
+                        url('duycode.jpg') center/cover no-repeat;
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             justify-content: center;
             text-align: center;
+            padding-bottom: 50px;
+        }
+
+        .hero-content {
+            max-width: 800px;
             padding: 0 20px;
         }
 
         .hero-content h1 {
-            font-size: clamp(40px, 8vw, 80px);
+            font-size: clamp(30px, 6vw, 60px);
             font-weight: 800;
             margin-bottom: 10px;
-            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            letter-spacing: -1px;
+            text-shadow: 0 5px 20px rgba(0,0,0,0.8);
         }
 
         /* --- Content Layout --- */
@@ -96,11 +108,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .section-header h2 {
-            font-size: 24px;
+            font-size: 22px;
             border-left: 4px solid var(--primary);
             padding-left: 15px;
             margin: 0;
@@ -109,51 +121,40 @@
         /* --- Movie Grid & Cards --- */
         .movie-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 25px;
         }
 
         .movie-card {
             background: var(--card-bg);
-            border-radius: 16px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 12px;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
             position: relative;
-            border: 1px solid rgba(255,255,255,0.03);
             overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .movie-card:hover {
-            transform: scale(1.05);
-            z-index: 10;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            border-color: rgba(0,229,255,0.3);
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            border-color: var(--primary);
         }
 
-        .poster-box {
-            aspect-ratio: 2 / 3;
-            overflow: hidden;
-            background: #252529;
-        }
-
-        .poster-box img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            transition: 0.5s;
-        }
-
+        .poster-box { aspect-ratio: 2 / 3; overflow: hidden; }
+        .poster-box img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
         .movie-card:hover .poster-box img { transform: scale(1.1); }
 
         .overlay-card {
-            padding: 15px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            padding: 12px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.95));
             position: absolute;
             bottom: 0; width: 100%;
             box-sizing: border-box;
         }
 
         .movie-title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             margin: 0 0 5px 0;
             white-space: nowrap;
@@ -161,26 +162,16 @@
             text-overflow: ellipsis;
         }
 
-        .movie-meta {
-            font-size: 12px;
-            color: var(--text-dim);
-            display: flex;
-            justify-content: space-between;
-        }
-
         .badge-tag {
-            position: absolute; top: 12px; right: 12px;
+            position: absolute; top: 10px; right: 10px;
             background: var(--accent);
-            padding: 4px 12px;
-            border-radius: 20px;
+            padding: 3px 10px;
+            border-radius: 6px;
             font-size: 10px;
             font-weight: 800;
-            text-transform: uppercase;
             z-index: 2;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
-        /* --- Loader --- */
         #loader {
             position: fixed; inset: 0;
             background: var(--bg-dark);
@@ -190,7 +181,7 @@
         }
 
         .spinner {
-            width: 50px; height: 50px;
+            width: 40px; height: 40px;
             border: 3px solid rgba(255,255,255,0.1);
             border-top: 3px solid var(--primary);
             border-radius: 50%;
@@ -210,7 +201,7 @@
 
     <div id="loader">
         <div class="spinner"></div>
-        <p style="margin-top: 15px; font-size: 12px; letter-spacing: 2px; opacity: 0.5;">LOADING DUYDODEE</p>
+        <p style="margin-top: 15px; font-size: 11px; letter-spacing: 2px; opacity: 0.6;">LOADING DUYDODEE</p>
     </div>
 
     <nav>
@@ -224,15 +215,15 @@
 
     <header class="hero">
         <div class="hero-content">
-            <h1>UNLIMITED<br><span style="color:var(--primary)">CHINESE SERIES</span></h1>
-            <p>อัปเดตซีรีส์สั้นแนวตั้งและพากย์ไทยยอดนิยม ดูฟรีทุกที่ทุกเวลา คมชัดระดับสูงสุด</p>
+            <h1><span style="color:var(--primary)">CHINESE</span> STREAMING</h1>
+            <p style="color: var(--text-dim);">อัปเดตซีรีส์สั้นแนวตั้งและพากย์ไทยยอดนิยม คมชัดระดับ 4K ฟรี 100%</p>
         </div>
     </header>
 
     <main>
         <section class="content-section" id="vertical-section">
             <div class="section-header">
-                <h2>ซีรีส์สั้นมาแรง</h2>
+                <h2>ซีรีส์สั้นแนวตั้ง</h2>
                 <a href="#" style="color: var(--primary); text-decoration: none; font-size: 13px;">ดูทั้งหมด ></a>
             </div>
             <div class="movie-grid" id="grid-vertical"></div>
@@ -240,21 +231,20 @@
 
         <section class="content-section" id="series-section">
             <div class="section-header">
-                <h2>พากย์ไทยอัปเดตใหม่</h2>
+                <h2>ซีรีส์พากย์ไทย</h2>
             </div>
             <div class="movie-grid" id="grid-series"></div>
         </section>
     </main>
 
-    <footer style="padding: 80px 6%; background: #050507; text-align: center; border-top: 1px solid rgba(255,255,255,0.05);">
+    <footer style="padding: 60px 6%; background: #050507; text-align: center; border-top: 1px solid rgba(255,255,255,0.05);">
         <h2 class="logo-text">DUYDODEE</h2>
-        <p style="color: var(--text-dim); font-size: 14px; max-width: 500px; margin: 20px auto;">ระบบสตรีมมิ่งที่รวบรวมความบันเทิงที่ดีที่สุดไว้ในที่เดียว</p>
-        <div style="margin-top: 30px; font-size: 20px;">
-            <i class="fab fa-facebook" style="margin: 0 15px; cursor: pointer;"></i>
-            <i class="fab fa-tiktok" style="margin: 0 15px; cursor: pointer;"></i>
-            <i class="fab fa-youtube" style="margin: 0 15px; cursor: pointer;"></i>
+        <div style="margin-top: 20px; font-size: 18px; opacity: 0.6;">
+            <i class="fab fa-facebook" style="margin: 0 10px; cursor: pointer;"></i>
+            <i class="fab fa-tiktok" style="margin: 0 10px; cursor: pointer;"></i>
+            <i class="fab fa-youtube" style="margin: 0 10px; cursor: pointer;"></i>
         </div>
-        <p style="font-size: 11px; opacity: 0.3; margin-top: 40px;">&copy; 2026 DUYDODEE-HD. All Rights Reserved.</p>
+        <p style="font-size: 11px; opacity: 0.3; margin-top: 30px;">&copy; 2026 DUYDODEE-HD. All Rights Reserved.</p>
     </footer>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -271,15 +261,12 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // ฟังก์ชันสร้างการ์ดหนัง (ปรับปรุงให้ดึงค่า rating จริง)
         function createMovieCard(id, data) {
             const card = document.createElement('div');
             card.className = 'movie-card';
             card.onclick = () => window.location.href = `watch.html?id=${id}`;
             
-            // จัดการเรื่องยอดวิว (K format)
             const views = data.viewCount >= 1000 ? (data.viewCount/1000).toFixed(1) + 'K' : (data.viewCount || 0);
-            // ดึงคะแนน (ถ้าไม่มีให้แสดง 8.5 เป็นค่าเริ่มต้น)
             const rating = data.rating || '8.5';
 
             card.innerHTML = `
@@ -289,8 +276,8 @@
                 </div>
                 <div class="overlay-card">
                     <p class="movie-title">${data.title}</p>
-                    <div class="movie-meta">
-                        <span><i class="far fa-play-circle"></i> ${views} views</span>
+                    <div style="font-size:11px; color:var(--text-dim); display:flex; justify-content:space-between;">
+                        <span><i class="far fa-play-circle"></i> ${views}</span>
                         <span style="color:var(--primary)"><i class="fas fa-star"></i> ${rating}</span>
                     </div>
                 </div>
@@ -300,7 +287,6 @@
 
         async function loadContent() {
             try {
-                // ดึงข้อมูลจากคอลเลกชัน 'artifacts' และเรียงลำดับตามเวลาล่าสุด
                 const snap = await db.collection('artifacts').orderBy('createdAt', 'desc').get();
                 const gridVertical = document.getElementById('grid-vertical');
                 const gridSeries = document.getElementById('grid-series');
@@ -308,16 +294,9 @@
                 gridVertical.innerHTML = '';
                 gridSeries.innerHTML = '';
 
-                if (snap.empty) {
-                    gridVertical.innerHTML = '<p style="opacity:0.5">ยังไม่มีข้อมูลในระบบ</p>';
-                    return;
-                }
-
                 snap.forEach(doc => {
                     const m = doc.data();
                     const card = createMovieCard(doc.id, m);
-                    
-                    // แยกหมวดหมู่แสดงผล
                     if(m.category === 'vertical') {
                         gridVertical.appendChild(card);
                     } else {
@@ -326,13 +305,9 @@
                 });
 
             } catch (err) {
-                console.error("Error fetching documents:", err);
-                // ในกรณีที่ Error มักเกิดจากไม่มีฟิลด์ createdAt ในบาง Document
-                // แนะนำให้ลองรันแบบไม่ orderBy เพื่อเช็คข้อมูลก่อน
+                console.error("Error:", err);
             } finally {
-                // ปิด Loader ด้วย Effect Fade Out
                 const loader = document.getElementById('loader');
-                loader.style.transition = '0.5s';
                 loader.style.opacity = '0';
                 setTimeout(() => loader.style.display = 'none', 500);
             }
