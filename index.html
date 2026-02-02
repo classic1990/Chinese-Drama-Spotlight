@@ -89,13 +89,6 @@
             letter-spacing: -1px;
         }
 
-        .hero-content p {
-            font-size: 18px;
-            color: var(--text-dim);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
         /* --- Content Layout --- */
         .content-section { padding: 40px 6%; }
         
@@ -278,12 +271,16 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // ฟังก์ชันสร้างการ์ดหนัง (ปรับปรุงให้ดึงค่า rating จริง)
         function createMovieCard(id, data) {
             const card = document.createElement('div');
             card.className = 'movie-card';
             card.onclick = () => window.location.href = `watch.html?id=${id}`;
             
+            // จัดการเรื่องยอดวิว (K format)
             const views = data.viewCount >= 1000 ? (data.viewCount/1000).toFixed(1) + 'K' : (data.viewCount || 0);
+            // ดึงคะแนน (ถ้าไม่มีให้แสดง 8.5 เป็นค่าเริ่มต้น)
+            const rating = data.rating || '8.5';
 
             card.innerHTML = `
                 ${data.badge ? `<span class="badge-tag">${data.badge}</span>` : ''}
@@ -294,7 +291,7 @@
                     <p class="movie-title">${data.title}</p>
                     <div class="movie-meta">
                         <span><i class="far fa-play-circle"></i> ${views} views</span>
-                        <span style="color:var(--primary)"><i class="fas fa-star"></i> 8.5</span>
+                        <span style="color:var(--primary)"><i class="fas fa-star"></i> ${rating}</span>
                     </div>
                 </div>
             `;
@@ -303,7 +300,7 @@
 
         async function loadContent() {
             try {
-                // แก้จาก movies เป็น artifacts ให้ตรงกับ Firebase
+                // ดึงข้อมูลจากคอลเลกชัน 'artifacts' และเรียงลำดับตามเวลาล่าสุด
                 const snap = await db.collection('artifacts').orderBy('createdAt', 'desc').get();
                 const gridVertical = document.getElementById('grid-vertical');
                 const gridSeries = document.getElementById('grid-series');
@@ -312,22 +309,28 @@
                 gridSeries.innerHTML = '';
 
                 if (snap.empty) {
-                    console.log("No documents found in 'artifacts' collection.");
+                    gridVertical.innerHTML = '<p style="opacity:0.5">ยังไม่มีข้อมูลในระบบ</p>';
+                    return;
                 }
 
                 snap.forEach(doc => {
                     const m = doc.data();
                     const card = createMovieCard(doc.id, m);
-                    // ตรวจสอบเงื่อนไขหมวดหมู่
+                    
+                    // แยกหมวดหมู่แสดงผล
                     if(m.category === 'vertical') {
                         gridVertical.appendChild(card);
                     } else {
                         gridSeries.appendChild(card);
                     }
                 });
+
             } catch (err) {
                 console.error("Error fetching documents:", err);
+                // ในกรณีที่ Error มักเกิดจากไม่มีฟิลด์ createdAt ในบาง Document
+                // แนะนำให้ลองรันแบบไม่ orderBy เพื่อเช็คข้อมูลก่อน
             } finally {
+                // ปิด Loader ด้วย Effect Fade Out
                 const loader = document.getElementById('loader');
                 loader.style.transition = '0.5s';
                 loader.style.opacity = '0';
