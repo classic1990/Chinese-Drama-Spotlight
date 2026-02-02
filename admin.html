@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel | DUYDODEE-HD</title>
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <style>
     body { margin: 0; font-family: 'Prompt', sans-serif; background: #0f0f0f; color: #fff; padding: 20px; }
     .container { max-width: 900px; margin: 0 auto; }
@@ -46,21 +47,21 @@
     .divider::after { right: 0; }
 
     .action-btns { display: flex; gap: 5px; }
-    .btn-danger { background: #ff4444; color: #fff; padding: 6px 12px; font-size: 13px; border-radius: 6px; }
-    .btn-edit { background: #ffcc00; color: #000; padding: 6px 12px; font-size: 13px; border-radius: 6px; }
+    .btn-danger { background: #ff4444; color: #fff; padding: 6px 12px; font-size: 13px; border-radius: 6px; border:none; cursor:pointer; }
+    .btn-edit { background: #ffcc00; color: #000; padding: 6px 12px; font-size: 13px; border-radius: 6px; border:none; cursor:pointer; }
     
     .movie-item { display: flex; align-items: center; gap: 15px; background: #1a1a1a; padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #222; }
     .movie-item img { width: 45px; height: 65px; object-fit: cover; border-radius: 4px; background: #333; }
     .movie-item-info { flex-grow: 1; }
     .movie-item-info h3 { margin: 0; font-size: 15px; line-height: 1.2; margin-bottom: 5px; }
-    .badge { font-size: 10px; background: #333; color: #00aeff; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
-    .url-warning { font-size: 11px; color: #ffcc00; display: block; margin-top: 5px; }
+    .badge { font-size: 10px; background: #333; color: #00aeff; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; margin-right: 5px; }
+    .view-count { font-size: 11px; color: #888; }
 </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Login -->
+    <!-- Login Section -->
     <div id="loginSection">
         <h1 style="color: #00aeff;">ADMIN LOGIN</h1>
         <p style="color: #888; margin-bottom: 25px;">ล็อกอินเพื่อจัดการระบบ DUYDODEE-HD</p>
@@ -184,7 +185,6 @@
         try { await auth.signInWithEmailAndPassword(email, pass); } catch (err) { alert('ผิดพลาด!'); }
     }
 
-    // ฟังก์ชันรีเซ็ตฟอร์ม
     function resetForm() {
         document.getElementById('movieForm').reset();
         document.getElementById('editId').value = '';
@@ -193,7 +193,6 @@
         document.getElementById('formCard').classList.remove('edit-mode');
     }
 
-    // ฟังก์ชันบันทึก หรือ อัปเดต
     document.getElementById('movieForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
@@ -212,11 +211,12 @@
 
         try {
             if (editId) {
-                // โหมดแก้ไข
+                // แก้ไข: จะไม่อัปเดต views เพื่อไม่ให้ยอดวิวหายหรือโดนรีเซ็ต
                 await db.collection('movies').doc(editId).update(data);
                 alert('อัปเดตข้อมูลเรียบร้อย!');
             } else {
-                // โหมดเพิ่มใหม่
+                // เพิ่มใหม่: กำหนดค่าเริ่มต้นยอดวิวเป็น 0
+                data.views = 0;
                 data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                 await db.collection('movies').add(data);
                 alert('เพิ่มหนังใหม่เรียบร้อย!');
@@ -229,7 +229,6 @@
         }
     });
 
-    // โหลดข้อมูลและแสดงผล
     function loadData() {
         db.collection('movies').orderBy('createdAt', 'desc').onSnapshot(snap => {
             const container = document.getElementById('movieListContainer');
@@ -242,7 +241,10 @@
                     <img src="${m.poster}" onerror="this.src='https://via.placeholder.com/50x75'">
                     <div class="movie-item-info">
                         <h3>${m.title}</h3>
-                        <span class="badge">${m.category}</span>
+                        <div>
+                            <span class="badge">${m.category}</span>
+                            <span class="view-count"><i class="far fa-eye"></i> ${ (m.views || 0).toLocaleString() } วิว</span>
+                        </div>
                     </div>
                     <div class="action-btns">
                         <button class="btn-edit" onclick='startEdit("${doc.id}", ${JSON.stringify(m).replace(/'/g, "&apos;")})'>แก้ไข</button>
@@ -254,7 +256,6 @@
         });
     }
 
-    // ฟังก์ชันเริ่มการแก้ไข (ดึงค่าใส่ฟอร์ม)
     window.startEdit = (id, data) => {
         document.getElementById('editId').value = id;
         document.getElementById('category').value = data.category;
