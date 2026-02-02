@@ -30,6 +30,7 @@
             background-color: var(--bg-dark);
             color: var(--text-main);
             overflow-x: hidden;
+            scroll-behavior: smooth;
         }
 
         /* Navigation */
@@ -69,7 +70,7 @@
 
         /* Hero */
         .hero {
-            height: 70vh;
+            height: 60vh;
             background: linear-gradient(to bottom, rgba(7,7,7,0.3), var(--bg-dark)), url('logo.png');
             background-size: contain;
             background-repeat: no-repeat;
@@ -85,7 +86,15 @@
 
         /* Movie Grid */
         .content-section { padding: 40px 5%; }
-        .section-header { margin-bottom: 25px; border-left: 4px solid var(--primary); padding-left: 15px; }
+        .section-header { 
+            margin-bottom: 25px; 
+            border-left: 4px solid var(--primary); 
+            padding-left: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
         .movie-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -99,36 +108,57 @@
             transition: 0.3s;
             cursor: pointer;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .movie-card:hover { transform: translateY(-8px); }
+        .movie-card:hover { 
+            transform: translateY(-8px); 
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px rgba(0, 174, 255, 0.2);
+        }
 
         .poster-box { aspect-ratio: 2/3; overflow: hidden; position: relative; }
-        .poster-box img { width: 100%; height: 100%; object-fit: cover; }
+        .poster-box img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .movie-card:hover .poster-box img { transform: scale(1.1); }
 
         .badge-tag {
             position: absolute; top: 8px; left: 8px;
             background: var(--accent-red); color: #fff;
             padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
+            z-index: 2;
         }
 
         .overlay-card {
             padding: 12px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            background: #121212;
+            flex-grow: 1;
         }
 
-        .movie-title { font-size: 14px; margin: 0 0 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .movie-meta { font-size: 11px; color: var(--text-dim); display: flex; justify-content: space-between; }
+        .movie-title { 
+            font-size: 14px; 
+            margin: 0 0 8px 0; 
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 40px;
+            line-height: 1.4;
+        }
+        
+        .movie-meta { font-size: 11px; color: var(--text-dim); display: flex; justify-content: space-between; align-items: center; }
 
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 9999;
         }
 
-        footer { padding: 50px; text-align: center; opacity: 0.6; font-size: 13px; }
+        footer { padding: 50px; text-align: center; opacity: 0.6; font-size: 13px; border-top: 1px solid rgba(255,255,255,0.05); }
 
         @media (max-width: 600px) {
             .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .hero { height: 40vh; }
         }
     </style>
 </head>
@@ -144,6 +174,7 @@
         <div class="nav-links">
             <a href="#vertical-section">แนวตั้ง</a>
             <a href="#series-section">พากย์ไทย</a>
+            <a href="admin.html" style="opacity: 0.5;"><i class="fas fa-user-cog"></i></a>
         </div>
     </nav>
 
@@ -156,18 +187,27 @@
 
     <main>
         <section class="content-section" id="vertical-section">
-            <div class="section-header"><h2><i class="fas fa-mobile-alt"></i> ซีรีส์จีนแนวตั้ง</h2></div>
-            <div class="movie-grid" id="grid-vertical"></div>
+            <div class="section-header">
+                <h2><i class="fas fa-mobile-alt" style="color: var(--primary);"></i> ซีรีส์จีนแนวตั้ง</h2>
+                <span style="font-size: 12px; color: var(--text-dim);">มาแรงล่าสุด</span>
+            </div>
+            <div class="movie-grid" id="grid-vertical">
+                </div>
         </section>
 
         <section class="content-section" id="series-section">
-            <div class="section-header"><h2><i class="fas fa-film"></i> ซีรีส์พากย์ไทย</h2></div>
-            <div class="movie-grid" id="grid-series"></div>
+            <div class="section-header">
+                <h2><i class="fas fa-film" style="color: var(--accent-red);"></i> ซีรีส์พากย์ไทย</h2>
+                <span style="font-size: 12px; color: var(--text-dim);">อัปเดตตอนใหม่</span>
+            </div>
+            <div class="movie-grid" id="grid-series">
+                </div>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2026 DUYDODEE-HD | ดูซีรีส์จีนออนไลน์ฟรี</p>
+        <p>&copy; 2026 DUYDODEE-HD | แหล่งรวมความบันเทิงซีรีส์จีนออนไลน์ฟรี</p>
+        <p style="font-size: 10px; margin-top: 10px; color: var(--text-dim);">เนื้อหาทั้งหมดเป็นการรวบรวมเพื่อความบันเทิงเท่านั้น</p>
     </footer>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -184,6 +224,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // ฟังก์ชันสร้างการ์ดหนัง
         function createMovieCard(id, data) {
             const card = document.createElement('div');
             card.className = 'movie-card';
@@ -191,7 +232,9 @@
             
             const formatViews = (num) => {
                 if(!num) return '0';
-                return num >= 1000 ? (num/1000).toFixed(1) + 'K' : num;
+                if(num >= 1000000) return (num/1000000).toFixed(1) + 'M';
+                if(num >= 1000) return (num/1000).toFixed(1) + 'K';
+                return num;
             };
 
             card.innerHTML = `
@@ -202,21 +245,29 @@
                 <div class="overlay-card">
                     <p class="movie-title">${data.title}</p>
                     <div class="movie-meta">
-                        <span><i class="fas fa-eye"></i> ${formatViews(data.viewCount)}</span>
-                        <span style="color:var(--primary)">ดูเลย</span>
+                        <span><i class="far fa-eye"></i> ${formatViews(data.viewCount)}</span>
+                        <span style="color:var(--primary); font-weight: 600;">ชมฟรี</span>
                     </div>
                 </div>
             `;
             return card;
         }
 
+        // โหลดเนื้อหาจาก Firebase
         async function loadContent() {
             try {
-                // ดึงข้อมูลจากคอลเลกชัน movies
+                // ดึงข้อมูลหนังทั้งหมด เรียงตามวันที่สร้างล่าสุด
                 const snap = await db.collection('movies').orderBy('createdAt', 'desc').get();
                 
                 const gridVertical = document.getElementById('grid-vertical');
                 const gridSeries = document.getElementById('grid-series');
+
+                // เคลียร์ค่าว่างก่อนโหลด (ป้องกันข้อมูลซ้ำตอน refresh)
+                gridVertical.innerHTML = '';
+                gridSeries.innerHTML = '';
+
+                let hasVertical = false;
+                let hasSeries = false;
 
                 snap.forEach(doc => {
                     const m = doc.data();
@@ -224,14 +275,22 @@
                     
                     if(m.category === 'vertical') {
                         gridVertical.appendChild(card);
+                        hasVertical = true;
                     } else {
                         gridSeries.appendChild(card);
+                        hasSeries = true;
                     }
                 });
 
+                // ถ้าไม่มีข้อมูล ให้แสดงข้อความแจ้งเตือน
+                if(!hasVertical) gridVertical.innerHTML = '<p style="color:#666; grid-column: 1/-1; text-align:center;">กำลังอัปเดตข้อมูล...</p>';
+                if(!hasSeries) gridSeries.innerHTML = '<p style="color:#666; grid-column: 1/-1; text-align:center;">กำลังอัปเดตข้อมูล...</p>';
+
             } catch (err) {
-                console.error(err);
+                console.error("Firebase Error:", err);
+                alert("เกิดข้อผิดพลาดในการโหลดข้อมูล กรุณาลองใหม่อีกครั้ง");
             } finally {
+                // ซ่อนตัวโหลดเมื่อทำงานเสร็จ
                 document.getElementById('loader').style.display = 'none';
             }
         }
