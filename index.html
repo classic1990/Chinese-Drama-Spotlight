@@ -16,304 +16,489 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="duycode.jpg">
 
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-:root{
-  --primary:#00e5ff;
-  --accent:#ff3d00;
-  --bg-dark:#0a0a0c;
-  --card-bg:#1a1a1e;
-  --text-main:#fff;
-  --text-dim:#b0b0b0;
-  --gradient:linear-gradient(135deg,#00e5ff,#007bff);
+:root {
+    --primary: #00f2ff;
+    --primary-dim: rgba(0, 242, 255, 0.1);
+    --secondary: #2d62ff;
+    --accent: #ff0055;
+    --bg-dark: #050507;
+    --bg-surface: #121216;
+    --text-main: #ffffff;
+    --text-muted: #9ca3af;
+    --card-radius: 12px;
+    --nav-height: 70px;
+    --gradient-glow: linear-gradient(135deg, #00f2ff 0%, #2d62ff 100%);
 }
 
-body{
-  margin:0;
-  font-family:'Prompt',sans-serif;
-  background:var(--bg-dark);
-  color:var(--text-main);
-  line-height:1.6;
-  overflow-x:hidden;
+* {
+    box-sizing: border-box;
+    outline: none;
+}
+
+body {
+    margin: 0;
+    font-family: 'Prompt', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
 }
 
 /* ===== Custom Scrollbar ===== */
-::-webkit-scrollbar{
-  width:8px;
+::-webkit-scrollbar {
+    width: 6px;
 }
-::-webkit-scrollbar-track{
-  background:#0a0a0c;
+::-webkit-scrollbar-track {
+    background: var(--bg-dark);
 }
-::-webkit-scrollbar-thumb{
-  background:#333;
-  border-radius:10px;
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
 }
-::-webkit-scrollbar-thumb:hover{
-  background:var(--primary);
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
 }
 
 /* ===== NAV ===== */
-nav{
-  position:fixed;
-  top:0;
-  width:100%;
-  padding:15px 6%;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:rgba(10,10,12,.85);
-  backdrop-filter:blur(20px);
-  z-index:1000;
-  border-bottom:1px solid rgba(255,255,255,0.08);
+nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: var(--nav-height);
+    padding: 0 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(5, 5, 7, 0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: 0.3s;
 }
 
-.logo-text{
-  font-size:26px;
-  font-weight:800;
-  background:var(--gradient);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  text-decoration:none;
-  letter-spacing:-0.5px;
+.logo-text {
+    font-size: 24px;
+    font-weight: 800;
+    text-transform: uppercase;
+    background: var(--gradient-glow);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
+    text-decoration: none;
+    letter-spacing: 1px;
 }
 
-.nav-links a{
-  color:var(--text-main);
-  text-decoration:none;
-  margin-left:25px;
-  font-size:14px;
-  opacity:0.8;
-  transition:.3s;
+.nav-links {
+    display: flex;
+    gap: 30px;
 }
-.nav-links a:hover{
-  opacity:1;
-  color:var(--primary);
+
+.nav-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-links a:hover, .nav-links a.active {
+    color: var(--primary);
+    text-shadow: 0 0 10px var(--primary-dim);
 }
 
 /* ===== HERO ===== */
-.hero{
-  height:70vh;
-  min-height:500px;
-  background:
-    linear-gradient(to bottom, rgba(10,10,12,0.2) 0%, var(--bg-dark) 95%),
-    url('duycode.jpg') center/cover no-repeat;
-  display:flex;
-  align-items:flex-end;
-  justify-content:center;
-  text-align:center;
-  padding-bottom:80px;
+.hero {
+    position: relative;
+    height: 80vh;
+    min-height: 600px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 5%;
+    overflow: hidden;
+    margin-bottom: 40px;
 }
 
-.hero-content{
-  max-width:850px;
-  padding:0 20px;
-  z-index:5;
+/* Background Image with Overlay */
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    /* ใช้รูป duycode.jpg ตามที่ขอครับ */
+    background: url('duycode.jpg') center/cover no-repeat;
+    filter: brightness(0.6);
+    z-index: -2;
+    transform: scale(1.05); /* Slight zoom for effect */
 }
 
-.hero-content h1{
-  font-size:clamp(32px,7vw,65px);
-  font-weight:800;
-  margin-bottom:10px;
-  text-shadow:0 5px 30px rgba(0,0,0,0.9), 0 0 20px rgba(0,229,255,0.3);
-  line-height:1.1;
+.hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, #050507 0%, rgba(5, 5, 7, 0.6) 50%, transparent 100%),
+                linear-gradient(to top, #050507 0%, transparent 40%);
+    z-index: -1;
 }
 
-.hero-content p{
-  color:var(--text-dim);
-  font-size:clamp(14px,2vw,18px);
-  text-shadow:0 2px 10px rgba(0,0,0,0.8);
+.hero-content {
+    max-width: 600px;
+    z-index: 1;
+    margin-top: var(--nav-height);
 }
 
-/* ===== CONTENT ===== */
-.content-section{
-  padding:40px 6%;
+.hero-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    backdrop-filter: blur(5px);
+    color: var(--primary);
 }
 
-.section-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:25px;
+.hero-content h1 {
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0 0 20px 0;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
-.section-header h2{
-  font-size:22px;
-  border-left:4px solid var(--primary);
-  padding-left:15px;
-  margin:0;
+.hero-content p {
+    color: var(--text-muted);
+    font-size: 16px;
+    margin-bottom: 30px;
+    max-width: 450px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
-/* ===== GRID ===== */
-.movie-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-  gap:25px;
+.hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 30px;
+    background: var(--gradient-glow);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 15px;
+    transition: 0.3s;
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
 }
 
-/* ===== CARD ===== */
-.movie-card{
-  background:var(--card-bg);
-  border-radius:12px;
-  overflow:hidden;
-  position:relative;
-  transition:.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  cursor:pointer;
-  border:1px solid rgba(255,255,255,0.05);
+.hero-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 242, 255, 0.5);
 }
 
-.movie-card:hover{
-  transform:translateY(-10px);
-  box-shadow:0 15px 30px rgba(0,0,0,0.5);
-  border-color:var(--primary);
+/* ===== SECTIONS ===== */
+.content-section {
+    padding: 20px 5%;
+    margin-bottom: 40px;
 }
 
-/* ===== POSTER SIZE ===== */
-.poster-box{
-  aspect-ratio:2 / 3;   /* ซีรีส์ปกติ */
-  overflow:hidden;
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 15px;
 }
 
-.poster-box.vertical{
-  aspect-ratio:9 / 16;  /* ซีรีส์สั้นแนวตั้ง */
+.section-header h2 {
+    font-size: 24px;
+    margin: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.poster-box img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  transition:.5s;
+.section-header h2::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 24px;
+    background: var(--primary);
+    border-radius: 2px;
+    box-shadow: 0 0 10px var(--primary);
 }
 
-.movie-card:hover .poster-box img{
-  transform:scale(1.1);
+.see-more {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    transition: 0.3s;
 }
 
-/* ===== OVERLAY ===== */
-.overlay-card{
-  padding:12px;
-  background:linear-gradient(transparent, rgba(0,0,0,0.95));
-  position:absolute;
-  bottom:0;
-  width:100%;
-  box-sizing:border-box;
+.see-more:hover {
+    color: var(--primary);
 }
 
-.movie-title{
-  font-size:14px;
-  font-weight:600;
-  margin:0 0 5px 0;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+/* ===== GRID & CARDS ===== */
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
 }
 
-.badge-tag{
-  position:absolute;
-  top:10px;
-  right:10px;
-  background:var(--accent);
-  padding:3px 10px;
-  border-radius:6px;
-  font-size:10px;
-  font-weight:800;
-  z-index:2;
+.movie-card {
+    background: var(--bg-surface);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.movie-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+    border-color: rgba(0, 242, 255, 0.3);
+}
+
+.poster-box {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* Standard Poster */
+.poster-box {
+    aspect-ratio: 2 / 3;
+}
+/* Vertical Short Series */
+.poster-box.vertical {
+    aspect-ratio: 9 / 16;
+}
+
+.poster-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.movie-card:hover .poster-box img {
+    transform: scale(1.15);
+}
+
+/* Gradient Overlay inside Card */
+.card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 40px 12px 12px 12px;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 10%, rgba(0,0,0,0.6) 50%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    pointer-events: none;
+}
+
+.badge-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--accent);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(255, 0, 85, 0.4);
+}
+
+.movie-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 6px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #fff;
+}
+
+.movie-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.movie-meta i {
+    margin-right: 4px;
+}
+
+.rating-star {
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+/* ===== FOOTER ===== */
+footer {
+    padding: 60px 5%;
+    background: #020203;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 60px;
+}
+
+.social-icons {
+    margin: 25px 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.social-icons i {
+    font-size: 20px;
+    color: var(--text-muted);
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.social-icons i:hover {
+    color: var(--primary);
+    transform: scale(1.2);
 }
 
 /* ===== LOADER ===== */
-#loader{
-  position:fixed;
-  inset:0;
-  background:var(--bg-dark);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
-}
-.spinner{
-  width:40px;
-  height:40px;
-  border:3px solid rgba(255,255,255,0.1);
-  border-top:3px solid var(--primary);
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-}
-@keyframes spin{
-  100%{transform:rotate(360deg);}
+#loader {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-dark);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
 }
 
-/* ===== MOBILE ===== */
-@media(max-width:768px){
-  .movie-grid{
-    grid-template-columns:repeat(2,1fr);
-    gap:15px;
-  }
-  .hero{
-    height:55vh;
-    padding-bottom:40px;
-  }
-  .nav-links{
-    display:none;
-  }
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(255, 255, 255, 0.05);
+    border-top: 3px solid var(--primary);
+    border-right: 3px solid var(--secondary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* ===== RESPONSIVE ===== */
+@media(max-width: 768px) {
+    .nav-links { display: none; }
+    
+    .hero h1 { font-size: 32px; }
+    .hero { height: 60vh; }
+    
+    .movie-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile */
+        gap: 12px;
+    }
+    
+    .poster-box.vertical {
+        aspect-ratio: 9 / 15; /* Slightly adjusted for mobile screens */
+    }
 }
 </style>
 </head>
 
 <body>
+
+<!-- Loader -->
 <div id="loader">
   <div class="spinner"></div>
-  <p style="margin-top:15px;font-size:11px;letter-spacing:2px;opacity:0.6;">LOADING DUYDODEE</p>
+  <p style="margin-top:20px; font-size:12px; letter-spacing:3px; color: var(--text-muted); text-transform: uppercase;">Loading Duydodee</p>
 </div>
 
+<!-- Navigation -->
 <nav>
-  <a href="index.html" class="logo-text">DUYDODEE</a>
+  <a href="index.html" class="logo-text">DUY<span style="color:#fff; -webkit-text-fill-color: initial;">DODEE</span></a>
   <div class="nav-links">
-    <a href="#vertical-section">ซีรีส์สั้น</a>
-    <a href="#series-section">พากย์ไทย</a>
+    <a href="#vertical-section" class="active"><i class="fas fa-mobile-alt"></i> ซีรีส์สั้น</a>
+    <a href="#series-section"><i class="fas fa-tv"></i> พากย์ไทย</a>
     <a href="#"><i class="fas fa-search"></i> ค้นหา</a>
   </div>
+  <a href="#" style="color:var(--text-main); font-size:18px; display:none;"><i class="fas fa-bars"></i></a> <!-- Mobile Menu Icon Placeholder -->
 </nav>
 
+<!-- Hero Section -->
 <header class="hero">
   <div class="hero-content">
-    <h1><span style="color:var(--primary)">CHINESE</span> STREAMING</h1>
-    <p>อัปเดตซีรีส์สั้นแนวตั้งและพากย์ไทยยอดนิยม คมชัดระดับ 4K ฟรี 100%</p>
+    <span class="hero-tag">NEW UPDATE 2026</span>
+    <h1><span style="color:var(--primary); text-shadow:0 0 20px rgba(0,242,255,0.4);">CHINESE</span><br>STREAMING</h1>
+    <p>ศูนย์รวมความบันเทิงระดับ 4K ซีรีส์จีนพากย์ไทยและซีรีส์สั้นแนวตั้งยอดนิยม อัปเดตตอนใหม่ทุกวัน ดูฟรีไม่มีสะดุด</p>
+    <a href="#series-section" class="hero-btn">
+       <i class="fas fa-play"></i> เริ่มรับชมเลย
+    </a>
   </div>
 </header>
 
 <main>
-<section class="content-section" id="vertical-section">
-  <div class="section-header">
-    <h2>ซีรีส์สั้นแนวตั้ง</h2>
-    <a href="#" style="color: var(--primary); text-decoration: none; font-size:13px;">ดูทั้งหมด ></a>
-  </div>
-  <div class="movie-grid" id="grid-vertical"></div>
-</section>
+  <!-- Vertical Series Section -->
+  <section class="content-section" id="vertical-section">
+    <div class="section-header">
+      <h2>ซีรีส์สั้นแนวตั้ง <span style="font-size:12px; font-weight:400; color:var(--text-muted); margin-left:10px; opacity:0.7;">(ยอดนิยม)</span></h2>
+      <a href="#" class="see-more">ดูทั้งหมด <i class="fas fa-chevron-right" style="font-size:10px;"></i></a>
+    </div>
+    <div class="movie-grid" id="grid-vertical"></div>
+  </section>
 
-<section class="content-section" id="series-section">
-  <div class="section-header">
-    <h2>ซีรีส์พากย์ไทย</h2>
-  </div>
-  <div class="movie-grid" id="grid-series"></div>
-</section>
+  <!-- Standard Series Section -->
+  <section class="content-section" id="series-section">
+    <div class="section-header">
+      <h2>ซีรีส์พากย์ไทย <span style="font-size:12px; font-weight:400; color:var(--text-muted); margin-left:10px; opacity:0.7;">(แนะนำ)</span></h2>
+      <a href="#" class="see-more">ดูทั้งหมด <i class="fas fa-chevron-right" style="font-size:10px;"></i></a>
+    </div>
+    <div class="movie-grid" id="grid-series"></div>
+  </section>
 </main>
 
-<footer style="padding:60px 6%; background:#050507; text-align:center; border-top:1px solid rgba(255,255,255,0.05);">
-  <h2 class="logo-text">DUYDODEE</h2>
-  <div style="margin-top:20px; font-size:18px; opacity:0.6;">
-    <i class="fab fa-facebook" style="margin:0 10px; cursor:pointer;"></i>
-    <i class="fab fa-tiktok" style="margin:0 10px; cursor:pointer;"></i>
-    <i class="fab fa-youtube" style="margin:0 10px; cursor:pointer;"></i>
+<!-- Footer -->
+<footer>
+  <h2 class="logo-text" style="font-size: 32px;">DUY<span style="color:#fff; -webkit-text-fill-color: initial;">DODEE</span></h2>
+  <div class="social-icons">
+    <i class="fab fa-facebook"></i>
+    <i class="fab fa-tiktok"></i>
+    <i class="fab fa-youtube"></i>
+    <i class="fab fa-instagram"></i>
   </div>
-  <p style="font-size:11px; opacity:0.3; margin-top:30px;">&copy; 2026 DUYDODEE-HD. All Rights Reserved.</p>
+  <p style="font-size:12px; color:var(--text-muted); opacity:0.5;">
+    &copy; 2026 DUYDODEE-HD. All Rights Reserved. <br>
+    Disclaimer: This site does not store any files on its server. All contents are provided by non-affiliated third parties.
+  </p>
 </footer>
 
+<!-- Firebase Scripts (NO CHANGES) -->
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
 <script>
+// CONFIG เดิม ไม่แตะต้อง
 const firebaseConfig = {
   apiKey:"AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
   authDomain:"classic-e8ab7.firebaseapp.com",
@@ -324,52 +509,65 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-function createMovieCard(id,data){
+// Function Create Card (ปรับแค่ HTML Structure เพื่อความสวยงาม แต่ใช้ Data เดิม)
+function createMovieCard(id, data){
   const card = document.createElement('div');
-  card.className='movie-card';
+  card.className = 'movie-card';
   card.onclick = () => window.location.href = `watch.html?id=${id}`;
 
-  const posterClass = data.category==='vertical' ? 'poster-box vertical' : 'poster-box';
+  const posterClass = data.category === 'vertical' ? 'poster-box vertical' : 'poster-box';
+  
+  // Format View Count (e.g. 1.2K)
+  const formattedView = data.viewCount >= 1000 
+    ? (data.viewCount/1000).toFixed(1) + 'K' 
+    : data.viewCount || 0;
 
-  card.innerHTML=`
-    ${data.badge?`<span class="badge-tag">${data.badge}</span>`:''}
+  card.innerHTML = `
+    ${data.badge ? `<span class="badge-tag">${data.badge}</span>` : ''}
     <div class="${posterClass}">
-      <img src="${data.poster}" alt="${data.title}" onerror="this.src='https://via.placeholder.com/400x600?text=No+Poster'" loading="lazy">
+      <img src="${data.poster}" alt="${data.title}" onerror="this.src='https://via.placeholder.com/400x600/1a1a1e/ffffff?text=No+Image'" loading="lazy">
     </div>
-    <div class="overlay-card">
+    <div class="card-overlay">
       <p class="movie-title">${data.title}</p>
-      <div style="font-size:11px;color:var(--text-dim);display:flex;justify-content:space-between;">
-        <span><i class="far fa-play-circle"></i> ${data.viewCount>=1000?(data.viewCount/1000).toFixed(1)+'K':data.viewCount||0}</span>
-        <span style="color:var(--primary)"><i class="fas fa-star"></i> ${data.rating||'8.5'}</span>
+      <div class="movie-meta">
+        <span><i class="far fa-play-circle" style="color:var(--primary)"></i> ${formattedView}</span>
+        <span style="font-weight:600;"><i class="fas fa-star rating-star"></i> ${data.rating || 'N/A'}</span>
       </div>
     </div>
   `;
   return card;
 }
 
+// Main Load Function (Logic เดิม 100%)
 async function loadContent(){
-  try{
+  try {
     const snap = await db.collection('artifacts').orderBy('createdAt','desc').get();
     const gridVertical = document.getElementById('grid-vertical');
     const gridSeries = document.getElementById('grid-series');
-    gridVertical.innerHTML='';
-    gridSeries.innerHTML='';
-    snap.forEach(doc=>{
+    
+    gridVertical.innerHTML = '';
+    gridSeries.innerHTML = '';
+    
+    snap.forEach(doc => {
       const m = doc.data();
       const card = createMovieCard(doc.id, m);
-      if(m.category==='vertical') gridVertical.appendChild(card);
-      else gridSeries.appendChild(card);
+      
+      if(m.category === 'vertical') {
+        gridVertical.appendChild(card);
+      } else {
+        gridSeries.appendChild(card);
+      }
     });
-  } catch(err){
-    console.error("Error:",err);
-  } finally{
+  } catch(err) {
+    console.error("Error loading content:", err);
+  } finally {
     const loader = document.getElementById('loader');
-    loader.style.opacity='0';
-    setTimeout(()=>loader.style.display='none',500);
+    loader.style.opacity = '0';
+    setTimeout(() => loader.style.display = 'none', 500);
   }
 }
 
-window.onload=loadContent;
+window.onload = loadContent;
 </script>
 </body>
 </html>
