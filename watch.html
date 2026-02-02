@@ -231,19 +231,19 @@
         <main class="player-wrapper">
             <div class="main-player-section">
                 <div class="video-container" id="video-box">
-                    <!-- Iframe will be inserted here -->
+                    <!-- วิดีโอจะแสดงที่นี่ -->
                 </div>
             </div>
 
             <div class="movie-details">
                 <h1 id="movie-title">กำลังโหลด...</h1>
                 <div class="meta-info">
-                    <span class="badge" id="movie-category">Category</span>
+                    <span class="badge" id="movie-category">หมวดหมู่</span>
                     <span><i class="far fa-calendar-alt"></i> <span id="movie-date">-</span></span>
-                    <span><i class="far fa-eye"></i> ยอดเข้าชม : <span id="view-count">...</span></span>
+                    <span><i class="far fa-eye"></i> ยอดเข้าชม : <span id="view-count">กำลังโหลด...</span></span>
                 </div>
                 <div class="description-box" id="movie-desc">
-                    ไม่มีข้อมูลคำอธิบายสำหรับเรื่องนี้
+                    กำลังโหลดข้อมูลเนื้อหา...
                 </div>
             </div>
         </main>
@@ -252,7 +252,7 @@
         <aside class="recommendation-section">
             <h2 class="section-title"><i class="fas fa-layer-group"></i> เรื่องที่คุณอาจสนใจ</h2>
             <div class="suggest-grid" id="suggest-grid">
-                <!-- Suggestions will be loaded here -->
+                <!-- รายการแนะนำจะแสดงที่นี่ -->
             </div>
         </aside>
     </div>
@@ -279,7 +279,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Get ID from URL
+        // ดึง ID จาก URL
         const urlParams = new URLSearchParams(window.location.search);
         const movieId = urlParams.get('id');
 
@@ -290,7 +290,7 @@
             }
 
             try {
-                // 1. Load Main Movie
+                // 1. ดึงข้อมูลหนังจาก Firestore
                 const doc = await db.collection('movies').doc(movieId).get();
                 if(!doc.exists) {
                     alert("ไม่พบข้อมูลวิดีโอ");
@@ -299,36 +299,40 @@
                 }
                 const data = doc.data();
 
+                // อัปเดตข้อมูลในหน้าเว็บ
                 document.title = `${data.title} | DUYDODEE-HD`;
                 document.getElementById('movie-title').innerText = data.title;
                 document.getElementById('movie-category').innerText = data.category === 'vertical' ? 'ซีรีส์แนวตั้ง' : 'พากย์ไทย';
                 document.getElementById('movie-desc').innerText = data.description || "สัมผัสความสนุกกับซีรีส์เรื่องนี้ได้เลย พากย์ไทยคมชัดระดับ HD";
-                document.getElementById('movie-date').innerText = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString('th-TH') : '-';
+                document.getElementById('movie-date').innerText = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString('th-TH') : 'ไม่ระบุวันที่';
+                document.getElementById('view-count').innerText = (data.views || 0).toLocaleString() + " ครั้ง";
                 
-                // Embed Video
+                // ฝังวิดีโอ Iframe
                 const videoBox = document.getElementById('video-box');
                 videoBox.innerHTML = `<iframe src="${data.url}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
 
-                // 2. Load Suggestions
+                // 2. ดึงรายการแนะนำ
                 loadSuggestions(data.category);
 
             } catch (err) {
-                console.error(err);
+                console.error("เกิดข้อผิดพลาดในการโหลดข้อมูล:", err);
             } finally {
-                document.getElementById('loader').style.display = 'none';
+                const loader = document.getElementById('loader');
+                if(loader) loader.style.display = 'none';
             }
         }
 
         async function loadSuggestions(currentCat) {
             const grid = document.getElementById('suggest-grid');
             try {
+                // ดึงหนัง 6 เรื่องในหมวดหมู่เดียวกัน
                 const snap = await db.collection('movies')
                     .where('category', '==', currentCat)
                     .limit(6)
                     .get();
 
                 snap.forEach(doc => {
-                    if(doc.id === movieId) return; // Skip current movie
+                    if(doc.id === movieId) return; // ข้ามเรื่องปัจจุบัน
                     const m = doc.data();
                     const card = document.createElement('div');
                     card.className = 'suggest-card';
@@ -343,7 +347,7 @@
                     grid.appendChild(card);
                 });
             } catch (e) {
-                console.log("Error loading suggests", e);
+                console.log("เกิดข้อผิดพลาดในการโหลดรายการแนะนำ", e);
             }
         }
 
