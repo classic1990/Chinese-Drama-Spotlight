@@ -28,6 +28,9 @@
             display: flex;
             align-items: center;
             gap: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .back-btn {
@@ -37,9 +40,21 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px; /* ขยายเพื่อให้พอดีกับ Sidebar */
             margin: 20px auto;
             padding: 0 15px;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        @media (min-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr 350px;
+            }
         }
 
         .video-container {
@@ -74,16 +89,34 @@
             color: var(--primary);
         }
 
-        .movie-desc {
+        .meta-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
             color: var(--text-dim);
-            line-height: 1.6;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .badge {
+            background: #ff3c00;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .movie-desc {
+            color: #ccc;
+            line-height: 1.7;
             font-size: 15px;
+            border-left: 3px solid var(--primary);
+            padding-left: 15px;
         }
 
-        .episode-list {
-            margin-top: 25px;
-        }
-
+        /* Episode List */
+        .episode-list { margin-top: 25px; }
         .episode-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
@@ -103,32 +136,55 @@
             font-size: 14px;
         }
 
-        .ep-btn:hover {
-            background: var(--primary);
-            color: #000;
+        .ep-btn:hover { background: var(--primary); color: #000; }
+        .ep-btn.active { background: var(--primary); color: #000; font-weight: 600; }
+
+        /* Suggest Section */
+        .suggest-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .ep-btn.active {
-            background: var(--primary);
-            color: #000;
-            font-weight: 600;
+        .suggest-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
         }
 
-        #loader {
-            text-align: center;
-            padding: 100px 0;
+        .suggest-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            color: white;
         }
 
+        .suggest-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,174,255,0.2); }
+        .suggest-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
+        .suggest-card p { padding: 10px; margin: 0; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        @media (min-width: 1024px) {
+            .suggest-grid { grid-template-columns: 1fr; }
+            .suggest-card { display: flex; height: 100px; }
+            .suggest-card img { width: 70px; aspect-ratio: auto; }
+            .suggest-card p { align-self: center; white-space: normal; }
+        }
+
+        /* Loader */
+        #loader { text-align: center; padding: 100px 0; }
         .spinner {
-            width: 50px;
-            height: 50px;
+            width: 50px; height: 50px;
             border: 5px solid rgba(255,255,255,0.1);
             border-top: 5px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
             display: inline-block;
         }
-
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -144,20 +200,30 @@
         <div id="loader"><div class="spinner"></div></div>
     </div>
 
-    <div id="playerArea" style="display:none;">
-        <div class="video-container" id="videoWrapper">
-            <!-- Iframe จะถูกแทรกที่นี่ -->
-        </div>
+    <div id="playerArea" style="display:none;" class="main-layout">
+        <main>
+            <div class="video-container" id="videoWrapper"></div>
 
-        <div class="movie-details">
-            <h1 class="movie-title" id="displayTitle">ชื่อซีรีส์</h1>
-            <p class="movie-desc" id="displayDesc">เรื่องย่อกำลังโหลด...</p>
-        </div>
+            <div class="episode-list">
+                <h3>เลือกตอนที่ต้องการรับชม</h3>
+                <div id="episodeGrid" class="episode-grid"></div>
+            </div>
 
-        <div class="episode-list">
-            <h3>เลือกตอนที่ต้องการรับชม</h3>
-            <div id="episodeGrid" class="episode-grid"></div>
-        </div>
+            <div class="movie-details">
+                <h1 class="movie-title" id="displayTitle">ชื่อซีรีส์</h1>
+                <div class="meta-tags">
+                    <span class="badge" id="m-badge">HD</span>
+                    <span><i class="far fa-eye"></i> <span id="m-views">0</span> วิว</span>
+                    <span><i class="far fa-calendar"></i> <span id="m-date">-</span></span>
+                </div>
+                <p class="movie-desc" id="displayDesc">เรื่องย่อกำลังโหลด...</p>
+            </div>
+        </main>
+
+        <aside>
+            <h3 class="suggest-title"><i class="fas fa-play-circle" style="color: var(--primary);"></i> เรื่องที่คุณอาจสนใจ</h3>
+            <div id="suggestBox" class="suggest-grid"></div>
+        </aside>
     </div>
 </div>
 
@@ -174,87 +240,116 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // ดึง ID จาก URL
     const urlParams = new URLSearchParams(window.location.search);
     const movieId = urlParams.get('id');
 
-    if (!movieId) {
-        window.location.href = 'index.html';
+    if (!movieId) window.location.href = 'index.html';
+
+    // ฟังก์ชันแปลงลิงก์ YouTube เป็น Embed
+    function getEmbedUrl(url) {
+        if (!url) return "";
+        let videoId = "";
+        try {
+            if (url.includes("youtu.be/")) {
+                videoId = url.split("youtu.be/")[1].split(/[?#]/)[0];
+            } else if (url.includes("youtube.com/watch")) {
+                const params = new URLSearchParams(new URL(url).search);
+                videoId = params.get('v');
+            } else if (url.includes("youtube.com/embed/")) {
+                return url;
+            }
+        } catch (e) { console.error("URL Error", e); }
+        return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0` : url;
     }
 
     async function loadMovieData() {
         try {
-            const doc = await db.collection('movies').doc(movieId).get();
+            const docRef = db.collection('movies').doc(movieId);
+            const doc = await docRef.get();
+            
             if (!doc.exists) {
-                alert("ไม่พบข้อมูลซีรีส์");
+                alert("ไม่พบข้อมูล");
                 window.location.href = 'index.html';
                 return;
             }
 
             const data = doc.data();
             
-            // อัปเดตยอดวิว (ใช้ FieldValue.increment เพื่อความแม่นยำ)
-            db.collection('movies').doc(movieId).update({
-                viewCount: firebase.firestore.FieldValue.increment(1)
-            });
-
-            // แสดงข้อมูล
+            // อัปเดต UI เบื้องต้น
             document.getElementById('navTitle').innerText = data.title;
             document.getElementById('displayTitle').innerText = data.title;
+            document.getElementById('m-badge').innerText = data.badge || 'HD';
+            document.getElementById('m-views').innerText = (data.viewCount || 0).toLocaleString();
             document.getElementById('displayDesc').innerText = data.desc || "ไม่มีเรื่องย่อ";
             
-            // สร้างปุ่มเลือกตอน
+            if(data.createdAt) {
+                const date = new Date(data.createdAt.seconds * 1000);
+                document.getElementById('m-date').innerText = date.toLocaleDateString('th-TH');
+            }
+
+            // ระบบจัดการหลายตอน
             const epGrid = document.getElementById('episodeGrid');
-            const links = data.links || (data.link ? [data.link] : []);
+            let allLinks = data.links && Array.isArray(data.links) ? data.links : (data.link ? [data.link] : []);
             
-            if (links.length > 0) {
-                links.forEach((link, index) => {
+            if (allLinks.length > 0) {
+                allLinks.forEach((link, index) => {
                     const btn = document.createElement('div');
                     btn.className = `ep-btn ${index === 0 ? 'active' : ''}`;
-                    btn.innerText = `ตอนที่ ${index + 1}`;
+                    btn.innerText = allLinks.length > 1 ? `ตอนที่ ${index + 1}` : `เริ่มเล่น`;
                     btn.onclick = () => playVideo(link, btn);
                     epGrid.appendChild(btn);
                 });
-
-                // เล่นตอนแรกทันที
-                playVideo(links[0]);
-            } else {
-                epGrid.innerHTML = "<p>ยังไม่มีลิงก์วิดีโอ</p>";
+                playVideo(allLinks[0]);
             }
 
-            // ซ่อน Loader
+            // เพิ่มยอดวิว
+            docRef.update({ viewCount: firebase.firestore.FieldValue.increment(1) });
+
+            // โหลดรายการแนะนำ
+            fetchSuggestions(data.category);
+
+            // แสดงหน้าจอ
             document.getElementById('loadingArea').style.display = 'none';
-            document.getElementById('playerArea').style.display = 'block';
+            document.getElementById('playerArea').style.display = 'grid';
 
         } catch (error) {
-            console.error("Error loading movie:", error);
-            alert("เกิดข้อผิดพลาดในการโหลดข้อมูล");
+            console.error("Error:", error);
         }
     }
 
     function playVideo(url, btnElement = null) {
         const wrapper = document.getElementById('videoWrapper');
-        
-        // ตรวจสอบและแปลงลิงก์ YouTube เป็น Embed
-        let embedUrl = url;
-        if (url.includes('youtube.com') || url.includes('youtu.be')) {
-            let videoId = "";
-            if (url.includes('v=')) {
-                videoId = url.split('v=')[1]?.split('&')[0];
-            } else {
-                videoId = url.split('/').pop();
-            }
-            embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-        }
+        wrapper.innerHTML = `<iframe src="${getEmbedUrl(url)}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
 
-        wrapper.innerHTML = `<iframe src="${embedUrl}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
-
-        // สลับสถานะปุ่ม Active
         if (btnElement) {
             document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
             btnElement.classList.add('active');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+    }
+
+    async function fetchSuggestions(category) {
+        if (!category) return;
+        const box = document.getElementById('suggestBox');
+        try {
+            const snap = await db.collection('movies')
+                                .where('category', '==', category)
+                                .limit(8)
+                                .get();
+            
+            snap.forEach(doc => {
+                if (doc.id === movieId) return;
+                const m = doc.data();
+                const card = document.createElement('a');
+                card.href = `player.html?id=${doc.id}`;
+                card.className = 'suggest-card';
+                card.innerHTML = `
+                    <img src="${m.poster}" onerror="this.src='https://via.placeholder.com/300x450?text=No+Poster'">
+                    <p>${m.title}</p>
+                `;
+                box.appendChild(card);
+            });
+        } catch (e) { console.error("Suggest Error:", e); }
     }
 
     window.onload = loadMovieData;
