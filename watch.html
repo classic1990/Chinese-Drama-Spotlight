@@ -246,7 +246,7 @@
             }
 
             try {
-                // ดึงข้อมูลหนัง (สิทธิ์ READ: allow ตามกฎข้อที่ 1)
+                // ดึงข้อมูลหนัง
                 const doc = await db.collection('movies').doc(movieId).get();
                 
                 if(!doc.exists) {
@@ -286,13 +286,14 @@
                     videoBox.innerHTML = `<div style="padding:50px; text-align:center; color:#ff4444;">ขออภัย ลิงก์วิดีโอไม่ถูกต้องหรือยังไม่ถูกอัปโหลด</div>`;
                 }
 
+                // อัปเดตยอดวิว (Increment views)
+                // หมายเหตุ: ต้องตรวจสอบ Firestore Rules ว่าอนุญาตให้ update ฟิลด์ views หรือไม่
+                db.collection('movies').doc(movieId).update({
+                    views: firebase.firestore.FieldValue.increment(1)
+                }).catch(e => console.log("View count update skipped due to permissions"));
+
                 // โหลดหนังแนะนำ
                 fetchSuggest(data.category);
-
-                /* หมายเหตุเรื่องความปลอดภัย: 
-                   ส่วนการเพิ่มยอดวิว (update views) ถูกนำออกตามความต้องการที่เน้นความปลอดภัยสูงสุด 
-                   เนื่องจากกฎ Firestore Rules ในปัจจุบันอนุญาตการแก้ไขข้อมูล (update) ให้กับแอดมินเท่านั้น
-                */
 
             } catch (err) {
                 console.error("Critical Error:", err);
