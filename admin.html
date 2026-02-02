@@ -4,341 +4,266 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | DUYDODEE-HD</title>
-    
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         :root {
             --primary: #00e5ff;
-            --primary-dark: #00b8cc;
             --bg-dark: #0a0a0c;
             --card-bg: #16161a;
             --input-bg: #1f1f23;
             --text-main: #ffffff;
             --text-dim: #9ca3af;
-            --success: #10b981;
-            --error: #ef4444;
             --ai-color: #a855f7;
             --glass-border: rgba(255, 255, 255, 0.05);
+            --error: #ef4444;
         }
 
         * { box-sizing: border-box; }
-
         body { 
-            margin: 0; 
-            font-family: 'Prompt', sans-serif; 
-            background: var(--bg-dark); 
-            color: var(--text-main);
+            margin: 0; font-family: 'Prompt', sans-serif; 
+            background: var(--bg-dark); color: var(--text-main);
             background-image: radial-gradient(circle at 0% 0%, rgba(0, 229, 255, 0.05) 0%, transparent 40%);
             min-height: 100vh;
         }
         
-        /* --- AI Toast Notification --- */
         #aiLoading { 
             position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
             background: var(--ai-color); color: white; padding: 12px 25px; 
             border-radius: 50px; z-index: 2000; display: none; 
             box-shadow: 0 10px 30px rgba(168, 85, 247, 0.4);
             font-weight: 600; font-size: 14px;
-            animation: slideDown 0.3s ease;
         }
-        @keyframes slideDown { from { top: -50px; } to { top: 30px; } }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+        .header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         
-        .header-box {
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 40px; border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 20px;
-        }
-        .header-box h2 { font-size: 24px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 15px; }
-        .header-box h2 i { background: var(--ai-color); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        /* --- Grid Layout --- */
-        .form-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 25px; }
-        @media (max-width: 900px) { .form-grid { grid-template-columns: 1fr; } }
+        .form-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; }
+        @media (max-width: 850px) { .form-grid { grid-template-columns: 1fr; } }
 
         .card { 
-            background: var(--card-bg); padding: 30px; border-radius: 20px; 
+            background: var(--card-bg); padding: 25px; border-radius: 16px; 
             border: 1px solid var(--glass-border); 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-        .card-title { font-size: 16px; font-weight: 600; margin-bottom: 20px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .card-title { color: var(--primary); font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+
+        .input-group { margin-bottom: 18px; }
+        .input-group label { display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-dim); font-size: 14px; }
         
-        /* --- Form Elements --- */
-        .input-group { margin-bottom: 20px; }
-        .input-group label { 
-            display: flex; justify-content: space-between; margin-bottom: 10px; 
-            color: var(--text-dim); font-size: 14px; font-weight: 500; 
+        input, select, textarea {
+            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--glass-border);
+            background: var(--input-bg); color: #fff; font-family: 'Prompt'; font-size: 14px;
         }
-        
-        .input-group input, .input-group select, .input-group textarea {
-            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--glass-border);
-            background: var(--input-bg); color: #fff; box-sizing: border-box; 
-            font-family: 'Prompt'; font-size: 15px; transition: 0.3s;
-        }
-        .input-group input:focus, .input-group textarea:focus {
-            border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.1);
-        }
+        input:focus { border-color: var(--primary); outline: none; }
 
-        .ai-btn { 
-            background: rgba(168, 85, 247, 0.15); color: var(--ai-color); 
-            border: 1px solid var(--ai-color); padding: 4px 12px; border-radius: 6px; 
-            font-size: 11px; cursor: pointer; font-weight: 600; transition: 0.2s;
-        }
-        .ai-btn:hover { background: var(--ai-color); color: white; }
+        .ai-btn { background: rgba(168, 85, 247, 0.1); color: var(--ai-color); border: 1px solid var(--ai-color); padding: 2px 10px; border-radius: 5px; cursor: pointer; font-size: 11px; }
+        .btn-submit { background: var(--primary); color: #000; padding: 14px; border-radius: 10px; border: none; font-weight: 700; width: 100%; cursor: pointer; font-size: 16px; transition: 0.2s; }
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-2px); }
 
-        .main-save-btn { 
-            background: var(--primary); color: #000; padding: 16px; border-radius: 12px; 
-            font-weight: 700; border: none; cursor: pointer; width: 100%; 
-            margin-top: 10px; font-size: 16px; transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
-        }
-        .main-save-btn:hover { background: #fff; transform: translateY(-2px); }
+        .episodes-area { background: #000; padding: 10px; border-radius: 10px; max-height: 250px; overflow-y: auto; border: 1px solid #222; }
+        .ep-row { display: flex; gap: 8px; margin-bottom: 8px; }
 
-        /* --- Episode Section --- */
-        .episodes-area { 
-            background: #000; padding: 15px; border-radius: 12px; 
-            border: 1px dashed #333; max-height: 300px; overflow-y: auto; 
-        }
-        .episode-row { 
-            display: flex; gap: 10px; margin-bottom: 10px; 
-            background: var(--input-bg); padding: 8px; border-radius: 10px; align-items: center; 
-        }
-        .episode-row input { padding: 8px 12px; border-radius: 8px; }
-
-        /* --- Table List --- */
-        .table-container { margin-top: 50px; }
-        .table-container h3 { margin-bottom: 20px; font-size: 20px; color: var(--text-main); }
-        
-        .movie-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-        .movie-row { 
-            background: var(--card-bg); border-radius: 15px; transition: 0.3s;
-        }
-        .movie-row:hover { background: #1f1f23; }
-        .movie-row td { 
-            padding: 15px; 
-            border-top: 1px solid var(--glass-border); 
-            border-bottom: 1px solid var(--glass-border);
-        }
-        .movie-row td:first-child { border-left: 1px solid var(--glass-border); border-top-left-radius: 15px; border-bottom-left-radius: 15px; }
-        .movie-row td:last-child { border-right: 1px solid var(--glass-border); border-top-right-radius: 15px; border-bottom-right-radius: 15px; }
-
-        .poster-mini { width: 45px; height: 60px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        
-        .action-btn { 
-            padding: 8px; border-radius: 8px; cursor: pointer; font-size: 14px; 
-            transition: 0.2s; display: inline-flex; align-items: center; justify-content: center;
-        }
-        .btn-edit { color: var(--primary); background: rgba(0, 229, 255, 0.1); margin-right: 10px; }
-        .btn-delete { color: var(--error); background: rgba(239, 68, 68, 0.1); }
-        .action-btn:hover { transform: scale(1.1); }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        .movie-table { width: 100%; border-collapse: collapse; margin-top: 40px; }
+        .movie-row { background: var(--card-bg); border-bottom: 8px solid var(--bg-dark); }
+        .movie-row td { padding: 12px; }
+        .poster-mini { width: 40px; height: 55px; border-radius: 5px; object-fit: cover; }
+        .action-btn { padding: 8px; cursor: pointer; border-radius: 6px; }
     </style>
 </head>
 <body>
 
-<div id="aiLoading"><i class="fas fa-magic fa-spin"></i> Gemini AI กำลังประมวลผล...</div>
+<div id="aiLoading">กำลังประมวลผลด้วย AI...</div>
 
 <div class="container">
     <div class="header-box">
-        <h2><i class="fas fa-bolt"></i> จัดการข้อมูลซีรีส์</h2>
-        <a href="index.html" style="color:var(--primary); text-decoration:none; font-weight:600; font-size:14px;"><i class="fas fa-external-link-alt"></i> ดูหน้าเว็บ</a>
+        <h2 style="margin:0;"><i class="fas fa-magic" style="color:var(--ai-color)"></i> ระบบจัดการซีรีส์</h2>
+        <a href="index.html" style="color:var(--primary); text-decoration:none;"><i class="fas fa-home"></i> กลับหน้าหลัก</a>
     </div>
 
     <form id="movieForm">
+        <input type="hidden" id="editId">
         <div class="form-grid">
-            <!-- Left Side -->
             <div class="card">
-                <div class="card-title"><i class="fas fa-info-circle"></i> ข้อมูลพื้นฐาน</div>
-                <input type="hidden" id="editId">
+                <div class="card-title"><i class="fas fa-file-alt"></i> ข้อมูลหลัก</div>
                 <div class="input-group">
                     <label>ชื่อเรื่อง</label>
-                    <input type="text" id="title" placeholder="ระบุชื่อเรื่องซีรีส์..." required>
+                    <input type="text" id="title" required placeholder="เช่น รักนี้ที่รอคอย">
                 </div>
                 <div class="input-group">
-                    <label>เรื่องย่อ <button type="button" class="ai-btn" onclick="aiAction('desc')">AI เจนเนื้อเรื่อง</button></label>
-                    <textarea id="desc" rows="6" placeholder="พิมพ์เรื่องย่อ หรือให้ AI ช่วยเขียน..."></textarea>
+                    <label>เรื่องย่อ <button type="button" class="ai-btn" onclick="runAI('desc')">AI เจนเนื้อหา</button></label>
+                    <textarea id="desc" rows="5" placeholder="ระบุเรื่องย่อ..."></textarea>
                 </div>
-                <div class="input-group" style="margin-bottom:0;">
-                    <label>ลิงก์วิดีโอ (รองรับหลายตอน)</label>
-                    <div id="episodesContainer" class="episodes-area"></div>
-                    <button type="button" class="ai-btn" style="width:100%; margin-top:15px; background:rgba(255,255,255,0.05); border-color:#444; color:#fff; padding:10px;" onclick="addEpisodeInput()">
-                        <i class="fas fa-plus"></i> เพิ่มตอนใหม่
-                    </button>
+                <div class="input-group">
+                    <label>จัดการตอน (ลิงก์วิดีโอ)</label>
+                    <div id="epContainer" class="episodes-area"></div>
+                    <button type="button" class="ai-btn" style="width:100%; margin-top:10px; padding:8px;" onclick="addEpField()">+ เพิ่มตอน</button>
                 </div>
             </div>
 
-            <!-- Right Side -->
             <div class="card">
-                <div class="card-title"><i class="fas fa-cog"></i> ตั้งค่าอื่นๆ</div>
+                <div class="card-title"><i class="fas fa-cog"></i> ตั้งค่า</div>
                 <div class="input-group">
-                    <label>หมวดหมู่การแสดงผล</label>
+                    <label>หมวดหมู่</label>
                     <select id="category">
-                        <option value="vertical">📱 ซีรีส์สั้น (แนวตั้ง)</option>
-                        <option value="series">🎬 ซีรีส์ยาว (พากย์ไทย)</option>
+                        <option value="vertical">ซีรีส์สั้น (แนวตั้ง)</option>
+                        <option value="series">ซีรีส์ยาว (พากย์ไทย)</option>
                     </select>
                 </div>
                 <div class="input-group">
                     <label>URL รูปโปสเตอร์</label>
-                    <input type="url" id="poster" placeholder="https://..." required>
+                    <input type="url" id="poster" required placeholder="https://...">
                 </div>
                 <div class="input-group">
-                    <label>ป้ายกำกับ <button type="button" class="ai-btn" onclick="aiAction('badge')">AI แนะนำ</button></label>
-                    <input type="text" id="badge" placeholder="เช่น HD, จบแล้ว, มาใหม่">
+                    <label>ป้ายกำกับ <button type="button" class="ai-btn" onclick="runAI('badge')">AI แนะนำ</button></label>
+                    <input type="text" id="badge" placeholder="เช่น จบแล้ว, แนะนำ">
                 </div>
-                
-                <div style="margin-top:30px;">
-                    <button type="submit" class="main-save-btn" id="submitBtn">บันทึกข้อมูลซีรีส์</button>
-                    <button type="button" id="cancelBtn" onclick="resetForm()" style="display:none; width:100%; margin-top:15px; background:transparent; color:var(--text-dim); border:1px solid #333; padding:12px; border-radius:12px; cursor:pointer; font-family:'Prompt';">ยกเลิกการแก้ไข</button>
-                </div>
+                <button type="submit" class="btn-submit" id="submitBtn">บันทึกข้อมูล</button>
+                <button type="button" id="cancelBtn" onclick="resetForm()" style="display:none; width:100%; margin-top:10px; background:none; color:var(--text-dim); border:none; cursor:pointer;">ยกเลิกแก้ไข</button>
             </div>
         </div>
     </form>
 
-    <div class="table-container">
-        <h3>รายการที่อัปโหลดล่าสุด</h3>
+    <div style="margin-top:40px;">
+        <h3 style="color:var(--text-dim)">รายการทั้งหมด</h3>
         <table class="movie-table">
             <tbody id="movieList"></tbody>
         </table>
     </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<!-- Firebase SDK -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
-<script>
-    /* --- Logic คงเดิมตามไฟล์ต้นฉบับ --- */
     const firebaseConfig = {
         apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
         authDomain: "classic-e8ab7.firebaseapp.com",
         projectId: "classic-e8ab7",
         appId: "1:596308927760:web:63043fd2786459082cb195"
     };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const COLLECTION_NAME = "artifacts";
-    const geminiKey = "AQ.Ab8RN6I36WcxxlrCTmyr6ChGTr0mpGkfaBMq9nJyVNIqzX90ww";
 
-    async function aiAction(type) {
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default';
+    const colPath = collection(db, 'artifacts', appId, 'public', 'data', 'series');
+
+    // AI Helper
+    window.runAI = async (type) => {
         const title = document.getElementById('title').value;
-        if(!title) return alert("กรุณาใส่ชื่อเรื่องก่อนใช้ AI ครับ");
+        if(!title) return alert("ใส่ชื่อเรื่องก่อนครับ");
         
         document.getElementById('aiLoading').style.display = 'block';
-        const prompt = type === 'desc' ? `ขอเรื่องย่อซีรีส์เรื่อง ${title} สั้นๆ 2 บรรทัด` : `ขอป้ายกำกับ 1 คำสำหรับเรื่อง ${title} (เช่น จบแล้ว, สนุกมาก, แอคชั่น)`;
+        const apiKey = ""; // API Key will be injected by environment
+        const prompt = type === 'desc' ? `เขียนเรื่องย่อซีรีส์ ${title} 2 บรรทัด` : `ขอ 1 คำสั้นๆ เป็นป้ายกำกับซีรีส์ ${title}`;
         
         try {
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
-                method: 'POST', body: JSON.stringify({contents: [{parts: [{text: prompt}]}]})
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
             });
             const data = await res.json();
-            const result = data.candidates[0].content.parts[0].text.trim();
-            if(type === 'desc') document.getElementById('desc').value = result;
-            else document.getElementById('badge').value = result.replace(/[^\u0E00-\u0E7F]/g, "").substring(0, 10);
-        } catch(e) { alert("AI ขัดข้องชั่วคราว"); }
+            const text = data.candidates?.[0]?.content?.parts?.[0]?.text.trim();
+            if(type === 'desc') document.getElementById('desc').value = text;
+            else document.getElementById('badge').value = text.substring(0, 10);
+        } catch (err) { console.error(err); }
         finally { document.getElementById('aiLoading').style.display = 'none'; }
-    }
+    };
 
-    function addEpisodeInput(value = "") {
-        const container = document.getElementById('episodesContainer');
+    // UI Helpers
+    window.addEpField = (val = "") => {
         const div = document.createElement('div');
-        div.className = 'episode-row';
+        div.className = 'ep-row';
         div.innerHTML = `
-            <input type="text" class="ep-link-input" placeholder="วางลิงก์วิดีโอ (YouTube/Embed)..." value="${value}" required>
-            <button type="button" onclick="this.parentElement.remove()" style="color:var(--error); background:none; border:none; cursor:pointer; font-size:20px;">&times;</button>
+            <input type="text" class="ep-link" placeholder="ลิงก์วิดีโอ" value="${val}" required>
+            <button type="button" onclick="this.parentElement.remove()" style="color:red; background:none; border:none; cursor:pointer;">&times;</button>
         `;
-        container.appendChild(div);
-    }
+        document.getElementById('epContainer').appendChild(div);
+    };
 
-    document.getElementById('movieForm').addEventListener('submit', async (e) => {
+    window.resetForm = () => {
+        document.getElementById('movieForm').reset();
+        document.getElementById('editId').value = '';
+        document.getElementById('epContainer').innerHTML = '';
+        document.getElementById('submitBtn').innerText = 'บันทึกข้อมูล';
+        document.getElementById('cancelBtn').style.display = 'none';
+        addEpField();
+    };
+
+    // CRUD Operations
+    document.getElementById('movieForm').onsubmit = async (e) => {
         e.preventDefault();
         const id = document.getElementById('editId').value;
-        const links = Array.from(document.getElementsByClassName('ep-link-input')).map(i => i.value.trim());
+        const links = Array.from(document.querySelectorAll('.ep-link')).map(i => i.value);
         
-        const data = {
+        const payload = {
             title: document.getElementById('title').value,
             desc: document.getElementById('desc').value,
             category: document.getElementById('category').value,
             poster: document.getElementById('poster').value,
             badge: document.getElementById('badge').value || "HD",
             links: links,
-            link: links[0],
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            updatedAt: serverTimestamp()
         };
 
         try {
-            if(id) await db.collection(COLLECTION_NAME).doc(id).update(data);
-            else {
-                data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                data.viewCount = 0;
-                await db.collection(COLLECTION_NAME).add(data);
+            if(id) {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'series', id), payload);
+            } else {
+                payload.createdAt = serverTimestamp();
+                await addDoc(colPath, payload);
             }
-            alert("บันทึกข้อมูลเรียบร้อย!");
             resetForm();
-        } catch(e) { alert(e.message); }
-    });
+        } catch (err) { alert("Error: " + err.message); }
+    };
 
-    function loadData() {
-        db.collection(COLLECTION_NAME).orderBy('createdAt', 'desc').onSnapshot(snap => {
-            const list = document.getElementById('movieList');
-            list.innerHTML = '';
-            snap.forEach(doc => {
-                const m = doc.data();
-                list.innerHTML += `
-                    <tr class="movie-row">
-                        <td width="60"><img src="${m.poster}" class="poster-mini"></td>
-                        <td>
-                            <div style="font-weight:600; color:#fff;">${m.title}</div>
-                            <div style="font-size:12px; color:var(--text-dim); margin-top:4px;">
-                                <span style="color:var(--primary)">${m.category === 'vertical' ? 'แนวตั้ง' : 'พากย์ไทย'}</span> &bull; ${m.links?.length || 1} ตอน
-                            </div>
-                        </td>
-                        <td align="right">
-                            <div class="action-btn btn-edit" onclick="editDoc('${doc.id}')"><i class="fas fa-pen"></i></div>
-                            <div class="action-btn btn-delete" onclick="deleteDoc('${doc.id}')"><i class="fas fa-trash"></i></div>
-                        </td>
-                    </tr>`;
-            });
-        });
-    }
-
-    async function editDoc(id) {
-        const doc = await db.collection(COLLECTION_NAME).doc(id).get();
-        const m = doc.data();
+    window.editItem = async (id, data) => {
+        const m = JSON.parse(decodeURIComponent(data));
         document.getElementById('editId').value = id;
         document.getElementById('title').value = m.title;
         document.getElementById('desc').value = m.desc || '';
         document.getElementById('category').value = m.category;
         document.getElementById('poster').value = m.poster;
         document.getElementById('badge').value = m.badge || '';
-        document.getElementById('episodesContainer').innerHTML = '';
-        if(m.links) m.links.forEach(l => addEpisodeInput(l));
-        else if(m.link) addEpisodeInput(m.link);
-        else addEpisodeInput();
+        document.getElementById('epContainer').innerHTML = '';
+        m.links.forEach(l => addEpField(l));
         
-        document.getElementById('submitBtn').innerText = "อัปเดตข้อมูล";
+        document.getElementById('submitBtn').innerText = 'อัปเดตข้อมูล';
         document.getElementById('cancelBtn').style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    };
 
-    function resetForm() {
-        document.getElementById('movieForm').reset();
-        document.getElementById('editId').value = '';
-        document.getElementById('episodesContainer').innerHTML = '';
-        addEpisodeInput();
-        document.getElementById('submitBtn').innerText = "บันทึกข้อมูลซีรีส์";
-        document.getElementById('cancelBtn').style.display = 'none';
-    }
+    window.deleteItem = async (id) => {
+        if(confirm("ลบรายการนี้?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'series', id));
+    };
 
-    async function deleteDoc(id) {
-        if(confirm('ยืนยันการลบรายการนี้?')) await db.collection(COLLECTION_NAME).doc(id).delete();
-    }
+    // Real-time Listener
+    onSnapshot(query(colPath, orderBy('createdAt', 'desc')), (snap) => {
+        const list = document.getElementById('movieList');
+        list.innerHTML = '';
+        snap.forEach(d => {
+            const item = d.data();
+            const dataStr = encodeURIComponent(JSON.stringify(item));
+            list.innerHTML += `
+                <tr class="movie-row">
+                    <td width="50"><img src="${item.poster}" class="poster-mini"></td>
+                    <td>
+                        <div style="font-weight:600;">${item.title}</div>
+                        <div style="font-size:12px; color:var(--text-dim);">${item.category} • ${item.links.length} ตอน</div>
+                    </td>
+                    <td align="right">
+                        <i class="fas fa-edit action-btn" style="color:var(--primary)" onclick="editItem('${d.id}', '${dataStr}')"></i>
+                        <i class="fas fa-trash action-btn" style="color:var(--error)" onclick="deleteItem('${d.id}')"></i>
+                    </td>
+                </tr>
+            `;
+        });
+    });
 
-    loadData();
+    // Init
     resetForm();
 </script>
 </body>
 </html>
+
