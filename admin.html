@@ -35,6 +35,12 @@
             border: 1px solid #333; background: var(--input); color: #fff; font-size: 16px; font-family: 'Prompt'; 
         }
         
+        /* Episode Style */
+        .episodes-area { background: #111; padding: 15px; border-radius: 10px; border: 1px dashed #444; margin-top: 5px; }
+        .episode-row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .btn-add-ep { background: #28a745; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-bottom: 10px; font-size: 14px; }
+        .btn-remove-ep { background: #ff4444; color: #fff; border: none; padding: 0 12px; border-radius: 5px; cursor: pointer; }
+
         .btn { padding: 14px; border-radius: 8px; border: none; cursor: pointer; font-size: 16px; font-weight: 600; width: 100%; transition: 0.3s; }
         .btn-primary { background: var(--primary); color: #000; margin-bottom: 10px; }
         .btn-primary:hover { opacity: 0.8; }
@@ -86,7 +92,14 @@
                 </div>
                 <div class="input-group"><label>ชื่อเรื่อง</label><input type="text" id="title" placeholder="ชื่อซีรีส์..." required></div>
                 <div class="input-group"><label>URL รูปโปสเตอร์</label><input type="url" id="poster" placeholder="https://..." required></div>
-                <div class="input-group"><label>URL วิดีโอ (YouTube Embed)</label><input type="text" id="link" placeholder="https://www.youtube.com/embed/..." required></div>
+                
+                <div class="input-group">
+                    <label>ลิงก์วิดีโอ (รองรับ YouTube ทุกรูปแบบ)</label>
+                    <div id="episodesContainer" class="episodes-area">
+                        </div>
+                    <button type="button" class="btn-add-ep" onclick="addEpisodeInput()" style="margin-top:10px;"><i class="fas fa-plus"></i> เพิ่มตอน (EP)</button>
+                </div>
+
                 <div class="input-group"><label>ป้ายกำกับ (เช่น EP.01, จบแล้ว)</label><input type="text" id="badge" placeholder="HD"></div>
                 <div class="input-group"><label>เรื่องย่อ</label><textarea id="desc" rows="3" placeholder="เขียนเรื่องย่อสั้นๆ..."></textarea></div>
                 
@@ -107,7 +120,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
 <script>
-    // Config โปรเจกต์ Classic
     const firebaseConfig = {
         apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
         authDomain: "classic-e8ab7.firebaseapp.com",
@@ -119,6 +131,19 @@
     const auth = firebase.auth();
 
     const ADMIN_EMAIL = "duy.kan1234@gmail.com"; 
+
+    // ระบบจัดการ UI ช่องกรอกตอน (Episodes)
+    function addEpisodeInput(value = "") {
+        const container = document.getElementById('episodesContainer');
+        const count = container.getElementsByClassName('episode-row').length + 1;
+        const div = document.createElement('div');
+        div.className = 'episode-row';
+        div.innerHTML = `
+            <input type="text" class="ep-link-input" placeholder="ลิงก์ตอนที่ ${count}..." value="${value}" required>
+            ${count > 1 ? '<button type="button" class="btn-remove-ep" onclick="this.parentElement.remove()">✕</button>' : ''}
+        `;
+        container.appendChild(div);
+    }
 
     // ระบบ Login
     async function loginWithGoogle() {
@@ -132,11 +157,11 @@
         } catch (e) { alert(e.message); }
     }
 
-    // ตรวจสอบสถานะการล็อกอิน
     auth.onAuthStateChanged(user => {
         if (user && user.email === ADMIN_EMAIL) {
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('adminContent').style.display = 'block';
+            resetForm(); // ล้างฟอร์มเตรียมพร้อม
             loadData();
         } else {
             document.getElementById('loginSection').style.display = 'block';
@@ -144,11 +169,16 @@
         }
     });
 
-    // ระบบบันทึกข้อมูล (เพิ่ม/แก้ไข)
+    // ระบบบันทึกข้อมูล
     document.getElementById('movieForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const id = document.getElementById('editId').value;
         const submitBtn = document.getElementById('submitBtn');
+        
+        // รวบรวมลิงก์ทั้งหมดจากช่องกรอก
+        const linkInputs = document.getElementsByClassName('ep-link-input');
+        const linksArray = Array.from(linkInputs).map(input => input.value.trim());
+
         submitBtn.disabled = true;
         submitBtn.innerText = "กำลังบันทึก...";
 
@@ -156,7 +186,8 @@
             category: document.getElementById('category').value,
             title: document.getElementById('title').value,
             poster: document.getElementById('poster').value,
-            link: document.getElementById('link').value,
+            links: linksArray, // เก็บเป็นอาเรย์เพื่อรองรับหลายตอน
+            link: linksArray[0], // เก็บลิงก์แรกไว้ที่ฟิลด์เดิมเพื่อรองรับโค้ดเก่า
             badge: document.getElementById('badge').value || 'HD',
             desc: document.getElementById('desc').value,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -181,30 +212,29 @@
         }
     });
 
-    // โหลดรายการหนังมาแสดง
     function loadData() {
         db.collection('movies').orderBy('createdAt', 'desc').onSnapshot(snap => {
             const list = document.getElementById('movieList');
             list.innerHTML = '';
             snap.forEach(doc => {
                 const m = doc.data();
+                const epCount = m.links ? m.links.length : 1;
                 list.innerHTML += `
                     <div class="movie-item">
                         <img src="${m.poster}" onerror="this.src='logo.png'">
                         <div class="movie-info">
                             <strong>${m.title}</strong>
-                            <span>${m.category === 'vertical' ? 'ซีรีส์แนวตั้ง' : 'พากย์ไทย'} | ${m.viewCount || 0} views</span>
+                            <span>${m.category === 'vertical' ? 'แนวตั้ง' : 'พากย์ไทย'} | ${epCount} ตอน | ${m.viewCount || 0} views</span>
                         </div>
                         <div class="action-btns">
-                            <button class="edit-btn" onclick="editDoc('${doc.id}')" title="แก้ไข"><i class="fas fa-edit"></i></button>
-                            <button class="delete-btn" onclick="deleteDoc('${doc.id}')" title="ลบ"><i class="fas fa-trash"></i></button>
+                            <button class="edit-btn" onclick="editDoc('${doc.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="delete-btn" onclick="deleteDoc('${doc.id}')"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>`;
             });
         });
     }
 
-    // ฟังก์ชันดึงข้อมูลมาแก้ไข
     async function editDoc(id) {
         const doc = await db.collection('movies').doc(id).get();
         if (doc.exists) {
@@ -213,9 +243,17 @@
             document.getElementById('category').value = m.category;
             document.getElementById('title').value = m.title;
             document.getElementById('poster').value = m.poster;
-            document.getElementById('link').value = m.link;
             document.getElementById('badge').value = m.badge;
             document.getElementById('desc').value = m.desc;
+
+            // จัดการช่องกรอกตอน
+            const container = document.getElementById('episodesContainer');
+            container.innerHTML = '';
+            if (m.links && Array.isArray(m.links)) {
+                m.links.forEach(url => addEpisodeInput(url));
+            } else {
+                addEpisodeInput(m.link || "");
+            }
 
             document.getElementById('adminTitle').innerText = "กำลังแก้ไข: " + m.title;
             document.getElementById('cancelBtn').style.display = 'block';
@@ -223,17 +261,17 @@
         }
     }
 
-    // ล้างฟอร์ม
     function resetForm() {
         document.getElementById('movieForm').reset();
         document.getElementById('editId').value = '';
         document.getElementById('adminTitle').innerText = "เพิ่มซีรีส์ใหม่";
         document.getElementById('cancelBtn').style.display = 'none';
+        document.getElementById('episodesContainer').innerHTML = '';
+        addEpisodeInput(); // เพิ่มช่องแรกให้โดยอัตโนมัติ
     }
 
-    // ลบข้อมูล
     async function deleteDoc(id) {
-        if(confirm('คุณแน่ใจหรือไม่ที่จะลบรายการนี้? ไม่สามารถย้อนกลับได้')) {
+        if(confirm('คุณแน่ใจหรือไม่ที่จะลบรายการนี้?')) {
             await db.collection('movies').doc(id).delete();
         }
     }
