@@ -10,13 +10,11 @@
     <meta name="keywords" content="ดูซีรีส์จีน, ซีรีส์พากย์ไทย, ซีรีส์แนวตั้ง, ดูหนังออนไลน์, DUYDODEE">
     <meta name="author" content="DUYDODEE-HD">
 
-    <!-- Open Graph (สำหรับโชว์รูปเวลาแชร์หรือค้นหา) -->
+    <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://classic1990.github.io/Chinese-Drama-Spotlight/">
     <meta property="og:title" content="DUYDODEE-HD | ดูซีรีส์จีน พากย์ไทย ยอดนิยม">
     <meta property="og:description" content="ดูซีรีส์จีนพากย์ไทย ซีรีส์แนวตั้ง คมชัดระดับ HD โหลดไว ดูลื่น">
-    
-    <!-- แก้ไขเป็น logo.png ตามที่คุณอัปโหลดขึ้น GitHub -->
     <meta property="og:image" content="logo.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
@@ -89,7 +87,6 @@
         .hero {
             position: relative;
             height: 85vh;
-            /* แก้ไขเป็น logo.png */
             background: linear-gradient(to bottom, rgba(7,7,7,0.2) 0%, rgba(7,7,7,0.8) 80%, var(--bg-dark) 100%), 
                         url('logo.png'); 
             background-size: cover;
@@ -98,14 +95,6 @@
             align-items: flex-end;
             padding: 0 5% 100px;
             border-bottom: 2px solid var(--primary);
-        }
-
-        .hero::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, transparent, rgba(0,0,0,0.4));
-            pointer-events: none;
         }
 
         .hero-content {
@@ -120,13 +109,6 @@
             line-height: 1.1;
             font-weight: 700;
             text-shadow: 2px 2px 20px rgba(0,0,0,0.8);
-        }
-
-        .hero-content p {
-            font-size: clamp(16px, 2vw, 20px);
-            color: var(--text-dim);
-            margin-bottom: 30px;
-            text-shadow: 1px 1px 10px rgba(0,0,0,0.8);
         }
 
         .btn-group {
@@ -151,33 +133,8 @@
             gap: 10px;
         }
 
-        .btn-play:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,174,255,0.4);
-        }
-
-        /* Content Sections */
-        .content-section {
-            padding: 60px 5% 20px;
-        }
-
-        .section-header {
-            margin-bottom: 30px;
-        }
-
-        .section-header h2 {
-            font-size: 26px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 0;
-        }
-
-        .section-header h2 i {
-            color: var(--primary);
-        }
-
-        /* Movie Card Redesign */
+        /* Movie Card */
+        .content-section { padding: 60px 5% 20px; }
         .movie-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -195,9 +152,8 @@
         }
 
         .movie-card:hover {
-            transform: scale(1.05);
+            transform: translateY(-10px);
             box-shadow: 0 15px 35px rgba(0,174,255,0.2);
-            z-index: 5;
         }
 
         .poster-box {
@@ -215,18 +171,34 @@
         .overlay-card {
             position: absolute;
             bottom: 0; left: 0; width: 100%;
-            padding: 15px;
-            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+            padding: 20px 15px 15px;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 50%, transparent 100%);
             box-sizing: border-box;
         }
 
         .movie-title {
             font-size: 14px;
-            margin: 0;
+            margin: 0 0 5px 0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             color: #fff;
+            font-weight: 400;
+        }
+
+        .movie-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        .view-tag {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--primary);
         }
 
         .badge-tag {
@@ -238,6 +210,7 @@
             border-radius: 4px;
             font-size: 11px;
             font-weight: 600;
+            z-index: 2;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
 
@@ -246,22 +219,21 @@
             text-align: center;
             background: #000;
             color: var(--text-dim);
-            border-top: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* Loading */
         #loader {
             position: fixed;
             top:0; left:0; width:100%; height:100%;
             background: var(--bg-dark);
             display:flex; justify-content:center; align-items:center;
             z-index: 9999;
+            transition: 0.5s;
         }
 
         @media (max-width: 768px) {
             .hero { height: 60vh; padding-bottom: 50px; }
             .nav-links { display: none; }
-            .movie-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+            .movie-grid { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 15px; }
         }
     </style>
 </head>
@@ -278,20 +250,16 @@
             <a href="index.html">หน้าแรก</a>
             <a href="#vertical-section">ซีรีส์แนวตั้ง</a>
             <a href="#series-section">พากย์ไทย</a>
-            <a href="#movie-section">ภาพยนตร์</a>
         </div>
-        <div>
-            <i class="fas fa-search" style="cursor:pointer"></i>
-        </div>
+        <div style="color:var(--primary)"><i class="fas fa-search"></i></div>
     </nav>
 
     <header class="hero">
         <div class="hero-content">
             <h1>พรีเมียมซีรีส์ และภาพยนตร์ HD</h1>
-            <p>สัมผัสประสบการณ์การรับชมที่เหนือระดับ คมชัด โหลดไว ดูฟรีทุกที่ทุกเวลา</p>
+            <p>คมชัด โหลดไว ดูฟรีทุกที่ทุกเวลา</p>
             <div class="btn-group">
-                <a href="#vertical-section" class="btn-play"><i class="fas fa-play"></i> รับชมเลย</a>
-                <a href="#" class="btn-play" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px);"><i class="fas fa-plus"></i> รายการของฉัน</a>
+                <a href="#vertical-section" class="btn-play"><i class="fas fa-play"></i> เริ่มรับชม</a>
             </div>
         </div>
     </header>
@@ -313,13 +281,10 @@
     </main>
 
     <footer>
-        <!-- แก้ไขเป็น logo.png -->
-        <img src="logo.png" alt="Logo" style="height: 60px; margin-bottom: 20px; border-radius: 8px;">
+        <img src="logo.png" alt="Logo" style="height: 50px; margin-bottom: 20px; border-radius: 8px;">
         <p>&copy; 2026 DUYDODEE-HD. All Rights Reserved.</p>
-        <p style="font-size: 12px; opacity: 0.5;">ห้ามคัดลอกส่วนใดส่วนหนึ่งของเว็บไซต์ก่อนได้รับอนุญาต</p>
     </footer>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
@@ -340,6 +305,13 @@
             const card = document.createElement('div');
             card.className = 'movie-card';
             card.onclick = () => window.location.href = `watch.html?id=${id}`;
+            
+            // Format views number (e.g. 1500 -> 1.5K)
+            const formatViews = (num) => {
+                if(!num) return '0';
+                return num >= 1000 ? (num/1000).toFixed(1) + 'K' : num;
+            };
+
             card.innerHTML = `
                 ${data.badge ? `<span class="badge-tag">${data.badge}</span>` : ''}
                 <div class="poster-box">
@@ -347,6 +319,10 @@
                 </div>
                 <div class="overlay-card">
                     <p class="movie-title">${data.title}</p>
+                    <div class="movie-meta">
+                        <span class="view-tag"><i class="fas fa-eye"></i> ${formatViews(data.views)}</span>
+                        <span>HD</span>
+                    </div>
                 </div>
             `;
             return card;
@@ -354,6 +330,7 @@
 
         async function loadContent() {
             try {
+                // ดึงข้อมูลเรียงตามวันที่สร้างล่าสุด
                 const snap = await db.collection('movies').orderBy('createdAt', 'desc').get();
                 
                 const gridVertical = document.getElementById('grid-vertical');
