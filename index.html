@@ -1,328 +1,671 @@
 <!DOCTYPE html>
+
 <html lang="th">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     
+
     <title>DUYDODEE-HD | ดูซีรีส์จีน พากย์ไทย แนวนอน Full HD 2026</title>
+
     <meta name="description" content="ศูนย์รวมซีรีส์จีนพากย์ไทยและซีรีส์สั้น อัปเดตตอนใหม่ทุกวัน ดูฟรีผ่านมือถือ คมชัดระดับ HD">
+
     <meta name="keywords" content="ดูซีรีส์จีน, ซีรีส์จีนพากย์ไทย, ซีรีส์แนวนอน, ซีรีส์สั้น, ดูหนังออนไลน์">
+
     <meta name="author" content="DUYDODEE-HD">
+
     
+
     <meta property="og:type" content="website">
+
     <meta property="og:url" content="https://yourdomain.com/"> 
+
     <meta property="og:title" content="DUYDODEE-HD | ดูซีรีส์จีน พากย์ไทย ยอดนิยม">
+
     <meta property="og:description" content="อัปเดตซีรีส์จีนใหม่ล่าสุด คมชัดระดับ HD ดูฟรีทุกที่ทุกเวลา">
+
     <meta property="og:image" content="logo.png">
 
+
+
+    <script type="application/ld+json">
+
+    {
+
+      "@context": "https://schema.org",
+
+      "@type": "WebSite",
+
+      "name": "DUYDODEE-HD",
+
+      "url": "https://yourdomain.com/",
+
+      "potentialAction": {
+
+        "@type": "SearchAction",
+
+        "target": "https://yourdomain.com/search?q={search_term_string}",
+
+        "query-input": "required name=search_term_string"
+
+      }
+
+    }
+
+    </script>
+
+
+
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     
+
     <style>
+
         :root {
+
             --primary: #00aeff;
+
             --accent-red: #ff3c00;
+
             --bg-dark: #070707;
+
             --card-bg: #121212;
+
             --text-main: #ffffff;
+
             --text-dim: #a0a0a0;
+
             --accent-gradient: linear-gradient(45deg, #00aeff, #ff3c00);
+
         }
+
+
 
         body {
+
             margin: 0;
+
             font-family: 'Prompt', sans-serif;
+
             background-color: var(--bg-dark);
+
             color: var(--text-main);
+
             overflow-x: hidden;
+
             scroll-behavior: smooth;
+
         }
+
+
 
         /* Navigation */
+
         nav {
+
             position: fixed;
+
             top: 0; width: 100%;
+
             padding: 15px 5%;
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
-            background: rgba(7, 7, 7, 0.85);
+
+            background: rgba(7, 7, 7, 0.8);
+
             z-index: 1000;
+
             box-sizing: border-box;
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.08);
+
+            backdrop-filter: blur(15px);
+
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+
         }
+
+
 
         .logo-text {
+
             font-size: 24px;
+
             font-weight: 800;
+
             background: var(--accent-gradient);
+
             -webkit-background-clip: text;
+
             -webkit-text-fill-color: transparent;
+
             text-decoration: none;
+
             text-transform: uppercase;
+
             letter-spacing: 1px;
+
         }
 
+
+
         .nav-links a {
+
             color: var(--text-main);
+
             text-decoration: none;
+
             margin-left: 20px;
+
             font-size: 15px;
+
             transition: 0.3s;
+
             font-weight: 400;
+
         }
+
+
 
         .nav-links a:hover { color: var(--primary); }
 
+
+
         /* Hero Section */
+
         .hero {
-            height: 60vh;
+
+            height: 70vh;
+
             position: relative;
-            background: #000 url('logo.png') center/contain no-repeat;
+
+            background: url('logo.png') center/cover no-repeat;
+
             display: flex;
+
             align-items: flex-end;
+
             padding-bottom: 8vh;
+
             justify-content: center;
+
         }
+
+
 
         .hero::before {
+
             content: '';
+
             position: absolute;
+
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(7,7,7,0.2) 0%, rgba(7,7,7,0.8) 70%, var(--bg-dark) 100%);
+
+            background: linear-gradient(to bottom, rgba(7,7,7,0.1) 0%, rgba(7,7,7,0.7) 60%, var(--bg-dark) 100%);
+
         }
+
+
 
         .hero-content {
+
             position: relative;
+
             z-index: 2;
+
             text-align: center;
+
             max-width: 800px;
+
             padding: 0 20px;
+
         }
+
+
 
         .hero h1 { 
-            font-size: clamp(28px, 5vw, 56px); 
+
+            font-size: clamp(30px, 5vw, 60px); 
+
             margin: 0; 
+
             font-weight: 600;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.9);
+
+            text-shadow: 0 5px 30px rgba(0,0,0,0.8);
+
         }
 
-        /* Movie Grid */
-        .content-section { padding: 40px 5%; position: relative; z-index: 5; }
-        .section-header { 
-            margin-bottom: 25px; 
-            border-left: 5px solid var(--primary); 
-            padding-left: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+
+
+        .hero p {
+
+            font-size: clamp(14px, 2vw, 20px);
+
+            margin-top: 10px;
+
+            color: #ddd;
+
         }
+
+
+
+        /* Movie Grid - ปรับให้กว้างขึ้นสำหรับรูปแนวนอน */
+
+        .content-section { padding: 40px 5%; position: relative; z-index: 5; }
+
+        .section-header { 
+
+            margin-bottom: 25px; 
+
+            border-left: 5px solid var(--primary); 
+
+            padding-left: 15px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+        }
+
+
 
         .movie-grid {
+
             display: grid;
+
+            /* ปรับขนาดขั้นต่ำเป็น 280px เพื่อให้แนวนอนดูสวย */
+
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+
             gap: 25px;
+
         }
 
-        /* Card Optimization */
+
+
+        /* การ์ดหนังฉบับแก้ไขเป็นแนวนอน */
+
         .movie-card {
+
             background: var(--card-bg);
+
             border-radius: 12px;
+
             overflow: hidden;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s;
+
+            transition: all 0.4s ease;
+
             cursor: pointer;
+
             border: 1px solid rgba(255,255,255,0.05);
+
         }
+
+
 
         .movie-card:hover { 
-            transform: translateY(-8px) scale(1.02);
+
+            transform: translateY(-8px);
+
             border-color: var(--primary);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+
         }
 
+
+
+        /* กำหนดสัดส่วนเป็น 16:9 */
+
         .poster-box { 
+
             aspect-ratio: 16 / 9; 
+
             overflow: hidden; 
+
             position: relative; 
-            background: #151515; /* สีพื้นหลังระหว่างรอรูปโหลด */
+
+            background: #1a1a1a;
+
         }
 
         .poster-box img { 
+
             width: 100%; 
+
             height: 100%; 
-            object-fit: cover;
-            /* แก้ไขรูปไม่ชัด: ช่วยให้เบราว์เซอร์จัดการขอบภาพให้คมขึ้น */
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
-            transition: transform 0.5s ease;
+
+            object-fit: cover; /* ตัดส่วนที่เกินออกเพื่อให้เต็มกรอบแนวนอน */
+
         }
 
-        .movie-card:hover .poster-box img {
-            transform: scale(1.1);
-        }
+
 
         .badge-tag {
+
             position: absolute; top: 10px; left: 10px;
+
             background: var(--accent-red); color: #fff;
-            padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 600;
-            z-index: 2; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+
+            padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;
+
+            z-index: 2;
+
         }
+
+
 
         .overlay-card { padding: 15px; background: var(--card-bg); }
+
         .movie-title { 
+
             font-size: 15px; 
+
             margin: 0 0 10px 0; 
+
             font-weight: 400; 
-            color: #ffffff; 
+
+            color: #eee; 
+
             white-space: nowrap; 
+
             overflow: hidden; 
+
             text-overflow: ellipsis; 
+
         }
+
         .movie-meta { font-size: 12px; color: var(--text-dim); display: flex; justify-content: space-between; align-items: center;}
 
+
+
         /* Loader */
+
         #loader {
+
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+
             background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 9999;
+
         }
+
+
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
+
+
         /* Responsive */
+
         @media (max-width: 600px) {
+
+            .hero { height: 45vh; }
+
             .movie-grid { 
+
+                /* มือถือแสดงแถวละ 1 หรือ 2 รูปตามขนาดหน้าจอ */
+
                 grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); 
-                gap: 20px; 
+
+                gap: 15px; 
+
             }
-            .hero { height: 40vh; }
+
+            nav { padding: 10px 5%; }
+
+            .logo-text { font-size: 20px; }
+
         }
+
     </style>
+
 </head>
+
 <body>
 
+
+
     <div id="loader">
+
         <div style="width:40px;height:40px;border:3px solid #1a1a1a;border-top:3px solid var(--primary);border-radius:50%;animation:spin 1s linear infinite"></div>
+
     </div>
 
+
+
     <nav>
+
         <a href="index.html" class="logo-text">DUYDODEE HD</a>
+
         <div class="nav-links">
+
             <a href="#vertical-section">ซีรีส์ยอดนิยม</a>
+
             <a href="#series-section">พากย์ไทย</a>
+
             <a href="admin.html" style="opacity: 0.3;"><i class="fas fa-cog"></i></a>
+
         </div>
+
     </nav>
 
+
+
     <header class="hero">
+
         <div class="hero-content">
+
             <h1>ดูซีรีส์จีนที่ดีที่สุด</h1>
+
             <p>สัมผัสประสบการณ์ใหม่ <span style="color:var(--primary)">คมชัดระดับ Full HD</span> อัปเดตทุกวัน</p>
+
         </div>
+
     </header>
 
+
+
     <main>
+
         <section class="content-section" id="vertical-section">
+
             <div class="section-header">
+
                 <h2><i class="fas fa-star" style="color: var(--primary);"></i> ซีรีส์แนะนำ</h2>
+
                 <span style="color: var(--text-dim); font-size: 13px;">ยอดนิยม</span>
+
             </div>
+
             <div class="movie-grid" id="grid-vertical"></div>
+
         </section>
+
+
 
         <section class="content-section" id="series-section">
+
             <div class="section-header">
+
                 <h2><i class="fas fa-film" style="color: var(--accent-red);"></i> ซีรีส์พากย์ไทย</h2>
+
                 <span style="color: var(--text-dim); font-size: 13px;">มาใหม่</span>
+
             </div>
+
             <div class="movie-grid" id="grid-series"></div>
+
         </section>
+
     </main>
 
+
+
     <footer style="padding: 60px 5%; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 50px;">
+
         <p style="font-weight: 600; letter-spacing: 1px; color: var(--primary);">DUYDODEE-HD</p>
+
         <p style="font-size: 12px; color: var(--text-dim); max-width: 500px; margin: 15px auto;">แหล่งรวมซีรีส์จีนออนไลน์ฟรีที่ดีที่สุดสำหรับคุณ อัปเดตรวดเร็ว ทันใจ คมชัดทุกอารมณ์</p>
+
         <p style="font-size: 11px; opacity: 0.4; margin-top: 30px;">&copy; 2026 DUYDODEE-HD All Rights Reserved.</p>
+
     </footer>
 
+
+
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
+
+
     <script>
+
         const firebaseConfig = {
+
             apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
+
             authDomain: "classic-e8ab7.firebaseapp.com",
+
             projectId: "classic-e8ab7",
+
             appId: "1:596308927760:web:63043fd2786459082cb195"
+
         };
+
         
+
         firebase.initializeApp(firebaseConfig);
+
         const db = firebase.firestore();
 
+
+
         function createMovieCard(id, data) {
+
             const card = document.createElement('div');
+
             card.className = 'movie-card';
+
             card.onclick = () => window.location.href = `watch.html?id=${id}`;
+
             
+
             const formatViews = (num) => {
+
                 if(!num) return '0';
-                if(num >= 1000000) return (num/1000000).toFixed(1) + 'M';
+
                 if(num >= 1000) return (num/1000).toFixed(1) + 'K';
+
                 return num;
+
             };
 
+
+
             card.innerHTML = `
+
                 ${data.badge ? `<span class="badge-tag">${data.badge}</span>` : ''}
+
                 <div class="poster-box">
-                    <img src="${data.poster}" 
-                         alt="${data.title}" 
-                         onerror="this.src='logo.png'"
-                         loading="eager">
+
+                    <img src="${data.poster}" alt="${data.title}" onerror="this.src='logo.png'" loading="lazy">
+
                 </div>
+
                 <div class="overlay-card">
+
                     <p class="movie-title">${data.title}</p>
+
                     <div class="movie-meta">
+
                         <span><i class="far fa-eye"></i> ${formatViews(data.viewCount)} วิว</span>
+
                         <span style="color:var(--primary); font-weight:600;">เล่นเลย <i class="fas fa-play-circle"></i></span>
+
                     </div>
+
                 </div>
+
             `;
+
             return card;
+
         }
+
+
 
         async function loadContent() {
+
             try {
-                // โหลดข้อมูลโดยเรียงจากเวลาที่สร้างล่าสุด
+
                 const snap = await db.collection('movies').orderBy('createdAt', 'desc').get();
+
                 const gridVertical = document.getElementById('grid-vertical');
+
                 const gridSeries = document.getElementById('grid-series');
 
+
+
+                // ล้างข้อมูลเก่าก่อนโหลด (ถ้ามี)
+
                 gridVertical.innerHTML = '';
+
                 gridSeries.innerHTML = '';
 
-                if (snap.empty) {
-                    console.log("No movies found.");
-                    return;
-                }
+
 
                 snap.forEach(doc => {
+
                     const m = doc.data();
+
                     const card = createMovieCard(doc.id, m);
+
                     
+
+                    // จัดกลุ่มตามหมวดหมู่
+
                     if(m.category === 'vertical') {
+
                         gridVertical.appendChild(card);
+
                     } else {
+
                         gridSeries.appendChild(card);
+
                     }
+
                 });
+
             } catch (err) {
+
                 console.error("Error loading movies:", err);
+
             } finally {
+
                 document.getElementById('loader').style.display = 'none';
+
             }
+
         }
 
-        window.addEventListener('DOMContentLoaded', loadContent);
+
+
+        window.onload = loadContent;
+
     </script>
+
 </body>
+
 </html>
