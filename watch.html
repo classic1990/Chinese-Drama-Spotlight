@@ -74,7 +74,7 @@
             position: relative;
             padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
             height: 0;
-            background: #000;
+            background: #1a1a1a;
         }
 
         .video-container iframe {
@@ -231,19 +231,19 @@
         <main class="player-wrapper">
             <div class="main-player-section">
                 <div class="video-container" id="video-box">
-                    <!-- วิดีโอจะแสดงที่นี่ -->
+                    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:var(--text-dim);">กำลังโหลดเครื่องเล่น...</div>
                 </div>
             </div>
 
             <div class="movie-details">
-                <h1 id="movie-title">กำลังโหลด...</h1>
+                <h1 id="movie-title">กำลังโหลดข้อมูล...</h1>
                 <div class="meta-info">
-                    <span class="badge" id="movie-category">หมวดหมู่</span>
+                    <span class="badge" id="movie-category">...</span>
                     <span><i class="far fa-calendar-alt"></i> <span id="movie-date">-</span></span>
-                    <span><i class="far fa-eye"></i> ยอดเข้าชม : <span id="view-count">กำลังโหลด...</span></span>
+                    <span><i class="far fa-eye"></i> ยอดเข้าชม : <span id="view-count">0</span></span>
                 </div>
                 <div class="description-box" id="movie-desc">
-                    กำลังโหลดข้อมูลเนื้อหา...
+                    กำลังดึงข้อมูลจากระบบ...
                 </div>
             </div>
         </main>
@@ -258,7 +258,7 @@
     </div>
 
     <footer>
-        <img src="logo.png" alt="Logo" style="height: 40px; margin-bottom: 15px;">
+        <img src="logo.png" alt="Logo" style="height: 40px; margin-bottom: 15px;" onerror="this.src='https://via.placeholder.com/150x50?text=LOGO'">
         <p style="font-size: 14px; color: var(--text-dim);">&copy; 2026 DUYDODEE-HD. All Rights Reserved.</p>
     </footer>
 
@@ -285,6 +285,7 @@
 
         async function initPage() {
             if(!movieId) {
+                console.error("No Movie ID provided in URL");
                 window.location.href = 'index.html';
                 return;
             }
@@ -292,30 +293,42 @@
             try {
                 // 1. ดึงข้อมูลหนังจาก Firestore
                 const doc = await db.collection('movies').doc(movieId).get();
+                
                 if(!doc.exists) {
-                    alert("ไม่พบข้อมูลวิดีโอ");
-                    window.location.href = 'index.html';
+                    document.getElementById('video-box').innerHTML = `<div style="padding:50px; text-align:center;">ไม่พบข้อมูลหนังเรื่องนี้ในระบบ</div>`;
+                    document.getElementById('movie-title').innerText = "ไม่พบข้อมูล";
                     return;
                 }
+
                 const data = doc.data();
 
-                // อัปเดตข้อมูลในหน้าเว็บ
-                document.title = `${data.title} | DUYDODEE-HD`;
-                document.getElementById('movie-title').innerText = data.title;
+                // อัปเดตข้อมูล UI
+                document.title = `${data.title || 'รับชม'} | DUYDODEE-HD`;
+                document.getElementById('movie-title').innerText = data.title || "ไม่มีชื่อเรื่อง";
                 document.getElementById('movie-category').innerText = data.category === 'vertical' ? 'ซีรีส์แนวตั้ง' : 'พากย์ไทย';
                 document.getElementById('movie-desc').innerText = data.description || "สัมผัสความสนุกกับซีรีส์เรื่องนี้ได้เลย พากย์ไทยคมชัดระดับ HD";
                 document.getElementById('movie-date').innerText = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString('th-TH') : 'ไม่ระบุวันที่';
                 document.getElementById('view-count').innerText = (data.views || 0).toLocaleString() + " ครั้ง";
                 
-                // ฝังวิดีโอ Iframe
+                // ฝังวิดีโอ Iframe (ตรวจสอบว่ามี URL หรือไม่)
                 const videoBox = document.getElementById('video-box');
-                videoBox.innerHTML = `<iframe src="${data.url}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+                if(data.url) {
+                    videoBox.innerHTML = `<iframe src="${data.url}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+                } else {
+                    videoBox.innerHTML = `<div style="padding:50px; text-align:center; color:white;">ขออภัย ไม่พบลิงก์วิดีโอสำหรับเรื่องนี้</div>`;
+                }
 
                 // 2. ดึงรายการแนะนำ
                 loadSuggestions(data.category);
 
+                // 3. อัปเดตยอดวิว (Optional: เพิ่มยอดวิวเมื่อมีการเปิดดู)
+                db.collection('movies').doc(movieId).update({
+                    views: firebase.firestore.FieldValue.increment(1)
+                }).catch(e => console.log("Update views failed", e));
+
             } catch (err) {
-                console.error("เกิดข้อผิดพลาดในการโหลดข้อมูล:", err);
+                console.error("Error loading page data:", err);
+                document.getElementById('movie-title').innerText = "เกิดข้อผิดพลาดในการโหลด";
             } finally {
                 const loader = document.getElementById('loader');
                 if(loader) loader.style.display = 'none';
@@ -327,31 +340,35 @@
             try {
                 // ดึงหนัง 6 เรื่องในหมวดหมู่เดียวกัน
                 const snap = await db.collection('movies')
-                    .where('category', '==', currentCat)
-                    .limit(6)
+                    .where('category', '==', currentCat || 'thai')
+                    .limit(7) // ดึงมาเผื่อ 7 เพื่อกรองตัวมันเองออก
                     .get();
 
+                let count = 0;
                 snap.forEach(doc => {
-                    if(doc.id === movieId) return; // ข้ามเรื่องปัจจุบัน
+                    if(doc.id === movieId || count >= 6) return; // ข้ามเรื่องปัจจุบัน หรือถ้าครบ 6 แล้ว
+                    
                     const m = doc.data();
                     const card = document.createElement('div');
                     card.className = 'suggest-card';
                     card.onclick = () => window.location.href = `watch.html?id=${doc.id}`;
                     card.innerHTML = `
-                        <img src="${m.poster}" class="suggest-poster" onerror="this.src='logo.png'">
+                        <img src="${m.poster || 'logo.png'}" class="suggest-poster" onerror="this.src='https://via.placeholder.com/200x300?text=No+Poster'">
                         <div class="suggest-info">
-                            <p>${m.title}</p>
+                            <p>${m.title || 'ไม่มีชื่อเรื่อง'}</p>
                             <small style="color:var(--primary); font-size:11px;">เล่นตอนนี้</small>
                         </div>
                     `;
                     grid.appendChild(card);
+                    count++;
                 });
             } catch (e) {
-                console.log("เกิดข้อผิดพลาดในการโหลดรายการแนะนำ", e);
+                console.log("Error loading suggestions", e);
             }
         }
 
-        initPage();
+        // เริ่มต้นทำงาน
+        window.onload = initPage;
     </script>
 </body>
 </html>
