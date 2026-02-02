@@ -3,285 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Watching | DUYDODEE-HD</title>
+    <title>กำลังรับชม | DUYDODEE-HD</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
         :root {
             --primary: #00aeff;
-            --bg-dark: #0a0a0a;
-            --card-bg: rgba(255, 255, 255, 0.05);
+            --accent-red: #ff3c00;
+            --bg-dark: #070707;
+            --card-bg: #121212;
             --text-main: #ffffff;
-            --text-dim: #b3b3b3;
+            --text-dim: #a0a0a0;
+            --accent-gradient: linear-gradient(45deg, #00aeff, #ff3c00);
         }
 
         body {
             margin: 0;
-            padding: 0;
             font-family: 'Prompt', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
             overflow-x: hidden;
         }
 
-        /* Navigation Bar */
+        /* Navigation */
         nav {
+            position: fixed;
+            top: 0; width: 100%;
             padding: 15px 5%;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
-            position: fixed;
-            top: 0;
-            width: 100%;
+            background: rgba(7, 7, 7, 0.9);
             z-index: 1000;
             box-sizing: border-box;
-        }
-
-        .back-btn {
-            color: var(--text-main);
-            text-decoration: none;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: 0.3s;
-        }
-
-        .back-btn:hover {
-            color: var(--primary);
-            transform: translateX(-5px);
-        }
-
-        /* Main Content Container */
-        .main-container {
-            max-width: 1200px;
-            margin: 80px auto 50px;
-            padding: 0 20px;
-        }
-
-        /* Video Player Section */
-        .player-wrapper {
-            position: relative;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
-            background: #000;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .player-wrapper iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* Movie Info Section */
-        .movie-details {
-            margin-top: 30px;
-            padding: 30px;
-            background: var(--card-bg);
             backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .movie-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-        }
-
-        .title-area h1 {
-            margin: 0;
-            font-size: 28px;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            background: var(--primary);
-            color: #000;
-            border-radius: 5px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-top: 8px;
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
             text-transform: uppercase;
         }
 
-        .action-bar {
+        /* Player Container */
+        .player-wrapper {
+            margin-top: 80px;
+            padding: 20px 5%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .main-player-section {
+            width: 100%;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            background: #000;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: none;
+        }
+
+        /* Movie Info */
+        .movie-details {
+            padding: 20px 0;
+        }
+
+        .movie-details h1 {
+            font-size: clamp(24px, 4vw, 32px);
+            margin: 0 0 10px 0;
+            color: var(--text-main);
+        }
+
+        .meta-info {
             display: flex;
             gap: 15px;
+            color: var(--text-dim);
+            font-size: 14px;
+            margin-bottom: 20px;
+            align-items: center;
         }
 
-        .action-btn {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.3s;
+        .meta-info span {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
         }
 
-        .action-btn:hover {
+        .meta-info .badge {
             background: var(--primary);
-            color: #000;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
         }
 
-        .description {
+        .description-box {
+            background: rgba(255,255,255,0.03);
+            padding: 20px;
+            border-radius: 12px;
+            line-height: 1.6;
             color: var(--text-dim);
-            line-height: 1.8;
-            font-size: 16px;
-            max-width: 800px;
+            border-left: 4px solid var(--primary);
         }
 
-        /* Related Movies Section */
-        .related-section {
-            margin-top: 50px;
+        /* Sidebar Recommendations */
+        .recommendation-section {
+            padding: 40px 5%;
         }
 
         .section-title {
-            font-size: 20px;
-            margin-bottom: 20px;
+            font-size: 22px;
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .section-title::before {
-            content: '';
-            width: 4px;
-            height: 20px;
-            background: var(--primary);
-            display: block;
-            border-radius: 2px;
+        .section-title i {
+            color: var(--primary);
         }
 
-        .related-grid {
+        .suggest-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 20px;
         }
 
-        .related-item {
-            cursor: pointer;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .related-item:hover {
-            transform: scale(1.05);
-        }
-
-        .poster-container {
-            position: relative;
-            border-radius: 12px;
+        .suggest-card {
+            background: var(--card-bg);
+            border-radius: 10px;
             overflow: hidden;
-            aspect-ratio: 2/3;
+            transition: 0.3s;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.03);
         }
 
-        .poster-container img {
+        .suggest-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .suggest-poster {
+            aspect-ratio: 2/3;
             width: 100%;
-            height: 100%;
             object-fit: cover;
         }
 
-        .related-title {
-            margin-top: 10px;
-            font-size: 14px;
-            text-align: center;
+        .suggest-info {
+            padding: 10px;
+        }
+
+        .suggest-info p {
+            margin: 0;
+            font-size: 13px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            color: var(--text-dim);
         }
 
-        /* Loading Animation */
+        /* Footer */
+        footer {
+            padding: 60px 5% 30px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: 40px;
+        }
+
+        /* Loader */
         #loader {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top:0; left:0; width:100%; height:100%;
             background: var(--bg-dark);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            transition: 0.5s;
+            display:flex; justify-content:center; align-items:center;
+            z-index: 9999;
         }
 
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(0,174,255,0.1);
-            border-top: 3px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        @media (max-width: 768px) {
-            .movie-header { flex-direction: column; gap: 20px; }
-            .action-bar { width: 100%; }
-            .action-btn { flex: 1; justify-content: center; }
-            .title-area h1 { font-size: 22px; }
+        @media (min-width: 1024px) {
+            .player-layout {
+                display: grid;
+                grid-template-columns: 1fr 350px;
+                gap: 30px;
+                padding: 20px 5%;
+            }
+            .player-wrapper { padding: 0; margin-top: 100px; }
+            .recommendation-section { padding: 0; margin-top: 100px; }
+            .suggest-grid { grid-template-columns: 1fr; }
+            .suggest-card { display: flex; height: 100px; }
+            .suggest-poster { width: 70px; height: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <div id="loader"><div class="spinner"></div></div>
+    <div id="loader">
+        <div style="width:40px;height:40px;border:3px solid rgba(0,174,255,0.1);border-top:3px solid var(--primary);border-radius:50%;animation:spin 1s linear infinite"></div>
+    </div>
+    <style>@keyframes spin {100%{transform:rotate(360deg)}}</style>
 
     <nav>
-        <a href="index.html" class="back-btn">
-            <i class="fas fa-arrow-left"></i> กลับหน้าหลัก
-        </a>
+        <a href="index.html" class="logo-text">DUYDODEE HD</a>
+        <a href="index.html" style="color: #fff; text-decoration: none; font-size: 14px;"><i class="fas fa-chevron-left"></i> กลับหน้าหลัก</a>
     </nav>
 
-    <div class="main-container">
-        <!-- วิดีโอแนวนอน 16:9 -->
-        <div class="player-wrapper">
-            <iframe id="videoFrame" allowfullscreen allow="autoplay"></iframe>
-        </div>
-
-        <div class="movie-details">
-            <div class="movie-header">
-                <div class="title-area">
-                    <h1 id="movieTitle">กำลังโหลดข้อมูล...</h1>
-                    <span id="movieBadge" class="badge">...</span>
-                </div>
-                <div class="action-bar">
-                    <button class="action-btn" onclick="shareMovie()">
-                        <i class="fas fa-share-alt"></i> แชร์
-                    </button>
-                    <button class="action-btn">
-                        <i class="fas fa-heart"></i> เก็บไว้ดู
-                    </button>
+    <div class="player-layout">
+        <!-- Main Player -->
+        <main class="player-wrapper">
+            <div class="main-player-section">
+                <div class="video-container" id="video-box">
+                    <!-- Iframe will be inserted here -->
                 </div>
             </div>
-            <div class="description" id="movieDesc">
-                กรุณารอสักครู่...
-            </div>
-        </div>
 
-        <!-- หนังเรื่องอื่นๆ -->
-        <div class="related-section">
-            <h2 class="section-title">แนะนำสำหรับคุณ</h2>
-            <div class="related-grid" id="relatedGrid">
-                <!-- Data will load here -->
+            <div class="movie-details">
+                <h1 id="movie-title">กำลังโหลด...</h1>
+                <div class="meta-info">
+                    <span class="badge" id="movie-category">Category</span>
+                    <span><i class="far fa-calendar-alt"></i> <span id="movie-date">-</span></span>
+                    <span><i class="far fa-eye"></i> ยอดเข้าชม : <span id="view-count">...</span></span>
+                </div>
+                <div class="description-box" id="movie-desc">
+                    ไม่มีข้อมูลคำอธิบายสำหรับเรื่องนี้
+                </div>
             </div>
-        </div>
+        </main>
+
+        <!-- Sidebar Suggestion -->
+        <aside class="recommendation-section">
+            <h2 class="section-title"><i class="fas fa-layer-group"></i> เรื่องที่คุณอาจสนใจ</h2>
+            <div class="suggest-grid" id="suggest-grid">
+                <!-- Suggestions will be loaded here -->
+            </div>
+        </aside>
     </div>
 
-    <!-- Firebase -->
+    <footer>
+        <img src="logo.png" alt="Logo" style="height: 40px; margin-bottom: 15px;">
+        <p style="font-size: 14px; color: var(--text-dim);">&copy; 2026 DUYDODEE-HD. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
@@ -298,76 +279,75 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Get Movie ID from URL
+        // Get ID from URL
         const urlParams = new URLSearchParams(window.location.search);
         const movieId = urlParams.get('id');
 
-        async function init() {
+        async function initPage() {
             if(!movieId) {
                 window.location.href = 'index.html';
                 return;
             }
 
             try {
+                // 1. Load Main Movie
                 const doc = await db.collection('movies').doc(movieId).get();
-                if(doc.exists) {
-                    const data = doc.data();
-                    document.title = `${data.title} | DUYDODEE-HD`;
-                    document.getElementById('movieTitle').innerText = data.title;
-                    document.getElementById('movieBadge').innerText = data.badge || data.category;
-                    document.getElementById('movieDesc').innerText = data.description || "ไม่มีเรื่องย่อสำหรับรายการนี้";
-                    document.getElementById('videoFrame').src = data.videoUrl;
-                    
-                    loadRelated(data.category);
-                } else {
-                    alert('ไม่พบข้อมูลหนัง');
+                if(!doc.exists) {
+                    alert("ไม่พบข้อมูลวิดีโอ");
                     window.location.href = 'index.html';
+                    return;
                 }
+                const data = doc.data();
+
+                document.title = `${data.title} | DUYDODEE-HD`;
+                document.getElementById('movie-title').innerText = data.title;
+                document.getElementById('movie-category').innerText = data.category === 'vertical' ? 'ซีรีส์แนวตั้ง' : 'พากย์ไทย';
+                document.getElementById('movie-desc').innerText = data.description || "สัมผัสความสนุกกับซีรีส์เรื่องนี้ได้เลย พากย์ไทยคมชัดระดับ HD";
+                document.getElementById('movie-date').innerText = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString('th-TH') : '-';
+                
+                // Embed Video
+                const videoBox = document.getElementById('video-box');
+                videoBox.innerHTML = `<iframe src="${data.url}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+
+                // 2. Load Suggestions
+                loadSuggestions(data.category);
+
             } catch (err) {
                 console.error(err);
             } finally {
-                document.getElementById('loader').style.opacity = '0';
-                setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+                document.getElementById('loader').style.display = 'none';
             }
         }
 
-        async function loadRelated(category) {
-            const snap = await db.collection('movies')
-                               .where('category', '==', category)
-                               .limit(6)
-                               .get();
-            
-            const grid = document.getElementById('relatedGrid');
-            snap.forEach(doc => {
-                if(doc.id === movieId) return;
-                const m = doc.data();
-                const item = document.createElement('div');
-                item.className = 'related-item';
-                item.onclick = () => window.location.href = `watch.html?id=${doc.id}`;
-                item.innerHTML = `
-                    <div class="poster-container">
-                        <img src="${m.poster}" alt="${m.title}">
-                    </div>
-                    <div class="related-title">${m.title}</div>
-                `;
-                grid.appendChild(item);
-            });
-        }
+        async function loadSuggestions(currentCat) {
+            const grid = document.getElementById('suggest-grid');
+            try {
+                const snap = await db.collection('movies')
+                    .where('category', '==', currentCat)
+                    .limit(6)
+                    .get();
 
-        function shareMovie() {
-            const url = window.location.href;
-            if (navigator.share) {
-                navigator.share({
-                    title: document.getElementById('movieTitle').innerText,
-                    url: url
+                snap.forEach(doc => {
+                    if(doc.id === movieId) return; // Skip current movie
+                    const m = doc.data();
+                    const card = document.createElement('div');
+                    card.className = 'suggest-card';
+                    card.onclick = () => window.location.href = `watch.html?id=${doc.id}`;
+                    card.innerHTML = `
+                        <img src="${m.poster}" class="suggest-poster" onerror="this.src='logo.png'">
+                        <div class="suggest-info">
+                            <p>${m.title}</p>
+                            <small style="color:var(--primary); font-size:11px;">เล่นตอนนี้</small>
+                        </div>
+                    `;
+                    grid.appendChild(card);
                 });
-            } else {
-                navigator.clipboard.writeText(url);
-                alert('คัดลอกลิงก์เรียบร้อย!');
+            } catch (e) {
+                console.log("Error loading suggests", e);
             }
         }
 
-        window.onload = init;
+        initPage();
     </script>
 </body>
 </html>
