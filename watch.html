@@ -274,11 +274,11 @@
         <main>
             <div class="main-player-section">
                 <div class="video-container" id="video-box">
-                    </div>
+                </div>
             </div>
 
             <div class="ep-list" id="ep-list-box">
-                </div>
+            </div>
 
             <div class="movie-header">
                 <h1 id="m-title">กำลังโหลดข้อมูล...</h1>
@@ -304,7 +304,7 @@
                 <i class="fas fa-fire-alt" style="color: var(--accent);"></i> เรื่องที่คุณอาจสนใจ
             </h3>
             <div class="grid-suggest" id="suggest-box">
-                </div>
+            </div>
         </aside>
     </div>
 
@@ -312,7 +312,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // ใช้ Config เดิมของคุณ
         const firebaseConfig = {
             apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
             authDomain: "classic-e8ab7.firebaseapp.com",
@@ -346,8 +345,9 @@
             if(!movieId) { window.location.href = 'index.html'; return; }
 
             try {
-                const docRef = db.collection('movies').doc(movieId);
-                const doc = await docRef.get();
+                // แก้ไขจุดนี้: เปลี่ยนจาก movies เป็น artifacts และเพิ่มบรรทัด await get()
+                const docRef = db.collection('artifacts').doc(movieId);
+                const doc = await docRef.get(); // บรรทัดที่หายไปในโค้ดเดิม
                 
                 if(!doc.exists) {
                     document.getElementById('m-title').innerText = "ขออภัย! ไม่พบข้อมูล";
@@ -391,9 +391,11 @@
                     });
                 }
 
+                // อัปเดตยอดวิว
                 docRef.update({ viewCount: firebase.firestore.FieldValue.increment(1) }).catch(e => {});
 
-                fetchSuggest(data.category);
+                // โหลดหนังแนะนำ (ใช้ artifacts แทน movies)
+                fetchSuggest(data.genre || ""); 
 
             } catch (err) {
                 console.error("Error:", err);
@@ -405,12 +407,12 @@
             }
         }
 
-        async function fetchSuggest(cat) {
+        async function fetchSuggest(genre) {
             const box = document.getElementById('suggest-box');
             try {
-                const snap = await db.collection('movies')
-                                   .where('category', '==', cat)
-                                   .limit(8)
+                // เปลี่ยนจาก movies เป็น artifacts ให้ตรงกับฐานข้อมูล
+                const snap = await db.collection('artifacts')
+                                   .limit(10)
                                    .get();
                 
                 snap.forEach(doc => {
