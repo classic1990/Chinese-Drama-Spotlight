@@ -70,13 +70,14 @@
             background: var(--input-bg);
             color: #fff;
             box-sizing: border-box;
+            font-family: 'Prompt', sans-serif;
         }
 
         .ai-btn {
             background: var(--ai-color);
             color: white;
             border: none;
-            padding: 4px 12px;
+            padding: 6px 12px;
             border-radius: 6px;
             font-size: 11px;
             cursor: pointer;
@@ -96,6 +97,7 @@
             border: none;
             cursor: pointer;
             width: 100%;
+            font-size: 16px;
         }
 
         .episodes-area {
@@ -103,7 +105,7 @@
             padding: 15px;
             border-radius: 12px;
             border: 1px dashed #444;
-            max-height: 250px;
+            max-height: 300px;
             overflow-y: auto;
         }
 
@@ -114,6 +116,7 @@
             background: var(--card-bg);
             padding: 8px;
             border-radius: 8px;
+            align-items: center;
         }
 
         .movie-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
@@ -126,9 +129,9 @@
 
 <div id="aiLoading"><i class="fas fa-magic fa-spin"></i> AI กำลังประมวลผล...</div>
 
-<div class="container" id="adminContent">
+<div class="container">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-        <h2><i class="fas fa-robot" style="color:var(--ai-color)"></i> ระบบจัดการซีรีส์ (AI Powered)</h2>
+        <h2><i class="fas fa-robot" style="color:var(--ai-color)"></i> ระบบจัดการซีรีส์ (Admin)</h2>
         <button onclick="auth.signOut()" style="background:var(--error); color:white; border:none; padding:8px 15px; border-radius:8px; cursor:pointer;">ออกจากระบบ</button>
     </div>
 
@@ -150,9 +153,9 @@
                     <textarea id="desc" rows="6" placeholder="ใช้ AI ช่วยแต่งเรื่องย่อที่น่าดึงดูด..."></textarea>
                 </div>
                 <div class="input-group">
-                    <label>จัดการตอน (Links)</label>
+                    <label>จัดการตอน (ลิงก์วิดีโอ)</label>
                     <div id="episodesContainer" class="episodes-area"></div>
-                    <button type="button" class="ai-btn" style="width:100%; margin-top:10px; background:var(--primary); color:#000" onclick="addEpisodeInput()">
+                    <button type="button" class="ai-btn" style="width:100%; margin-top:10px; background:var(--primary); color:#000; justify-content: center;" onclick="addEpisodeInput()">
                         <i class="fas fa-plus"></i> เพิ่มตอนใหม่
                     </button>
                 </div>
@@ -180,13 +183,13 @@
                     <input type="text" id="badge" placeholder="เช่น HD, จบแล้ว, แนะนำ">
                 </div>
                 <button type="submit" class="main-save-btn" id="submitBtn">บันทึกข้อมูล</button>
-                <button type="button" id="cancelBtn" onclick="resetForm()" style="display:none; width:100%; margin-top:10px; background:transparent; color:#fff; border:1px solid #444; padding:10px; border-radius:10px;">ยกเลิก</button>
+                <button type="button" id="cancelBtn" onclick="resetForm()" style="display:none; width:100%; margin-top:10px; background:transparent; color:#fff; border:1px solid #444; padding:10px; border-radius:10px; cursor:pointer;">ยกเลิกการแก้ไข</button>
             </div>
         </div>
     </form>
 
     <div style="margin-top:40px;">
-        <h3>รายการทั้งหมด</h3>
+        <h3>รายการซีรีส์ทั้งหมดในฐานข้อมูล</h3>
         <table class="movie-table">
             <tbody id="movieList"></tbody>
         </table>
@@ -208,91 +211,64 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    // API Key จากรูปภาพที่คุณส่งมา
-    const apiKey = "AQ.Ab8RN6I36WcxxlrCTmyr6ChGTr0mpGkfaBMq9nJyVNIqzX90ww"; 
+    // ส่วนสำคัญ: ชื่อ Collection ต้องตรงกับหน้า watch.html
+    const COLLECTION_NAME = "artifacts"; 
     const ADMIN_EMAIL = "duy.kan1234@gmail.com";
+    
+    // API Key สำหรับ Gemini (กรุณาใช้คีย์จริงของคุณ)
+    const geminiKey = "AQ.Ab8RN6I36WcxxlrCTmyr6ChGTr0mpGkfaBMq9nJyVNIqzX90ww"; 
 
-    // AI Helper Function with Exponential Backoff
+    // AI Helper
     async function askGemini(prompt) {
-        if (!apiKey) {
-            alert("กรุณาตั้งค่า API Key ในระบบก่อนใช้งานฟีเจอร์ AI");
-            return "";
-        }
-        
         document.getElementById('aiLoading').style.display = 'block';
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`;
         
-        const payload = {
-            contents: [{ parts: [{ text: prompt }] }],
-            systemInstruction: { parts: [{ text: "คุณคือผู้เชี่ยวชาญด้านการเขียนรีวิวและเรื่องย่อซีรีส์จีนสำหรับเว็บไซต์สตรีมมิ่ง" }] }
-        };
-
-        const maxRetries = 5;
-        for (let i = 0; i < maxRetries; i++) {
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
-                if (!response.ok) throw new Error('API Error');
-                
-                const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-            } catch (error) {
-                if (i === maxRetries - 1) {
-                    alert("ไม่สามารถติดต่อ AI ได้ในขณะนี้ โปรดลองอีกครั้งภายหลัง");
-                    return "";
-                }
-                await new Promise(res => setTimeout(res, Math.pow(2, i) * 1000));
-            } finally {
-                if (i === maxRetries - 1 || i === 0) document.getElementById('aiLoading').style.display = 'none';
-            }
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+            const data = await response.json();
+            return data.candidates[0].content.parts[0].text;
+        } catch (error) {
+            console.error(error);
+            alert("AI Error: ตรวจสอบ API Key หรือการเชื่อมต่อ");
+            return "";
+        } finally {
+            document.getElementById('aiLoading').style.display = 'none';
         }
     }
 
-    // AI Actions
     async function aiGenerateDesc() {
         const title = document.getElementById('title').value;
-        if (!title) return alert("กรุณาใส่ชื่อเรื่องก่อนเพื่อให้ AI วิเคราะห์");
-        const prompt = `ช่วยเขียนเรื่องย่อซีรีส์ภาษาไทยให้น่าสนใจสำหรับเรื่อง "${title}" ความยาวประมาณ 3-4 ประโยค โดยเน้นความตื่นเต้นและน่าติดตาม`;
-        const result = await askGemini(prompt);
-        if (result) document.getElementById('desc').value = result.trim();
+        if (!title) return alert("กรุณาใส่ชื่อเรื่องก่อน");
+        const res = await askGemini(`เขียนเรื่องย่อซีรีส์จีนเรื่อง "${title}" ให้น่าตื่นเต้น สั้นๆ 3 ประโยค ภาษาไทย`);
+        if (res) document.getElementById('desc').value = res.trim();
     }
 
     async function aiSuggestBadge() {
         const title = document.getElementById('title').value;
         if (!title) return;
-        const prompt = `จากชื่อซีรีส์ "${title}" ช่วยแนะนำป้ายกำกับสั้นๆ 1 คำ (เช่น พากย์ไทย, จบแล้ว, แนะนำ, มาใหม่) ตอบเฉพาะคำนั้นออกมาตรงๆ`;
-        const result = await askGemini(prompt);
-        if (result) {
-            // ลบอักขระพิเศษเพื่อให้ได้แค่ตัวอักษร
-            const cleanResult = result.replace(/[^ก-๙a-zA-Z]/g, '').trim();
-            document.getElementById('badge').value = cleanResult;
-        }
+        const res = await askGemini(`จากซีรีส์ "${title}" ขอคำป้ายกำกับสั้นๆ 1 คำ เช่น จบแล้ว หรือ พากย์ไทย ตอบแค่คำนั้น`);
+        if (res) document.getElementById('badge').value = res.replace(/[^\u0E00-\u0E7F]/g, "").trim();
     }
 
-    // --- ระบบพื้นฐาน (Standard Functions) ---
+    // Episodes Management
     function addEpisodeInput(value = "") {
         const container = document.getElementById('episodesContainer');
         const count = container.children.length + 1;
         const div = document.createElement('div');
         div.className = 'episode-row';
-        div.innerHTML = `<input type="text" class="ep-link-input" placeholder="ลิงก์ EP ${count}" value="${value}" required>
-        ${count > 1 ? '<button type="button" onclick="this.parentElement.remove()" style="color:var(--error); border:none; background:none; cursor:pointer;">✕</button>' : ''}`;
+        div.innerHTML = `
+            <span style="min-width:40px; font-size:12px; color:var(--primary)">EP ${count}</span>
+            <input type="text" class="ep-link-input" placeholder="วางลิงก์วิดีโอที่นี่" value="${value}" required>
+            ${count > 1 ? '<button type="button" onclick="this.parentElement.remove()" style="background:none; border:none; color:var(--error); cursor:pointer;"><i class="fas fa-times"></i></button>' : ''}
+        `;
         container.appendChild(div);
     }
 
-    auth.onAuthStateChanged(user => {
-        if (user && user.email === ADMIN_EMAIL) {
-            loadData();
-            resetForm();
-        } else {
-            // กรณีไม่ได้ Login หรือไม่ใช่ Admin ให้ระบบจัดการตามความเหมาะสม
-        }
-    });
-
+    // Firebase Operations
     document.getElementById('movieForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const id = document.getElementById('editId').value;
@@ -303,47 +279,52 @@
             desc: document.getElementById('desc').value,
             category: document.getElementById('category').value,
             poster: document.getElementById('poster').value,
-            badge: document.getElementById('badge').value,
+            badge: document.getElementById('badge').value || "HD",
             links: links,
-            link: links[0],
+            link: links[0], // สำหรับรองรับระบบเก่า
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
         try {
             if (id) {
-                await db.collection('movies').doc(id).update(data);
+                await db.collection(COLLECTION_NAME).doc(id).update(data);
+                alert("อัปเดตข้อมูลสำเร็จ!");
             } else {
                 data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                 data.viewCount = 0;
-                await db.collection('movies').add(data);
+                await db.collection(COLLECTION_NAME).add(data);
+                alert("เพิ่มซีรีส์ใหม่สำเร็จ!");
             }
-            alert("บันทึกข้อมูลสำเร็จ!");
             resetForm();
         } catch (err) {
-            alert("เกิดข้อผิดพลาด: " + err.message);
+            alert("Error: " + err.message);
         }
     });
 
     function loadData() {
-        db.collection('movies').orderBy('createdAt', 'desc').onSnapshot(snap => {
+        db.collection(COLLECTION_NAME).orderBy('createdAt', 'desc').onSnapshot(snap => {
             const list = document.getElementById('movieList');
             list.innerHTML = '';
             snap.forEach(doc => {
                 const m = doc.data();
-                list.innerHTML += `<tr class="movie-row">
-                    <td width="50"><img src="${m.poster}" class="poster-mini" onerror="this.src='https://via.placeholder.com/50x70'"></td>
-                    <td><b>${m.title}</b><br><small style="color:var(--text-dim)">${m.badge || 'HD'} | ${m.links?.length || 1} ตอน</small></td>
-                    <td align="right">
-                        <button onclick="editDoc('${doc.id}')" style="background:none; border:none; color:var(--primary); cursor:pointer;"><i class="fas fa-edit"></i></button>
-                        <button onclick="deleteDoc('${doc.id}')" style="background:none; border:none; color:var(--error); cursor:pointer; margin-left:10px;"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>`;
+                list.innerHTML += `
+                    <tr class="movie-row">
+                        <td width="60"><img src="${m.poster}" class="poster-mini" onerror="this.src='https://via.placeholder.com/50x70'"></td>
+                        <td>
+                            <b>${m.title}</b><br>
+                            <small style="color:var(--text-dim)">${m.category === 'vertical' ? 'แนวตั้ง' : 'พากย์ไทย'} | ${m.links?.length || 1} ตอน</small>
+                        </td>
+                        <td align="right">
+                            <button onclick="editDoc('${doc.id}')" style="background:none; border:none; color:var(--primary); cursor:pointer; font-size:18px;"><i class="fas fa-edit"></i></button>
+                            <button onclick="deleteDoc('${doc.id}')" style="background:none; border:none; color:var(--error); cursor:pointer; margin-left:15px; font-size:18px;"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
             });
         });
     }
 
     async function editDoc(id) {
-        const doc = await db.collection('movies').doc(id).get();
+        const doc = await db.collection(COLLECTION_NAME).doc(id).get();
         const m = doc.data();
         document.getElementById('editId').value = id;
         document.getElementById('title').value = m.title;
@@ -360,6 +341,7 @@
             addEpisodeInput(m.link || "");
         }
         
+        document.getElementById('submitBtn').innerText = "อัปเดตข้อมูล";
         document.getElementById('cancelBtn').style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -369,12 +351,27 @@
         document.getElementById('editId').value = '';
         document.getElementById('episodesContainer').innerHTML = '';
         addEpisodeInput();
+        document.getElementById('submitBtn').innerText = "บันทึกข้อมูล";
         document.getElementById('cancelBtn').style.display = 'none';
     }
 
     async function deleteDoc(id) {
-        if(confirm('คุณแน่ใจหรือไม่ที่จะลบรายการนี้?')) await db.collection('movies').doc(id).delete();
+        if(confirm('ยืนยันที่จะลบซีรีส์เรื่องนี้ออกจากระบบ?')) {
+            await db.collection(COLLECTION_NAME).doc(id).delete();
+        }
     }
+
+    // Auth & Init
+    auth.onAuthStateChanged(user => {
+        if (user && user.email === ADMIN_EMAIL) {
+            loadData();
+            resetForm();
+        } else {
+            // ส่งกลับหน้าล็อคอินถ้าจำเป็น
+            console.log("Unauthorized Access");
+        }
+    });
 </script>
+
 </body>
 </html>
