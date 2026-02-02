@@ -4,23 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>กำลังรับชม | DUYDODEE-HD</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         :root {
             --primary: #00aeff;
-            --primary-glow: rgba(0, 174, 255, 0.4);
-            --accent-red: #ff3c00;
             --bg-dark: #0a0a0b;
-            --card-bg: #161618;
-            --card-hover: #1c1c1e;
-            --text-main: #f5f5f7;
+            --card-bg: #1c1c1e;
+            --text-main: #ffffff;
             --text-dim: #8e8e93;
-            --glass: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --accent-gradient: linear-gradient(135deg, #00aeff, #0076ff);
         }
 
         body {
@@ -28,476 +20,235 @@
             font-family: 'Prompt', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
         }
 
-        /* Scrollbar Customization */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
-
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0; width: 100%;
-            padding: 0 5%;
-            height: 70px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(10, 10, 11, 0.8);
-            z-index: 1000;
-            box-sizing: border-box;
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .logo-text {
-            font-size: 22px;
-            font-weight: 800;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-decoration: none;
-            letter-spacing: 1px;
-        }
-
-        .nav-link {
-            color: var(--text-main);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            border-radius: 20px;
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-        }
-
-        .nav-link:hover {
-            background: rgba(255,255,255,0.1);
-            color: var(--primary);
-        }
-
-        /* Player Layout */
-        .player-layout {
-            margin-top: 90px;
-            padding: 20px 5%;
-            max-width: 1600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .main-player-section {
-            width: 100%;
+        header {
             background: #000;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border: 1px solid var(--glass-border);
-            position: relative;
+            padding: 15px 5%;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-btn {
+            color: #fff;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 15px;
         }
 
         .video-container {
             position: relative;
-            padding-bottom: 56.25%; /* 16:9 */
-            height: 0;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
             background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .video-container iframe {
             position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             border: none;
         }
 
-        /* Episode Selector */
-        .ep-list {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
+        .movie-details {
             margin-top: 25px;
-            padding: 5px 0;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .movie-title {
+            font-size: 24px;
+            margin: 0 0 10px 0;
+            color: var(--primary);
+        }
+
+        .movie-desc {
+            color: var(--text-dim);
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .episode-list {
+            margin-top: 25px;
+        }
+
+        .episode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
         }
 
         .ep-btn {
-            background: var(--card-bg);
-            color: var(--text-dim);
-            border: 1px solid var(--glass-border);
-            padding: 10px 20px;
-            border-radius: 10px;
+            background: #2c2c2e;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
             cursor: pointer;
-            font-family: 'Prompt';
-            font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: 0.3s;
             font-size: 14px;
         }
 
         .ep-btn:hover {
-            border-color: var(--primary);
-            color: var(--text-main);
-            transform: translateY(-2px);
-            background: var(--card-hover);
+            background: var(--primary);
+            color: #000;
         }
 
         .ep-btn.active {
             background: var(--primary);
             color: #000;
-            border-color: var(--primary);
             font-weight: 600;
-            box-shadow: 0 0 20px var(--primary-glow);
         }
 
-        /* Info Section */
-        .movie-header { 
-            margin-top: 30px; 
-            padding-bottom: 30px;
-            border-bottom: 1px solid var(--glass-border);
-        }
-        
-        .movie-header h1 {
-            font-size: clamp(24px, 5vw, 36px);
-            font-weight: 700;
-            margin-bottom: 15px;
-            color: var(--text-main);
-            line-height: 1.2;
-        }
-
-        .meta-tags {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 20px;
-            color: var(--text-dim);
-            font-size: 14px;
-            margin-bottom: 25px;
-        }
-
-        .badge {
-            background: var(--accent-red);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .description {
-            background: var(--glass);
-            padding: 25px;
-            border-radius: 16px;
-            color: #c1c1c6;
-            line-height: 1.8;
-            border: 1px solid var(--glass-border);
-            font-weight: 300;
-            font-size: 15px;
-        }
-
-        /* Suggestion Section */
-        .suggest-section { margin-top: 40px; }
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .grid-suggest {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 20px;
-        }
-
-        .suggest-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            border: 1px solid var(--glass-border);
-            position: relative;
-        }
-
-        .suggest-card:hover {
-            transform: scale(1.05);
-            border-color: var(--primary);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 1;
-        }
-
-        .suggest-card .img-wrapper {
-            position: relative;
-            aspect-ratio: 2/3;
-            overflow: hidden;
-        }
-
-        .suggest-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: 0.5s;
-        }
-
-        .suggest-card:hover img {
-            transform: scale(1.1);
-        }
-
-        .suggest-card p {
-            padding: 12px;
-            font-size: 14px;
-            font-weight: 500;
-            margin: 0;
-            color: var(--text-main);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Loader */
         #loader {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-dark);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 2000;
-            gap: 20px;
+            text-align: center;
+            padding: 100px 0;
         }
 
         .spinner {
             width: 50px;
             height: 50px;
-            border: 3px solid rgba(255,255,255,0.05);
-            border-top: 3px solid var(--primary);
+            border: 5px solid rgba(255,255,255,0.1);
+            border-top: 5px solid var(--primary);
             border-radius: 50%;
-            animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+            animation: spin 1s linear infinite;
+            display: inline-block;
         }
 
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        /* Responsive Desktop */
-        @media (min-width: 1024px) {
-            .player-layout {
-                display: grid;
-                grid-template-columns: 1fr 380px;
-                gap: 40px;
-                align-items: start;
-            }
-            .suggest-section { margin-top: 0; }
-            .grid-suggest { grid-template-columns: 1fr; }
-            
-            .suggest-card { 
-                flex-direction: row; 
-                display: flex; 
-                height: 110px; 
-            }
-            .suggest-card .img-wrapper { 
-                width: 80px; 
-                min-width: 80px;
-                aspect-ratio: auto; 
-            }
-            .suggest-card p { 
-                white-space: normal; 
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                -webkit-box-orient: vertical;
-                padding: 15px;
-                align-self: center;
-            }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <div id="loader">
-        <div class="spinner"></div>
-        <div style="font-size: 14px; letter-spacing: 2px; color: var(--primary);">DUYDODEE</div>
+<header>
+    <a href="index.html" class="back-btn"><i class="fas fa-chevron-left"></i> กลับหน้าหลัก</a>
+    <h3 id="navTitle" style="margin:0; font-weight:400; font-size:16px;">กำลังโหลด...</h3>
+</header>
+
+<div class="container">
+    <div id="loadingArea">
+        <div id="loader"><div class="spinner"></div></div>
     </div>
 
-    <nav>
-        <a href="index.html" class="logo-text">DUYDODEE HD</a>
-        <a href="index.html" class="nav-link">
-            <i class="fas fa-home"></i> หน้าหลัก
-        </a>
-    </nav>
+    <div id="playerArea" style="display:none;">
+        <div class="video-container" id="videoWrapper">
+            <!-- Iframe จะถูกแทรกที่นี่ -->
+        </div>
 
-    <div class="player-layout">
-        <main>
-            <!-- Video Player -->
-            <div class="main-player-section">
-                <div class="video-container" id="video-box">
-                    <!-- Iframe will be injected here -->
-                </div>
-            </div>
+        <div class="movie-details">
+            <h1 class="movie-title" id="displayTitle">ชื่อซีรีส์</h1>
+            <p class="movie-desc" id="displayDesc">เรื่องย่อกำลังโหลด...</p>
+        </div>
 
-            <!-- Episodes -->
-            <div class="ep-list" id="ep-list-box"></div>
-
-            <!-- Info -->
-            <div class="movie-header">
-                <h1 id="m-title">กำลังโหลดข้อมูล...</h1>
-                <div class="meta-tags">
-                    <span class="badge" id="m-badge">HD</span>
-                    <span><i class="fas fa-fire-alt" style="color: var(--accent-red);"></i> <span id="m-views">0</span> วิว</span>
-                    <span><i class="far fa-calendar-alt"></i> <span id="m-date">-</span></span>
-                </div>
-                <div class="description" id="m-desc">
-                    กำลังดึงข้อมูลเรื่องย่อ โปรดรอสักครู่...
-                </div>
-            </div>
-        </main>
-
-        <!-- Sidebar Suggestions -->
-        <aside class="suggest-section">
-            <div class="section-title">
-                <i class="fas fa-compact-disc fa-spin" style="color: var(--primary);"></i> 
-                <span>เรื่องที่คุณอาจสนใจ</span>
-            </div>
-            <div class="grid-suggest" id="suggest-box"></div>
-        </aside>
+        <div class="episode-list">
+            <h3>เลือกตอนที่ต้องการรับชม</h3>
+            <div id="episodeGrid" class="episode-grid"></div>
+        </div>
     </div>
+</div>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
-            authDomain: "classic-e8ab7.firebaseapp.com",
-            projectId: "classic-e8ab7",
-            appId: "1:596308927760:web:63043fd2786459082cb195"
-        };
-        
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
+        authDomain: "classic-e8ab7.firebaseapp.com",
+        projectId: "classic-e8ab7",
+        appId: "1:596308927760:web:63043fd2786459082cb195"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const movieId = urlParams.get('id');
+    // ดึง ID จาก URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const movieId = urlParams.get('id');
 
-        function getEmbedUrl(url) {
-            if (!url) return "";
-            let videoId = "";
-            try {
-                if (url.includes("youtu.be/")) {
-                    videoId = url.split("youtu.be/")[1].split(/[?#]/)[0];
-                } else if (url.includes("youtube.com/watch")) {
-                    const params = new URLSearchParams(new URL(url).search);
-                    videoId = params.get('v');
-                } else if (url.includes("youtube.com/embed/")) {
-                    return url;
-                }
-            } catch (e) { console.error("URL Error", e); }
-            return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1` : url;
-        }
+    if (!movieId) {
+        window.location.href = 'index.html';
+    }
 
-        async function loadContent() {
-            if(!movieId) { window.location.href = 'index.html'; return; }
-
-            try {
-                const docRef = db.collection('movies').doc(movieId);
-                const doc = await docRef.get();
-                
-                if(!doc.exists) {
-                    document.getElementById('m-title').innerText = "ไม่พบเนื้อหา";
-                    return;
-                }
-
-                const data = doc.data();
-                document.getElementById('m-title').innerText = data.title;
-                document.getElementById('m-badge').innerText = data.badge || 'HD';
-                document.getElementById('m-views').innerText = (data.viewCount || 0).toLocaleString();
-                document.getElementById('m-desc').innerText = data.desc || "ไม่มีเรื่องย่อสำหรับซีรีส์เรื่องนี้";
-                
-                if(data.createdAt) {
-                    const date = new Date(data.createdAt.seconds * 1000);
-                    document.getElementById('m-date').innerText = date.toLocaleDateString('th-TH', {
-                        year: 'numeric', month: 'long', day: 'numeric'
-                    });
-                }
-
-                const videoBox = document.getElementById('video-box');
-                const epListBox = document.getElementById('ep-list-box');
-                
-                let allLinks = [];
-                if (data.links && Array.isArray(data.links)) {
-                    allLinks = data.links;
-                } else if (data.link) {
-                    allLinks = [data.link];
-                }
-
-                if(allLinks.length > 0) {
-                    allLinks.forEach((url, index) => {
-                        const btn = document.createElement('button');
-                        btn.className = 'ep-btn';
-                        btn.innerText = allLinks.length > 1 ? `EP ${index + 1}` : `Play Video`;
-                        
-                        btn.onclick = () => {
-                            videoBox.innerHTML = `<iframe src="${getEmbedUrl(url)}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-                            document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
-                            btn.classList.add('active');
-                            // Smooth scroll to player on mobile
-                            if(window.innerWidth < 768) {
-                                window.scrollTo({ top: 0, behavior: 'smooth' });
-                            }
-                        };
-                        epListBox.appendChild(btn);
-
-                        if(index === 0) btn.click();
-                    });
-                }
-
-                docRef.update({ viewCount: firebase.firestore.FieldValue.increment(1) })
-                      .catch(e => console.log("Update view count failed"));
-
-                fetchSuggest(data.category);
-
-            } catch (err) {
-                console.error("Error:", err);
-            } finally {
-                setTimeout(() => {
-                    document.getElementById('loader').style.opacity = '0';
-                    setTimeout(() => {
-                        document.getElementById('loader').style.display = 'none';
-                    }, 500);
-                }, 800);
+    async function loadMovieData() {
+        try {
+            const doc = await db.collection('movies').doc(movieId).get();
+            if (!doc.exists) {
+                alert("ไม่พบข้อมูลซีรีส์");
+                window.location.href = 'index.html';
+                return;
             }
+
+            const data = doc.data();
+            
+            // อัปเดตยอดวิว
+            db.collection('movies').doc(movieId).update({
+                viewCount: (data.viewCount || 0) + 1
+            });
+
+            // แสดงข้อมูล
+            document.getElementById('navTitle').innerText = data.title;
+            document.getElementById('displayTitle').innerText = data.title;
+            document.getElementById('displayDesc').innerText = data.desc || "ไม่มีเรื่องย่อ";
+            
+            // สร้างปุ่มเลือกตอน
+            const epGrid = document.getElementById('episodeGrid');
+            const links = data.links || [data.link];
+            
+            links.forEach((link, index) => {
+                const btn = document.createElement('div');
+                btn.className = `ep-btn ${index === 0 ? 'active' : ''}`;
+                btn.innerText = `ตอนที่ ${index + 1}`;
+                btn.onclick = () => playVideo(link, btn);
+                epGrid.appendChild(btn);
+            });
+
+            // เล่นตอนแรกทันที
+            playVideo(links[0]);
+
+            // ซ่อน Loader
+            document.getElementById('loadingArea').style.display = 'none';
+            document.getElementById('playerArea').style.display = 'block';
+
+        } catch (error) {
+            console.error("Error loading movie:", error);
+            alert("เกิดข้อผิดพลาดในการโหลดข้อมูล");
+        }
+    }
+
+    function playVideo(url, btnElement = null) {
+        const wrapper = document.getElementById('videoWrapper');
+        
+        // ตรวจสอบว่าเป็นลิงก์ YouTube หรือไม่
+        let embedUrl = url;
+        if (url.includes('youtube.com') || url.includes('youtu.be')) {
+            const videoId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
+            embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
         }
 
-        async function fetchSuggest(cat) {
-            const box = document.getElementById('suggest-box');
-            try {
-                const snap = await db.collection('movies')
-                                   .where('category', '==', cat)
-                                   .limit(8)
-                                   .get();
-                
-                snap.forEach(doc => {
-                    if(doc.id === movieId) return;
-                    const m = doc.data();
-                    const card = document.createElement('div');
-                    card.className = 'suggest-card';
-                    card.onclick = () => window.location.href = `watch.html?id=${doc.id}`;
-                    card.innerHTML = `
-                        <div class="img-wrapper">
-                            <img src="${m.poster}" onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'">
-                        </div>
-                        <p>${m.title}</p>
-                    `;
-                    box.appendChild(card);
-                });
-            } catch(e) { console.log(e); }
-        }
+        wrapper.innerHTML = `<iframe src="${embedUrl}" allowfullscreen allow="autoplay"></iframe>`;
 
-        window.onload = loadContent;
-    </script>
+        // สลับสถานะปุ่ม Active
+        if (btnElement) {
+            document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+
+    window.onload = loadMovieData;
+</script>
 </body>
 </html>
