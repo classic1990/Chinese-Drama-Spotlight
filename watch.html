@@ -25,8 +25,7 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         .logo { font-size: 24px; font-weight: 800; color: var(--primary); cursor: pointer; text-decoration: none; text-transform: uppercase; }
-        .nav-back { color: var(--text-muted); cursor: pointer; text-decoration: none; font-size: 14px; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
-        .nav-back:hover { color: var(--primary); transform: translateX(-5px); }
+        .nav-back { color: var(--text-muted); cursor: pointer; text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 8px; }
 
         /* Layout */
         .player-layout {
@@ -34,50 +33,51 @@
             max-width: 1500px; display: grid; grid-template-columns: 1fr 350px; gap: 35px;
         }
 
-        /* Player & Episodes */
-        .video-box { position: relative; padding-bottom: 56.25%; background: #000; border-radius: 12px; overflow: hidden; border: 1px solid #222; }
+        /* Video Player Area */
+        .video-box { 
+            position: relative; padding-bottom: 56.25%; background: #000; 
+            border-radius: 12px; overflow: hidden; border: 1px solid #222; 
+        }
         .video-box iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+
+        /* VIP Lock UI */
+        .vip-lock {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.95);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 20px; z-index: 100;
+        }
+        .btn-login {
+            background: var(--primary); color: #000; padding: 12px 30px; 
+            border-radius: 50px; text-decoration: none; font-weight: 700; margin-top: 15px;
+        }
 
         .ep-list { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 25px; }
         .ep-btn { 
             background: #1a1a1e; color: var(--text-muted); border: 1px solid #333;
-            padding: 8px 18px; border-radius: 8px; cursor: pointer; font-family: inherit; transition: 0.3s;
+            padding: 8px 18px; border-radius: 8px; cursor: pointer; transition: 0.3s;
         }
-        .ep-btn.active { background: var(--primary); color: #000; font-weight: 600; border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2); }
+        .ep-btn.active { background: var(--primary); color: #000; font-weight: 600; }
 
-        /* Movie Info */
         .info-card { margin-top: 30px; background: var(--bg-surf); padding: 30px; border-radius: 12px; }
-        .m-title { font-size: clamp(20px, 4vw, 28px); margin: 0; font-weight: 700; }
-        .meta { display: flex; flex-wrap: wrap; gap: 20px; font-size: 13px; color: var(--text-muted); margin: 20px 0; align-items: center; }
-        .badge { background: #ff0055; color: #fff; padding: 2px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
-        .desc { font-size: 14px; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; white-space: pre-line; }
+        .m-title { font-size: 28px; margin: 0; }
+        .desc { font-size: 14px; color: var(--text-muted); margin-top: 20px; white-space: pre-line; }
 
         /* Sidebar Suggestions */
         .side-title { font-size: 18px; margin-bottom: 20px; border-left: 4px solid var(--primary); padding-left: 15px; }
-        .suggest-card { display: flex; gap: 15px; background: var(--bg-surf); padding: 10px; border-radius: 10px; cursor: pointer; transition: 0.3s; margin-bottom: 15px; border: 1px solid transparent; }
-        .suggest-card:hover { transform: translateX(5px); background: #1a1a1e; border-color: rgba(0, 242, 255, 0.2); }
-        .suggest-card img { width: 75px; aspect-ratio: 2/3; object-fit: cover; border-radius: 6px; }
-        .suggest-card img.vertical { aspect-ratio: 9/16; width: 65px; }
-        .suggest-info p { margin: 0; font-size: 14px; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .suggest-info span { font-size: 11px; color: var(--primary); display: block; margin-top: 5px; }
+        .suggest-card { display: flex; gap: 15px; background: var(--bg-surf); padding: 10px; border-radius: 10px; cursor: pointer; margin-bottom: 15px; }
+        .suggest-card img { width: 70px; aspect-ratio: 2/3; object-fit: cover; border-radius: 6px; }
 
         /* Loader */
-        #loader { position: fixed; inset: 0; background: var(--bg-dark); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; transition: 0.4s; }
+        #loader { position: fixed; inset: 0; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 2000; transition: 0.4s; }
         .spin { width: 45px; height: 45px; border: 3px solid rgba(255,255,255,0.05); border-top-color: var(--primary); border-radius: 50%; animation: s 0.8s linear infinite; }
         @keyframes s { 100% { transform: rotate(360deg); } }
 
-        @media (max-width: 1024px) {
-            .player-layout { grid-template-columns: 1fr; }
-            .suggest-card { background: transparent; padding: 0; }
-        }
+        @media (max-width: 1024px) { .player-layout { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-<div id="loader">
-    <div class="spin"></div>
-    <p style="margin-top:20px; font-size:10px; letter-spacing:3px; color: var(--text-muted);">LOADING PLAYER</p>
-</div>
+<div id="loader"><div class="spin"></div></div>
 
 <nav>
     <div class="logo" onclick="goHome()">DUY<span style="color:#fff">DODEE</span></div>
@@ -89,16 +89,15 @@
         <div class="video-box" id="player-box"></div>
         
         <div class="ep-list-container">
-            <p style="font-weight:600; margin-bottom:12px; font-size:14px; margin-top: 20px;">เลือกตอนรับชม:</p>
+            <p style="font-weight:600; margin-top: 20px; font-size:14px;">เลือกตอน:</p>
             <div class="ep-list" id="ep-list"></div>
         </div>
 
         <div class="info-card">
             <h1 class="m-title" id="m-title">...</h1>
-            <div class="meta">
-                <span class="badge" id="m-badge">HD</span>
-                <span><i class="far fa-eye" style="color:var(--primary)"></i> <span id="m-views">0</span> วิว</span>
-                <span><i class="fas fa-star" style="color:#ffd700"></i> <span id="m-rating">8.5</span></span>
+            <div style="margin: 15px 0; font-size:13px; color:var(--text-muted);">
+                <span id="m-badge" style="background:#ff0055; color:#fff; padding:2px 8px; border-radius:4px; margin-right:10px;">HD</span>
+                <span><i class="far fa-eye"></i> <span id="m-views">0</span> วิว</span>
             </div>
             <div class="desc" id="m-desc">...</div>
         </div>
@@ -110,12 +109,11 @@
     </aside>
 </div>
 
-<!-- Firebase Logic (คงเดิมตามที่คุณกำหนด) -->
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
 <script>
-    // การตั้งค่า Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
         authDomain: "classic-e8ab7.firebaseapp.com",
@@ -124,132 +122,100 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    const auth = firebase.auth();
 
     const movieId = new URLSearchParams(window.location.search).get('id');
 
-    // ✅ ฟังก์ชันดึง Video ID ที่แม่นยำที่สุด (รองรับ YouTube ทุกแบบ)
-    function getEmbed(u) {
-        if (!u || typeof u !== 'string') return "";
-        u = u.trim();
-        
-        // เช็คว่าเป็น YouTube หรือไม่
+    function getEmbed(url) {
+        if (!url) return "";
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-        const match = u.match(regExp);
-        
+        const match = url.match(regExp);
         if (match && match[2].length === 11) {
-            // ถ้าเป็น YouTube ให้ส่งคืน URL สำหรับ Embed
             return `https://www.youtube.com/embed/${match[2]}?autoplay=1&rel=0`;
         }
-        
-        // 💡 ถ้าไม่ใช่ YouTube (เช่นลิงก์ .mp4 หรือลิงก์เว็บอื่น) ให้ส่งลิงก์เดิมกลับไปตรงๆ
-        return u;
+        return url;
     }
 
     async function init() {
-        if(!movieId) { 
-            document.getElementById('loader').innerHTML = '<p>ไม่พบรหัสวิดีโอ</p>';
-            return; 
-        }
+        if(!movieId) { window.location.href = 'index.html'; return; }
         
         try {
             const docRef = db.collection('artifacts').doc(movieId);
             const doc = await docRef.get();
-            
-            if(!doc.exists) {
-                document.getElementById('loader').innerHTML = '<p>ขออภัย ไม่พบข้อมูลหนัง</p>';
-                return;
-            }
+            if(!doc.exists) { alert("ไม่พบข้อมูล"); return; }
 
             const d = doc.data();
 
-            // แสดงข้อมูลเบื้องต้น
-            document.title = `${d.title} | DUYDODEE-HD`;
-            document.getElementById('m-title').innerText = d.title;
-            document.getElementById('m-badge').innerText = d.badge || 'HD';
-            document.getElementById('m-views').innerText = (d.viewCount || 0).toLocaleString();
-            document.getElementById('m-rating').innerText = d.rating || '8.5';
-            document.getElementById('m-desc').innerText = d.desc || "ไม่มีข้อมูลเรื่องย่อ";
+            auth.onAuthStateChanged(user => {
+                if (d.isVip && !user) {
+                    document.getElementById('player-box').innerHTML = `
+                        <div class="vip-lock">
+                            <i class="fas fa-lock" style="font-size:50px; color:var(--primary); margin-bottom:15px;"></i>
+                            <h3>เนื้อหาเฉพาะสมาชิก VIP</h3>
+                            <p>กรุณาเข้าสู่ระบบเพื่อรับชมเรื่องนี้</p>
+                            <a href="login.html" class="btn-login">เข้าสู่ระบบตอนนี้</a>
+                        </div>
+                    `;
+                    // ปิด Loader แม้จะติด VIP
+                    document.getElementById('loader').style.display = 'none';
+                    return;
+                }
+                loadVideoContent(d, docRef);
+            });
 
-            const pBox = document.getElementById('player-box');
-            const eList = document.getElementById('ep-list');
-            
-            // ✅ ตรวจสอบโครงสร้างลิงก์ (เผื่อเก็บมาทั้งแบบ link และ links)
-            let videoSources = [];
-            if (Array.isArray(d.links) && d.links.length > 0) {
-                videoSources = d.links;
-            } else if (d.link) {
-                videoSources = [d.link];
-            }
-
-            if(videoSources.length === 0) {
-                pBox.innerHTML = `<div style="padding:80px 20px; text-align:center; color:#666;">
-                    <i class="fas fa-video-slash" style="font-size:40px; margin-bottom:15px;"></i>
-                    <p>ยังไม่มีไฟล์วิดีโอสำหรับเรื่องนี้</p>
-                </div>`;
-            } else {
-                // สร้างปุ่มตอน
-                videoSources.forEach((url, i) => {
-                    const b = document.createElement('button');
-                    b.className = 'ep-btn';
-                    b.innerText = videoSources.length > 1 ? `ตอนที่ ${i+1}` : `เล่นวิดีโอ`;
-                    
-                    b.onclick = () => {
-                        const embedUrl = getEmbed(url);
-                        // เปลี่ยนวิดีโอใน Iframe
-                        pBox.innerHTML = `<iframe src="${embedUrl}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-                        
-                        // เปลี่ยนสถานะปุ่ม Active
-                        document.querySelectorAll('.ep-btn').forEach(btn => btn.classList.remove('active'));
-                        b.classList.add('active');
-                    };
-                    
-                    eList.appendChild(b);
-                    
-                    // สั่งให้เล่นตอนแรกอัตโนมัติ
-                    if(i === 0) b.click();
-                });
-            }
-
-            // เพิ่มยอดวิว
-            docRef.update({ viewCount: firebase.firestore.FieldValue.increment(1) });
-            fetchSuggest(d.category);
-            
-        } catch(e) { 
-            console.error("Error:", e);
-            document.getElementById('player-box').innerHTML = `<p style="text-align:center; padding:50px;">เกิดข้อผิดพลาด: ${e.message}</p>`;
-        } finally { 
-            const ld = document.getElementById('loader');
-            ld.style.opacity = '0';
-            setTimeout(() => ld.style.display = 'none', 400);
-        }
+        } catch(e) { console.error(e); }
     }
 
-    // ฟังก์ชันแนะนำ (เหมือนเดิม)
-    async function fetchSuggest(category) {
-        const box = document.getElementById('suggest-box');
-        try {
-            const snap = await db.collection('artifacts').where('category', '==', category).limit(6).get();
-            snap.forEach(doc => {
-                if(doc.id === movieId) return;
-                const m = doc.data();
-                const card = document.createElement('div');
-                card.className = 'suggest-card';
-                card.onclick = () => window.location.href = `watch.html?id=${doc.id}`;
-                card.innerHTML = `
-                    <img src="${m.poster}" onerror="this.src='https://via.placeholder.com/150x225?text=No+Image'">
-                    <div class="suggest-info">
-                        <p>${m.title}</p>
-                        <span><i class="fas fa-play-circle"></i> ดูตอนนี้</span>
-                    </div>
-                `;
-                box.appendChild(card);
+    function loadVideoContent(d, docRef) {
+        document.getElementById('m-title').innerText = d.title;
+        document.getElementById('m-badge').innerText = d.badge || 'HD';
+        document.getElementById('m-views').innerText = (d.viewCount || 0).toLocaleString();
+        document.getElementById('m-desc').innerText = d.desc || "ไม่มีเรื่องย่อ";
+
+        const pBox = document.getElementById('player-box');
+        const eList = document.getElementById('ep-list');
+        
+        let links = Array.isArray(d.links) ? d.links : (d.link ? [d.link] : []);
+
+        if(links.length === 0) {
+            pBox.innerHTML = `<p style="text-align:center; padding-top:100px;">ไม่พบไฟล์วิดีโอ</p>`;
+        } else {
+            links.forEach((url, i) => {
+                const b = document.createElement('button');
+                b.className = 'ep-btn';
+                b.innerText = links.length > 1 ? `ตอนที่ ${i+1}` : `เล่นวิดีโอ`;
+                b.onclick = () => {
+                    pBox.innerHTML = `<iframe src="${getEmbed(url)}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+                    document.querySelectorAll('.ep-btn').forEach(btn => btn.classList.remove('active'));
+                    b.classList.add('active');
+                };
+                eList.appendChild(b);
+                if(i === 0) b.click();
             });
-        } catch(e) { console.log(e); }
+        }
+
+        docRef.update({ viewCount: firebase.firestore.FieldValue.increment(1) });
+        fetchSuggest(d.category);
+        document.getElementById('loader').style.display = 'none';
+    }
+
+    async function fetchSuggest(cat) {
+        const box = document.getElementById('suggest-box');
+        const snap = await db.collection('artifacts').where('category', '==', cat).limit(6).get();
+        snap.forEach(doc => {
+            if(doc.id === movieId) return;
+            const m = doc.data();
+            const d = document.createElement('div');
+            d.className = 'suggest-card';
+            d.onclick = () => window.location.href = `watch.html?id=${doc.id}`;
+            d.innerHTML = `<img src="${m.poster}"><div class="s-info"><p style="font-size:14px; margin:0;">${m.title}</p></div>`;
+            box.appendChild(d);
+        });
     }
 
     function goHome() { window.location.href = 'index.html'; }
 
-    window.onload = init;
+    init();
 </script>
 </body>
 </html>
