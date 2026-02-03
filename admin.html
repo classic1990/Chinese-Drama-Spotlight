@@ -6,6 +6,8 @@
     <title>Admin Dashboard | DUYDODEE-HD</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" href="logo.png" type="image/png">
     <style>
         :root {
             --primary: #00e5ff;
@@ -27,26 +29,6 @@
             min-height: 100vh; line-height: 1.6;
         }
         
-        /* Auth Overlay */
-        #authOverlay {
-            position: fixed; inset: 0; background: var(--bg-dark);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 3000;
-        }
-        .login-card {
-            background: var(--card-bg); padding: 40px; border-radius: 24px;
-            border: 1px solid var(--glass-border); text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            width: 90%; max-width: 400px;
-        }
-        .btn-google {
-            background: white; color: black; border: none; padding: 12px 25px;
-            border-radius: 12px; font-weight: 700; cursor: pointer;
-            display: flex; align-items: center; gap: 10px; font-size: 16px; margin: 25px auto 0;
-            transition: 0.3s; width: 100%; justify-content: center;
-        }
-        .btn-google:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
-
         #aiLoading { 
             position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
             background: var(--ai-color); color: white; padding: 12px 25px; 
@@ -55,10 +37,25 @@
             font-weight: 600; font-size: 14px;
         }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; display: none; }
-        .header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
+        /* Login Overlay */
+        #loginOverlay {
+            position: fixed; inset: 0; background: var(--bg-dark); z-index: 3000;
+            display: flex; align-items: center; justify-content: center; flex-direction: column;
+        }
+        .login-box {
+            background: var(--card-bg); padding: 40px; border-radius: 20px;
+            border: 1px solid var(--glass-border); text-align: center; max-width: 400px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .btn-google {
+            background: #fff; color: #333; border: none; padding: 12px 25px; border-radius: 50px;
+            font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 10px; margin: 20px auto 0;
+        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; display: none; /* ซ่อนก่อน Login */ }
+        .header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         
-        .fetch-card { background: rgba(168, 85, 247, 0.05); border: 1px solid rgba(168, 85, 247, 0.3); margin-bottom: 25px; padding: 20px; border-radius: 16px; }
+        /* YouTube Fetcher */
+        .fetch-card { background: #1c101e; border: 1px solid var(--ai-color); margin-bottom: 25px; padding: 20px; border-radius: 16px; }
         .fetch-group { display: flex; gap: 10px; margin-top: 10px; }
 
         .form-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; }
@@ -68,7 +65,7 @@
             background: var(--card-bg); padding: 25px; border-radius: 16px; 
             border: 1px solid var(--glass-border); 
         }
-        .card-title { color: var(--primary); font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; font-size: 18px; }
+        .card-title { color: var(--primary); font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
 
         .input-group { margin-bottom: 18px; }
         .input-group label { display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-dim); font-size: 14px; }
@@ -77,111 +74,112 @@
             width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--glass-border);
             background: var(--input-bg); color: #fff; font-family: 'Prompt'; font-size: 14px; transition: 0.3s;
         }
-        input:focus, textarea:focus { border-color: var(--primary); background: #25252b; }
+        input:focus { border-color: var(--primary); background: #25252b; }
 
-        .ai-btn { background: rgba(168, 85, 247, 0.1); color: var(--ai-color); border: 1px solid var(--ai-color); padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: 0.2s; font-weight: 500; }
+        .ai-btn { background: rgba(168, 85, 247, 0.1); color: var(--ai-color); border: 1px solid var(--ai-color); padding: 2px 10px; border-radius: 5px; cursor: pointer; font-size: 11px; transition: 0.2s; }
         .ai-btn:hover { background: var(--ai-color); color: #fff; }
 
         .btn-submit { background: var(--primary); color: #000; padding: 14px; border-radius: 10px; border: none; font-weight: 700; width: 100%; cursor: pointer; font-size: 16px; transition: 0.2s; margin-top: 10px; }
         .btn-submit:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 229, 255, 0.3); }
 
-        .episodes-area { background: #000; padding: 12px; border-radius: 10px; max-height: 250px; overflow-y: auto; border: 1px solid #222; margin-bottom: 10px; }
+        .episodes-area { background: #000; padding: 12px; border-radius: 10px; max-height: 250px; overflow-y: auto; border: 1px solid #222; }
         .ep-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
 
         .movie-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         .movie-row { background: var(--card-bg); border-bottom: 8px solid var(--bg-dark); transition: 0.3s; }
         .movie-row:hover { background: #1c1c21; }
-        .movie-row td { padding: 15px; vertical-align: middle; }
+        .movie-row td { padding: 15px; }
         .poster-mini { width: 45px; height: 60px; border-radius: 6px; object-fit: cover; border: 1px solid #333; }
-        .action-btn { padding: 8px; cursor: pointer; border-radius: 8px; font-size: 16px; transition: 0.2s; margin-left: 5px; }
-        .action-btn:hover { background: rgba(255,255,255,0.1); }
+        .action-btn { padding: 10px; cursor: pointer; border-radius: 8px; font-size: 16px; transition: 0.2s; }
+        .action-btn:hover { background: rgba(255,255,255,0.05); }
 
-        .user-info { display: flex; align-items: center; gap: 12px; }
-        .user-info img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--primary); }
-        .user-info span { font-size: 14px; font-weight: 500; color: var(--text-dim); }
+        /* Dashboard Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .stat-card { background: var(--card-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .stat-value { font-size: 36px; font-weight: 800; color: var(--primary); text-shadow: 0 0 20px rgba(0, 229, 255, 0.2); z-index: 1; }
+        .stat-label { color: var(--text-dim); font-size: 14px; z-index: 1; }
+        .chart-container { background: var(--card-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--glass-border); margin-bottom: 25px; height: 350px; position: relative; }
 
-        .logout-btn { background: none; border: 1px solid var(--error); color: var(--error); padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: 0.2s; }
-        .logout-btn:hover { background: var(--error); color: #fff; }
-
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #444; }
     </style>
 </head>
 <body>
 
+<div id="aiLoading">กำลังประมวลผล...</div>
+
 <!-- Login Section -->
-<div id="authOverlay">
-    <div class="login-card">
-        <h1 style="color:var(--primary); margin-bottom: 5px; font-size: 24px;">DUYDODEE ADMIN</h1>
-        <p style="color:var(--text-dim); font-size:14px;">ระบบจัดการซีรีส์หลังบ้าน</p>
-        <button class="btn-google" id="btnGoogleLogin">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
-            เข้าสู่ระบบด้วย Google
+<div id="loginOverlay">
+    <div class="login-box">
+        <h2 style="color:var(--primary); margin-bottom:10px;">ADMIN ACCESS</h2>
+        <p style="color:var(--text-dim); font-size:14px;">ระบบจัดการสำหรับผู้ดูแลระบบเท่านั้น</p>
+        <button class="btn-google" onclick="loginGoogle()">
+            <i class="fab fa-google"></i> เข้าสู่ระบบด้วย Google
         </button>
-        <div id="loginError" style="color:var(--error); font-size:13px; margin-top:15px; display:none; background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 8px;">❌ อีเมลของคุณไม่มีสิทธิ์เข้าถึงระบบนี้</div>
     </div>
 </div>
 
-<div id="aiLoading">AI กำลังประมวลผล...</div>
-
-<div class="container" id="adminPanel">
+<div class="container" id="dashboard">
     <div class="header-box">
-        <div style="display:flex; align-items:center; gap:12px;">
-            <i class="fas fa-magic" style="color:var(--ai-color); font-size: 24px;"></i>
-            <h2 style="margin:0; letter-spacing: 1px;">จัดการซีรีส์ DUYDODEE</h2>
-        </div>
-        
-        <div class="user-info">
-            <div id="userData" style="display:flex; align-items:center; gap:10px;"></div>
-            <button class="logout-btn" onclick="handleLogout()">ออกจากระบบ</button>
+        <h2 style="margin:0;"><i class="fas fa-magic" style="color:var(--ai-color)"></i> ระบบจัดการซีรีส์ DUYDODEE</h2>
+        <div style="display:flex; gap:15px; align-items:center;">
+            <span id="adminEmail" style="font-size:12px; color:var(--text-dim);"></span>
+            <button onclick="logout()" style="background:none; border:1px solid #333; color:#fff; padding:5px 10px; border-radius:5px; cursor:pointer;">Logout</button>
+            <a href="index.html" style="color:var(--primary); text-decoration:none; font-size: 14px;"><i class="fas fa-external-link-alt"></i> หน้าเว็บหลัก</a>
         </div>
     </div>
 
-    <!-- YouTube Fetcher -->
+    <!-- Dashboard Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value" id="totalViews">0</div>
+            <div class="stat-label"><i class="fas fa-eye"></i> ยอดวิวรวมทั้งหมด</div>
+            <i class="fas fa-chart-line" style="position:absolute; right:-10px; bottom:-10px; font-size:80px; opacity:0.05; color:var(--primary);"></i>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="totalSeries">0</div>
+            <div class="stat-label"><i class="fas fa-film"></i> จำนวนซีรีส์</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="totalEps">0</div>
+            <div class="stat-label"><i class="fas fa-list-ol"></i> จำนวนตอนรวม</div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="viewsChart"></canvas>
+    </div>
+
     <div class="fetch-card">
-        <div class="card-title" style="color:var(--ai-color); margin-bottom: 10px;">
-            <i class="fab fa-youtube"></i> ดึงข้อมูลจาก YouTube
-        </div>
-        <p style="font-size:12px; color:var(--text-dim); margin-top: 0;">วางลิงก์วิดีโอเพื่อดึงชื่อเรื่องและรูปภาพโดยอัตโนมัติ</p>
+        <div class="card-title" style="color:var(--ai-color)"><i class="fab fa-youtube"></i> ดึงข้อมูลด่วนจาก YouTube</div>
         <div class="fetch-group">
-            <input type="text" id="ytUrl" placeholder="https://www.youtube.com/watch?v=...">
-            <button type="button" class="ai-btn" style="padding:0 20px; font-size:14px; background: var(--ai-color); color:white;" id="btnFetch">ดึงข้อมูล</button>
+            <input type="text" id="ytUrl" placeholder="วางลิงก์ YouTube ที่นี่เพื่อดึงชื่อและรูปภาพ...">
+            <button type="button" class="ai-btn" style="padding:0 20px; font-size:14px;" id="btnFetch">ดึงข้อมูล</button>
         </div>
     </div>
 
-    <!-- Main Form -->
     <form id="movieForm">
         <input type="hidden" id="editId">
         <div class="form-grid">
             <div class="card">
                 <div class="card-title"><i class="fas fa-file-alt"></i> ข้อมูลเนื้อหา</div>
-                
                 <div class="input-group">
                     <label>ชื่อเรื่อง</label>
-                    <input type="text" id="title" required placeholder="เช่น ตัวอย่างซีรีส์สั้น EP.1-50">
+                    <input type="text" id="title" required placeholder="ชื่อซีรีส์">
                 </div>
-                
                 <div class="input-group">
-                    <label>
-                        เรื่องย่อ 
-                        <button type="button" class="ai-btn" onclick="runAI('desc')">AI ช่วยเขียน</button>
-                    </label>
-                    <textarea id="desc" rows="5" placeholder="ระบุเรื่องย่อของซีรีส์..."></textarea>
+                    <label>เรื่องย่อ <button type="button" class="ai-btn" onclick="runAI('desc')">AI ช่วยเขียน</button></label>
+                    <textarea id="desc" rows="5" placeholder="ระบุเรื่องย่อ..."></textarea>
                 </div>
-                
                 <div class="input-group">
-                    <label>ลิงก์แต่ละตอน (Links)</label>
+                    <label>จัดการตอน (Links)</label>
                     <div id="epContainer" class="episodes-area"></div>
-                    <button type="button" class="ai-btn" style="width:100%; padding:10px; border-style: dashed; background: transparent;" onclick="addEpField()">+ เพิ่มตอน (Episode)</button>
+                    <button type="button" class="ai-btn" style="width:100%; margin-top:10px; padding:10px;" onclick="addEpField()">+ เพิ่มตอน (Episode)</button>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-title"><i class="fas fa-cog"></i> ตั้งค่าระบบ</div>
-                
                 <div class="input-group">
                     <label>หมวดหมู่</label>
                     <select id="category">
@@ -189,111 +187,97 @@
                         <option value="series">ซีรีส์ยาว (พากย์ไทย)</option>
                     </select>
                 </div>
-                
                 <div class="input-group">
                     <label>URL รูปโปสเตอร์</label>
                     <input type="url" id="poster" required placeholder="https://...">
                 </div>
-                
                 <div class="input-group">
-                    <label>
-                        ป้ายกำกับ (Badge) 
-                        <button type="button" class="ai-btn" onclick="runAI('badge')">AI สุ่มคำ</button>
-                    </label>
-                    <input type="text" id="badge" placeholder="เช่น พากย์ไทย, จบแล้ว, มาใหม่">
+                    <label>ป้ายกำกับ <button type="button" class="ai-btn" onclick="runAI('badge')">AI สุ่มคำ</button></label>
+                    <input type="text" id="badge" placeholder="เช่น พากย์ไทย, จบแล้ว">
                 </div>
-                
-                <button type="submit" class="btn-submit" id="submitBtn">บันทึกข้อมูลเข้าฐานข้อมูล</button>
-                <button type="button" id="cancelBtn" onclick="resetForm()" style="display:none; width:100%; margin-top:15px; background:none; color:var(--text-dim); border:1px solid #333; padding: 10px; border-radius: 10px; cursor:pointer;">ยกเลิกการแก้ไข</button>
+                <div class="input-group">
+                    <label>สถานะ VIP</label>
+                    <div style="display:flex; align-items:center; gap:10px; background:var(--input-bg); padding:10px; border-radius:10px; border:1px solid var(--glass-border);">
+                        <input type="checkbox" id="isVip" style="width:20px; height:20px; accent-color:var(--primary);">
+                        <span style="font-size:14px;">จำกัดเฉพาะสมาชิก (Login Required)</span>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit" id="submitBtn">บันทึกข้อมูล</button>
+                <button type="button" id="cancelBtn" onclick="resetForm()" style="display:none; width:100%; margin-top:12px; background:none; color:var(--text-dim); border:none; cursor:pointer; font-size:13px;">ยกเลิกการแก้ไข</button>
             </div>
         </div>
     </form>
 
-    <!-- Content Table -->
-    <div style="margin-top:50px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
-            <h3 style="color:var(--text-main); font-weight: 500; margin:0; border-left: 4px solid var(--primary); padding-left: 15px;">รายการทั้งหมดในระบบ</h3>
-            <span id="totalItems" style="color:var(--text-dim); font-size:13px;"></span>
+    <div style="margin-top:40px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3 style="color:var(--text-dim); font-weight: 400; border-left: 3px solid var(--primary); padding-left: 10px; margin:0;">รายการในระบบ</h3>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="searchInput" placeholder="ค้นหาชื่อซีรีส์..." style="width:200px; padding:8px;" onkeyup="if(event.key === 'Enter') searchMovies()">
+                <button onclick="searchMovies()" class="ai-btn" style="padding:8px 15px;">ค้นหา</button>
+                <button onclick="resetSearch()" class="ai-btn" style="padding:8px 15px; background:transparent; border-color:#555; color:#aaa;">รีเซ็ต</button>
+            </div>
         </div>
-        <div style="overflow-x: auto;">
-            <table class="movie-table">
-                <tbody id="movieList"></tbody>
-            </table>
-        </div>
+        <table class="movie-table">
+            <tbody id="movieList"></tbody>
+        </table>
     </div>
 </div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-    import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+    // Import จากไฟล์กลาง
+    import { db, auth, googleProvider } from './firebase-config.js';
+    import { collection, addDoc, doc, updateDoc, deleteDoc, query, orderBy, onSnapshot, serverTimestamp, where, limit, startAfter, getDocs, getCountFromServer } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+    import { signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
-        authDomain: "classic-e8ab7.firebaseapp.com",
-        projectId: "classic-e8ab7",
-        appId: "1:596308927760:web:63043fd2786459082cb195"
-    };
+    // --- Auth Logic ---
+    const ALLOWED_EMAILS = [
+        "duy.kan1234@gmail.com",
+        "admin2@gmail.com" // เพิ่มอีเมลแอดมินคนที่ 2, 3 ตรงนี้
+    ];
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-    const colPath = collection(db, 'artifacts');
-
-    // กำหนดอีเมลผู้ดูแลระบบ
-    const ALLOWED_EMAILS = ["duy.kan1234@gmail.com"];
-
-    // --- Authentication ---
-    document.getElementById('btnGoogleLogin').onclick = async () => {
+    window.loginGoogle = async () => {
         try {
-            await signInWithPopup(auth, provider);
-        } catch (e) {
-            console.error(e);
-        }
+            await signInWithPopup(auth, googleProvider);
+        } catch (err) { alert("Login Failed: " + err.message); }
     };
 
-    window.handleLogout = () => signOut(auth);
+    window.logout = () => signOut(auth);
 
     onAuthStateChanged(auth, (user) => {
-        const overlay = document.getElementById('authOverlay');
-        const adminPanel = document.getElementById('adminPanel');
-        const errorMsg = document.getElementById('loginError');
+        const overlay = document.getElementById('loginOverlay');
+        const dashboard = document.getElementById('dashboard');
 
         if (user) {
-            if (ALLOWED_EMAILS.includes(user.email)) {
+            if(ALLOWED_EMAILS.includes(user.email)) {
                 overlay.style.display = 'none';
-                adminPanel.style.display = 'block';
-                document.getElementById('userData').innerHTML = `
-                    <img src="${user.photoURL}" alt="avatar">
-                    <span>${user.displayName}</span>
-                `;
+                dashboard.style.display = 'block';
+                document.getElementById('adminEmail').innerText = user.email;
             } else {
-                errorMsg.style.display = 'block';
-                setTimeout(() => signOut(auth), 4000);
+                alert("อีเมลของคุณไม่มีสิทธิ์เข้าถึงหน้านี้!");
+                signOut(auth);
             }
         } else {
             overlay.style.display = 'flex';
-            adminPanel.style.display = 'none';
+            dashboard.style.display = 'none';
         }
     });
 
-    // --- YouTube Integration ---
+    // Path: 'artifacts' (เพื่อให้หน้าบ้านมองเห็น)
+    const colPath = collection(db, 'artifacts');
+
+    // --- YouTube Fetch Logic ---
     document.getElementById('btnFetch').onclick = async () => {
         const url = document.getElementById('ytUrl').value;
-        if (!url) return;
+        if (!url) return alert("กรุณาวางลิงก์ YouTube ก่อน");
         
         let vId = "";
-        try {
-            if (url.includes("v=")) vId = new URLSearchParams(new URL(url).search).get('v');
-            else if (url.includes("youtu.be/")) vId = url.split("youtu.be/")[1].split(/[?#]/)[0];
-            else if (url.includes("shorts/")) vId = url.split("shorts/")[1].split(/[?#]/)[0];
-        } catch(e) { return alert("ลิงก์ไม่ถูกต้อง"); }
+        if (url.includes("v=")) vId = new URLSearchParams(new URL(url).search).get('v');
+        else if (url.includes("youtu.be/")) vId = url.split("youtu.be/")[1].split(/[?#]/)[0];
 
         if (vId) {
             document.getElementById('poster').value = `https://img.youtube.com/vi/${vId}/maxresdefault.jpg`;
             try {
-                const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${vId}`);
+                const res = await fetch(`https://noembed.com/embed?url=${url}`);
                 const data = await res.json();
                 if(data.title) document.getElementById('title').value = data.title;
             } catch(e) {}
@@ -301,25 +285,26 @@
             document.getElementById('epContainer').innerHTML = "";
             window.addEpField(url);
         } else {
-            alert("ไม่พบ Video ID");
+            alert("ลิงก์ YouTube ไม่ถูกต้อง");
         }
     };
 
     // --- AI Gemini Helper ---
     window.runAI = async (type) => {
         const title = document.getElementById('title').value;
-        if(!title) return alert("กรุณาระบุชื่อเรื่องก่อนใช้ AI");
+        if(!title) return alert("กรุณาใส่ชื่อเรื่องก่อนใช้ AI");
         
         const loader = document.getElementById('aiLoading');
         loader.style.display = 'block';
         
-        const apiKey = ""; // API Key จะถูกจัดการโดยระบบสภาพแวดล้อม
+        // ใส่ API Key ของคุณที่นี่
+        const apiKey = "YOUR_GEMINI_API_KEY"; 
         const prompt = type === 'desc' 
-            ? `ช่วยเขียนเรื่องย่อที่น่าดึงดูดสำหรับซีรีส์เรื่อง "${title}" ความยาวประมาณ 2-3 บรรทัด เน้นความเร้าใจ` 
-            : `ขอคำสั้นๆ 1-2 คำ (ไม่มีเว้นวรรค) เพื่อใช้เป็นป้ายกำกับ (Badge) สำหรับเรื่อง "${title}" เช่น พากย์ไทย, จบแล้ว, แนะนำ, ยอดฮิต`;
+            ? `เขียนเรื่องย่อซีรีส์เรื่อง ${title} แบบสั้นๆ 2 บรรทัดให้น่าสนใจ` 
+            : `ขอคำสั้นๆ 1 คำ (เช่น พากย์ไทย, จบแล้ว, แนะนำ) สำหรับเรื่อง ${title}`;
         
         try {
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
@@ -327,22 +312,22 @@
             const data = await res.json();
             const text = data.candidates?.[0]?.content?.parts?.[0]?.text.trim();
             if(type === 'desc') document.getElementById('desc').value = text;
-            else document.getElementById('badge').value = text.replace(/[#".*]/g, "").substring(0, 10);
+            else document.getElementById('badge').value = text.replace(/[".]/g, "").substring(0, 10);
         } catch (err) {
-            console.error(err);
-            alert("AI ไม่ตอบสนองในขณะนี้");
+            console.error("AI Error:", err);
+            alert("AI ไม่ตอบสนอง กรุณาเช็ค API Key");
         } finally {
             loader.style.display = 'none';
         }
     };
 
-    // --- UI Logic ---
+    // --- UI Helpers ---
     window.addEpField = (val = "") => {
         const div = document.createElement('div');
         div.className = 'ep-row';
         div.innerHTML = `
-            <input type="text" class="ep-link" placeholder="ลิงก์วิดีโอ (YouTube/Direct URL)" value="${val}" required>
-            <button type="button" onclick="this.parentElement.remove()" style="color:var(--error); background:none; border:none; cursor:pointer; font-size:18px;"><i class="fas fa-times-circle"></i></button>
+            <input type="text" class="ep-link" placeholder="วางลิงก์วิดีโอ (YouTube/MP4)" value="${val}" required>
+            <button type="button" onclick="this.parentElement.remove()" style="color:var(--error); background:none; border:none; cursor:pointer; font-size:18px;"><i class="fas fa-minus-circle"></i></button>
         `;
         document.getElementById('epContainer').appendChild(div);
     };
@@ -351,106 +336,242 @@
         document.getElementById('movieForm').reset();
         document.getElementById('editId').value = '';
         document.getElementById('epContainer').innerHTML = '';
-        document.getElementById('submitBtn').innerText = 'บันทึกข้อมูลเข้าฐานข้อมูล';
+        document.getElementById('isVip').checked = false;
+        document.getElementById('submitBtn').innerText = 'บันทึกข้อมูล';
         document.getElementById('cancelBtn').style.display = 'none';
         window.addEpField();
     };
 
-    // --- CRUD Operations ---
+    // --- CRUD ---
     document.getElementById('movieForm').onsubmit = async (e) => {
         e.preventDefault();
         const id = document.getElementById('editId').value;
-        const links = Array.from(document.querySelectorAll('.ep-link')).map(i => i.value).filter(l => l.trim() !== "");
+        const links = Array.from(document.querySelectorAll('.ep-link')).map(i => i.value);
         
-        if(links.length === 0) return alert("กรุณาเพิ่มลิงก์อย่างน้อย 1 ตอน");
-
-        const payload = {
+        const data = {
             title: document.getElementById('title').value,
             desc: document.getElementById('desc').value,
             category: document.getElementById('category').value,
             poster: document.getElementById('poster').value,
             badge: document.getElementById('badge').value || "HD",
+            isVip: document.getElementById('isVip').checked,
             links: links,
             updatedAt: serverTimestamp()
         };
 
         try {
             if(id) {
-                await updateDoc(doc(db, 'artifacts', id), payload);
+                await updateDoc(doc(db, 'artifacts', id), data);
             } else {
-                payload.createdAt = serverTimestamp();
-                payload.viewCount = 0;
-                await addDoc(colPath, payload);
+                data.createdAt = serverTimestamp();
+                data.viewCount = 0;
+                await addDoc(colPath, data);
             }
             resetForm();
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         } catch (err) { alert("Error: " + err.message); }
     };
 
-    window.editItem = (id, dataStr) => {
-        const item = JSON.parse(decodeURIComponent(dataStr));
+    window.editItem = (id, jsonStr) => {
+        const item = JSON.parse(decodeURIComponent(jsonStr));
         document.getElementById('editId').value = id;
         document.getElementById('title').value = item.title;
         document.getElementById('desc').value = item.desc || '';
         document.getElementById('category').value = item.category;
         document.getElementById('poster').value = item.poster;
         document.getElementById('badge').value = item.badge || '';
+        document.getElementById('isVip').checked = item.isVip || false;
         
         document.getElementById('epContainer').innerHTML = '';
-        if(item.links && item.links.length > 0) {
-            item.links.forEach(link => window.addEpField(link));
-        } else {
-            window.addEpField();
-        }
+        if(item.links) item.links.forEach(l => window.addEpField(l));
         
-        document.getElementById('submitBtn').innerText = 'อัปเดตข้อมูลรายการนี้';
+        document.getElementById('submitBtn').innerText = 'อัปเดตข้อมูลเดี๋ยวนี้';
         document.getElementById('cancelBtn').style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     window.deleteItem = async (id) => {
-        if(confirm("คุณต้องการลบซีรีส์เรื่องนี้ออกจากระบบใช่หรือไม่?")) {
-            try {
-                await deleteDoc(doc(db, 'artifacts', id));
-            } catch(e) { alert("ลบไม่สำเร็จ: " + e.message); }
+        if(confirm("คุณแน่ใจนะว่าจะลบรายการนี้?")) {
+            await deleteDoc(doc(db, 'artifacts', id));
         }
     };
 
-    // --- Real-time Sync ---
-    onSnapshot(query(colPath, orderBy('createdAt', 'desc')), (snap) => {
+    // --- Chart Variables ---
+    let myChart = null;
+
+    // --- Pagination Variables ---
+    let lastVisible = null;
+    const ITEMS_PER_PAGE = 20;
+    let totalViewsAccumulated = 0;
+    let totalEpsAccumulated = 0;
+
+    // --- Search Logic ---
+    window.searchMovies = async () => {
+        const term = document.getElementById('searchInput').value.trim();
+        if (!term) return resetSearch();
+
         const list = document.getElementById('movieList');
-        const countDisplay = document.getElementById('totalItems');
-        list.innerHTML = '';
-        countDisplay.innerText = `จำนวนทั้งหมด: ${snap.size} รายการ`;
+        list.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px;">กำลังค้นหา...</td></tr>';
+        document.getElementById('btnLoadMore').style.display = 'none';
 
-        snap.forEach(d => {
-            const item = d.data();
-            const dataStr = encodeURIComponent(JSON.stringify(item));
-            list.innerHTML += `
-                <tr class="movie-row">
-                    <td width="60"><img src="${item.poster}" class="poster-mini" onerror="this.src='https://via.placeholder.com/45x60?text=No+Img'"></td>
-                    <td>
-                        <div style="font-weight:600; color:var(--primary);">${item.title}</div>
-                        <div style="font-size:12px; color:var(--text-dim);">
-                            <span style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; margin-right:5px;">
-                                ${item.category === 'vertical' ? 'แนวตั้ง' : 'พากย์ไทย'}
-                            </span>
-                            <span style="color:var(--ai-color)">●</span> ${item.links ? item.links.length : 0} ตอน
-                            ${item.badge ? ` | <span style="color:var(--primary)">${item.badge}</span>` : ''}
-                        </div>
-                    </td>
-                    <td align="right">
-                        <i class="fas fa-edit action-btn" style="color:var(--primary)" title="แก้ไข" onclick="editItem('${d.id}', '${dataStr}')"></i>
-                        <i class="fas fa-trash-alt action-btn" style="color:var(--error)" title="ลบ" onclick="deleteItem('${d.id}')"></i>
-                    </td>
-                </tr>
-            `;
+        try {
+            // ค้นหาแบบ Prefix (ชื่อขึ้นต้นด้วย...)
+            const q = query(colPath, 
+                where('title', '>=', term), 
+                where('title', '<=', term + '\uf8ff'),
+                limit(20)
+            );
+            const snap = await getDocs(q);
+            
+            list.innerHTML = '';
+            if(snap.empty) {
+                list.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:var(--text-dim);">ไม่พบข้อมูลที่ค้นหา</td></tr>';
+                return;
+            }
+
+            snap.forEach(d => renderMovieRow(d));
+        } catch(e) {
+            console.error(e);
+            alert("เกิดข้อผิดพลาดในการค้นหา (ตรวจสอบ Index ใน Firebase Console)");
+        }
+    };
+
+    window.resetSearch = () => {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('movieList').innerHTML = '';
+        lastVisible = null;
+        totalViewsAccumulated = 0;
+        totalEpsAccumulated = 0;
+        loadMoreMovies();
+    };
+
+    // ฟังก์ชันโหลดข้อมูลเริ่มต้น (Dashboard + First Page)
+    async function initDashboard() {
+        // 1. ดึงจำนวนซีรีส์ทั้งหมด (ใช้ getCountFromServer ประหยัด Read)
+        try {
+            const countSnap = await getCountFromServer(colPath);
+            document.getElementById('totalSeries').innerText = countSnap.data().count.toLocaleString();
+        } catch(e) { console.error(e); }
+
+        // 2. ดึง Top 10 สำหรับกราฟ
+        try {
+            const qChart = query(colPath, orderBy('viewCount', 'desc'), limit(10));
+            const snapChart = await getDocs(qChart);
+            const chartData = [];
+            snapChart.forEach(d => {
+                const item = d.data();
+                chartData.push({ title: item.title, views: item.viewCount || 0 });
+            });
+            updateChart(chartData);
+        } catch(e) { console.error(e); }
+
+        // 3. โหลดรายการหนังหน้าแรก
+        loadMoreMovies();
+    }
+
+    // ฟังก์ชันโหลดรายการหนัง (Pagination)
+    window.loadMoreMovies = async () => {
+        const btn = document.getElementById('btnLoadMore');
+        btn.innerText = "กำลังโหลด...";
+        btn.disabled = true;
+
+        let q = query(colPath, orderBy('createdAt', 'desc'), limit(ITEMS_PER_PAGE));
+        if (lastVisible) {
+            q = query(colPath, orderBy('createdAt', 'desc'), startAfter(lastVisible), limit(ITEMS_PER_PAGE));
+        }
+
+        const snap = await getDocs(q);
+        const list = document.getElementById('movieList');
+        
+        if (snap.empty) {
+            btn.style.display = 'none';
+            return;
+        }
+
+        lastVisible = snap.docs[snap.docs.length - 1];
+
+        snap.forEach(d => renderMovieRow(d));
+
+        // อัปเดตตัวเลขสถิติ (แสดงเฉพาะของรายการที่โหลดมาแล้ว + คำอธิบาย)
+        document.getElementById('totalViews').innerText = totalViewsAccumulated.toLocaleString() + "+";
+        document.getElementById('totalEps').innerText = totalEpsAccumulated.toLocaleString() + "+";
+
+        // จัดการปุ่ม Load More
+        if (snap.docs.length < ITEMS_PER_PAGE) {
+            btn.style.display = 'none';
+        } else {
+            btn.style.display = 'inline-block';
+            btn.innerText = "โหลดเพิ่มเติม";
+            btn.disabled = false;
+            btn.onclick = loadMoreMovies;
+        }
+    };
+
+    function renderMovieRow(d) {
+        const item = d.data();
+        const jsonStr = encodeURIComponent(JSON.stringify(item));
+        const html = `
+            <tr class="movie-row">
+                <td width="60"><img src="${item.poster}" class="poster-mini" loading="lazy"></td>
+                <td>
+                    <div style="font-weight:600; color:var(--primary);">${item.title}</div>
+                    <div style="font-size:12px; color:var(--text-dim);">${item.category === 'vertical' ? 'แนวตั้ง' : 'พากย์ไทย'} • ${item.links ? item.links.length : 0} ตอน ${item.isVip ? '<span style="color:#f59e0b; border:1px solid #f59e0b; padding:0 4px; border-radius:4px; font-size:10px; margin-left:5px;">VIP</span>' : ''}</div>
+                </td>
+                <td align="right">
+                    <i class="fas fa-edit action-btn" style="color:var(--primary)" onclick="editItem('${d.id}', '${jsonStr}')"></i>
+                    <i class="fas fa-trash-alt action-btn" style="color:var(--error)" onclick="deleteItem('${d.id}')"></i>
+                </td>
+            </tr>
+        `;
+        document.getElementById('movieList').insertAdjacentHTML('beforeend', html);
+        
+        // สะสมยอดวิวและตอน (เฉพาะที่โหลดมาแสดง)
+        if(!document.getElementById('searchInput').value) { // นับเฉพาะตอนไม่ได้ค้นหา
+            totalViewsAccumulated += (item.viewCount || 0);
+            totalEpsAccumulated += (item.links ? item.links.length : 0);
+        }
+    }
+
+    function updateChart(data) {
+        // เรียงลำดับตามยอดวิว และตัดมาแค่ 10 อันดับแรก
+        data.sort((a, b) => b.views - a.views);
+        const top10 = data.slice(0, 10);
+
+        const ctx = document.getElementById('viewsChart').getContext('2d');
+
+        // ถ้ามีกราฟเดิมอยู่ ให้ทำลายก่อนสร้างใหม่
+        if (myChart) myChart.destroy();
+
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: top10.map(d => d.title.length > 15 ? d.title.substring(0, 15) + '...' : d.title),
+                datasets: [{
+                    label: 'ยอดการเข้าชม (Views)',
+                    data: top10.map(d => d.views),
+                    backgroundColor: 'rgba(0, 229, 255, 0.5)',
+                    borderColor: '#00e5ff',
+                    borderWidth: 1,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: '#fff' } },
+                    title: { display: true, text: '10 อันดับซีรีส์ยอดนิยม', color: '#fff', font: { size: 16 } }
+                },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: '#aaa' } },
+                    x: { grid: { display: false }, ticks: { color: '#aaa' } }
+                }
+            }
         });
-    });
+    }
 
-    // Initial State
+    // เริ่มต้นระบบ
     window.addEpField();
-
+    initDashboard(); // เรียกใช้ฟังก์ชันใหม่แทน onSnapshot
 </script>
 </body>
 </html>
