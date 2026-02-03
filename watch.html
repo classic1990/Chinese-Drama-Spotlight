@@ -64,15 +64,18 @@
 
         /* Sidebar Suggestions */
         .side-title { font-size: 18px; margin-bottom: 20px; border-left: 4px solid var(--primary); padding-left: 15px; }
-        .suggest-card { display: flex; gap: 15px; background: var(--bg-surf); padding: 10px; border-radius: 10px; cursor: pointer; margin-bottom: 15px; }
+        .suggest-card { display: flex; gap: 15px; background: var(--bg-surf); padding: 10px; border-radius: 10px; cursor: pointer; margin-bottom: 15px; transition: 0.3s; }
+        .suggest-card:hover { background: #1f1f25; }
         .suggest-card img { width: 70px; aspect-ratio: 2/3; object-fit: cover; border-radius: 6px; }
 
-        /* Loader */
         #loader { position: fixed; inset: 0; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 2000; transition: 0.4s; }
         .spin { width: 45px; height: 45px; border: 3px solid rgba(255,255,255,0.05); border-top-color: var(--primary); border-radius: 50%; animation: s 0.8s linear infinite; }
         @keyframes s { 100% { transform: rotate(360deg); } }
 
-        @media (max-width: 1024px) { .player-layout { grid-template-columns: 1fr; } }
+        @media (max-width: 1024px) { 
+            .player-layout { grid-template-columns: 1fr; } 
+            .suggest-card img { width: 60px; }
+        }
     </style>
 </head>
 <body>
@@ -89,14 +92,16 @@
         <div class="video-box" id="player-box"></div>
         
         <div class="ep-list-container">
-            <p style="font-weight:600; margin-top: 20px; font-size:14px;">เลือกตอน:</p>
+            <p style="font-weight:600; margin-top: 25px; font-size:14px; color:var(--primary);">
+                <i class="fas fa-list-ol"></i> เลือกตอนที่ต้องการรับชม:
+            </p>
             <div class="ep-list" id="ep-list"></div>
         </div>
 
         <div class="info-card">
             <h1 class="m-title" id="m-title">...</h1>
             <div style="margin: 15px 0; font-size:13px; color:var(--text-muted);">
-                <span id="m-badge" style="background:#ff0055; color:#fff; padding:2px 8px; border-radius:4px; margin-right:10px;">HD</span>
+                <span id="m-badge" style="background:#ff0055; color:#fff; padding:2px 8px; border-radius:4px; margin-right:10px; font-weight:bold;">HD</span>
                 <span><i class="far fa-eye"></i> <span id="m-views">0</span> วิว</span>
             </div>
             <div class="desc" id="m-desc">...</div>
@@ -126,12 +131,13 @@
 
     const movieId = new URLSearchParams(window.location.search).get('id');
 
+    // แปลงลิงก์ YouTube ให้เป็น Embed
     function getEmbed(url) {
         if (!url) return "";
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
         const match = url.match(regExp);
         if (match && match[2].length === 11) {
-            return `https://www.youtube.com/embed/${match[2]}?autoplay=1&rel=0`;
+            return `https://www.youtube.com/embed/${match[2]}?autoplay=1&rel=0&modestbranding=1`;
         }
         return url;
     }
@@ -142,79 +148,115 @@
         try {
             const docRef = db.collection('artifacts').doc(movieId);
             const doc = await docRef.get();
-            if(!doc.exists) { alert("ไม่พบข้อมูล"); return; }
+            
+            if(!doc.exists) { 
+                alert("ไม่พบข้อมูลซีรีส์เรื่องนี้"); 
+                window.location.href = 'index.html';
+                return; 
+            }
 
-            const d = doc.data();
+            const data = doc.data();
 
+            // เช็คสถานะ Login และ VIP
             auth.onAuthStateChanged(user => {
-                if (d.isVip && !user) {
-                    document.getElementById('player-box').innerHTML = `
-                        <div class="vip-lock">
-                            <i class="fas fa-lock" style="font-size:50px; color:var(--primary); margin-bottom:15px;"></i>
-                            <h3>เนื้อหาเฉพาะสมาชิก VIP</h3>
-                            <p>กรุณาเข้าสู่ระบบเพื่อรับชมเรื่องนี้</p>
-                            <a href="login.html" class="btn-login">เข้าสู่ระบบตอนนี้</a>
-                        </div>
-                    `;
-                    // ปิด Loader แม้จะติด VIP
-                    document.getElementById('loader').style.display = 'none';
-                    return;
+                if (data.isVip && !user) {
+                    showVipLock();
+                    hideLoader();
+                } else {
+                    renderContent(data, docRef);
                 }
-                loadVideoContent(d, docRef);
             });
 
-        } catch(e) { console.error(e); }
+        } catch(e) { 
+            console.error("Init Error:", e);
+            hideLoader();
+        }
     }
 
-    function loadVideoContent(d, docRef) {
-        document.getElementById('m-title').innerText = d.title;
-        document.getElementById('m-badge').innerText = d.badge || 'HD';
-        document.getElementById('m-views').innerText = (d.viewCount || 0).toLocaleString();
-        document.getElementById('m-desc').innerText = d.desc || "ไม่มีเรื่องย่อ";
+    function showVipLock() {
+        document.getElementById('player-box').innerHTML = `
+            <div class="vip-lock">
+                <i class="fas fa-crown" style="font-size:60px; color:var(--primary); margin-bottom:15px; filter: drop-shadow(0 0 10px rgba(0,242,255,0.5));"></i>
+                <h2 style="margin:10px 0;">เนื้อหาเฉพาะสมาชิก VIP</h2>
+                <p style="color:var(--text-muted); max-width:250px;">ซีรีส์เรื่องนี้จำกัดสิทธิ์เฉพาะสมาชิกเท่านั้น กรุณาเข้าสู่ระบบ</p>
+                <a href="login.html" class="btn-login">เข้าสู่ระบบ / สมัครสมาชิก</a>
+            </div>
+        `;
+    }
+
+    function renderContent(data, docRef) {
+        // อัปเดตข้อมูลพื้นฐาน
+        document.getElementById('m-title').innerText = data.title;
+        document.getElementById('m-badge').innerText = data.badge || 'HD';
+        document.getElementById('m-views').innerText = (data.viewCount || 0).toLocaleString();
+        document.getElementById('m-desc').innerText = data.desc || "ไม่มีเรื่องย่อสำหรับซีรีส์เรื่องนี้";
 
         const pBox = document.getElementById('player-box');
         const eList = document.getElementById('ep-list');
         
-        let links = Array.isArray(d.links) ? d.links : (d.link ? [d.link] : []);
+        // จัดการลิงก์วิดีโอ (รองรับทั้ง links array และ link string)
+        let links = Array.isArray(data.links) ? data.links : (data.link ? [data.link] : []);
 
         if(links.length === 0) {
-            pBox.innerHTML = `<p style="text-align:center; padding-top:100px;">ไม่พบไฟล์วิดีโอ</p>`;
+            pBox.innerHTML = `<p style="text-align:center; padding-top:100px; color:var(--text-muted);">ขออภัย ไม่พบไฟล์วิดีโอในระบบ</p>`;
         } else {
             links.forEach((url, i) => {
-                const b = document.createElement('button');
-                b.className = 'ep-btn';
-                b.innerText = links.length > 1 ? `ตอนที่ ${i+1}` : `เล่นวิดีโอ`;
-                b.onclick = () => {
+                const btn = document.createElement('button');
+                btn.className = 'ep-btn';
+                btn.innerText = links.length > 1 ? `ตอนที่ ${i+1}` : `เล่นวิดีโอ`;
+                
+                btn.onclick = () => {
                     pBox.innerHTML = `<iframe src="${getEmbed(url)}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-                    document.querySelectorAll('.ep-btn').forEach(btn => btn.classList.remove('active'));
-                    b.classList.add('active');
+                    document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
                 };
-                eList.appendChild(b);
-                if(i === 0) b.click();
+                
+                eList.appendChild(btn);
+                if(i === 0) btn.click(); // เล่นตอนแรกอัตโนมัติ
             });
         }
 
+        // เพิ่มยอดวิว + โหลดหนังแนะนำ
         docRef.update({ viewCount: firebase.firestore.FieldValue.increment(1) });
-        fetchSuggest(d.category);
-        document.getElementById('loader').style.display = 'none';
+        fetchSuggest(data.category);
+        hideLoader();
     }
 
     async function fetchSuggest(cat) {
         const box = document.getElementById('suggest-box');
-        const snap = await db.collection('artifacts').where('category', '==', cat).limit(6).get();
-        snap.forEach(doc => {
-            if(doc.id === movieId) return;
-            const m = doc.data();
-            const d = document.createElement('div');
-            d.className = 'suggest-card';
-            d.onclick = () => window.location.href = `watch.html?id=${doc.id}`;
-            d.innerHTML = `<img src="${m.poster}"><div class="s-info"><p style="font-size:14px; margin:0;">${m.title}</p></div>`;
-            box.appendChild(d);
-        });
+        try {
+            const snap = await db.collection('artifacts')
+                .where('category', '==', cat)
+                .limit(6)
+                .get();
+
+            snap.forEach(doc => {
+                if(doc.id === movieId) return; // ไม่แสดงเรื่องที่กำลังดู
+                const m = doc.data();
+                const d = document.createElement('div');
+                d.className = 'suggest-card';
+                d.onclick = () => window.location.href = `watch.html?id=${doc.id}`;
+                d.innerHTML = `
+                    <img src="${m.poster}" loading="lazy">
+                    <div class="s-info">
+                        <p style="font-size:14px; margin:0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${m.title}</p>
+                        <span style="font-size:11px; color:var(--primary);">${m.badge || 'พากย์ไทย'}</span>
+                    </div>
+                `;
+                box.appendChild(d);
+            });
+        } catch(e) { console.error("Suggest Error:", e); }
+    }
+
+    function hideLoader() {
+        const loader = document.getElementById('loader');
+        loader.style.opacity = '0';
+        setTimeout(() => loader.style.display = 'none', 500);
     }
 
     function goHome() { window.location.href = 'index.html'; }
 
+    // เริ่มทำงาน
     init();
 </script>
 </body>
