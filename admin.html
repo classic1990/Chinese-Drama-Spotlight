@@ -100,6 +100,15 @@
         .stat-label { color: var(--text-dim); font-size: 14px; z-index: 1; }
         .chart-container { background: var(--card-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--glass-border); margin-bottom: 25px; height: 350px; position: relative; }
 
+        /* Toast Notification */
+        #toast {
+            visibility: hidden; min-width: 250px; margin-left: -125px; background-color: #333; color: #fff; text-align: center; 
+            border-radius: 50px; padding: 16px; position: fixed; z-index: 3000; left: 50%; bottom: 30px; 
+            font-size: 14px; border: 1px solid var(--primary); box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); 
+            opacity: 0; transition: opacity 0.5s, bottom 0.5s;
+        }
+        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
     </style>
@@ -107,6 +116,7 @@
 <body>
 
 <div id="aiLoading">กำลังประมวลผล...</div>
+<div id="toast">บันทึกข้อมูลสำเร็จ</div>
 
 <!-- Login Section -->
 <div id="loginOverlay">
@@ -150,11 +160,17 @@
         <canvas id="viewsChart"></canvas>
     </div>
 
+    <div class="chart-container">
+        <canvas id="membersChart"></canvas>
+    </div>
+
     <div class="fetch-card">
         <div class="card-title" style="color:var(--ai-color)"><i class="fab fa-youtube"></i> ดึงข้อมูลด่วนจาก YouTube</div>
         <div class="fetch-group">
-            <input type="text" id="ytUrl" placeholder="วางลิงก์ YouTube ที่นี่เพื่อดึงชื่อและรูปภาพ...">
-            <button type="button" class="ai-btn" style="padding:0 20px; font-size:14px;" id="btnFetch">ดึงข้อมูล</button>
+            <input type="text" id="ytUrl" placeholder="วางลิงก์ YouTube (Video หรือ Playlist)...">
+            <button type="button" class="ai-btn" style="padding:0 20px; font-size:14px;" id="btnFetch">ดึงวิดีโอ</button>
+            <button type="button" class="ai-btn" style="padding:0 20px; font-size:14px; margin-left:5px; background:rgba(255,0,0,0.2); color:#ff4444; border-color:#ff4444;" id="btnFetchPlaylist">ดึง Playlist</button>
+            <button type="button" onclick="resetYouTubeKey()" class="ai-btn" style="margin-left:5px; background:transparent; border-color:#555; color:#aaa; font-size:10px;" title="ลบ YouTube API Key เพื่อใส่ใหม่">Reset YT Key</button>
         </div>
     </div>
 
@@ -168,7 +184,10 @@
                     <input type="text" id="title" required placeholder="ชื่อซีรีส์">
                 </div>
                 <div class="input-group">
-                    <label>เรื่องย่อ <button type="button" class="ai-btn" onclick="runAI('desc')">AI ช่วยเขียน</button></label>
+                    <label>เรื่องย่อ 
+                        <button type="button" class="ai-btn" onclick="runAI('desc')">AI ช่วยเขียน</button>
+                        <button type="button" class="ai-btn" onclick="resetAIKey()" style="margin-left:5px; background:transparent; border-color:#555; color:#aaa; font-size:10px;" title="ลบ API Key เพื่อใส่ใหม่">Reset Key</button>
+                    </label>
                     <textarea id="desc" rows="5" placeholder="ระบุเรื่องย่อ..."></textarea>
                 </div>
                 <div class="input-group">
@@ -192,6 +211,10 @@
                     <input type="url" id="poster" required placeholder="https://...">
                 </div>
                 <div class="input-group">
+                    <label>URL ตัวอย่าง (Trailer)</label>
+                    <input type="url" id="trailer" placeholder="https://youtube.com/...">
+                </div>
+                <div class="input-group">
                     <label>ป้ายกำกับ <button type="button" class="ai-btn" onclick="runAI('badge')">AI สุ่มคำ</button></label>
                     <input type="text" id="badge" placeholder="เช่น พากย์ไทย, จบแล้ว">
                 </div>
@@ -212,14 +235,41 @@
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
             <h3 style="color:var(--text-dim); font-weight: 400; border-left: 3px solid var(--primary); padding-left: 10px; margin:0;">รายการในระบบ</h3>
             <div style="display:flex; gap:10px;">
+                <select id="sortSelect" onchange="resetSearch()" style="width:140px; padding:8px; background:var(--input-bg); color:#fff; border:1px solid var(--glass-border); border-radius:5px;">
+                    <option value="newest">มาใหม่ล่าสุด</option>
+                    <option value="views">ยอดวิวสูงสุด</option>
+                </select>
                 <input type="text" id="searchInput" placeholder="ค้นหาชื่อซีรีส์..." style="width:200px; padding:8px;" onkeyup="if(event.key === 'Enter') searchMovies()">
                 <button onclick="searchMovies()" class="ai-btn" style="padding:8px 15px;">ค้นหา</button>
                 <button onclick="resetSearch()" class="ai-btn" style="padding:8px 15px; background:transparent; border-color:#555; color:#aaa;">รีเซ็ต</button>
+                <button onclick="exportEmails()" class="ai-btn" style="padding:8px 15px; background:#06C755; color:#fff; border:none; font-weight:600;"><i class="fas fa-file-csv"></i> Export CSV</button>
+                <button onclick="deleteAllMovies(this)" class="ai-btn" style="padding:8px 15px; background:var(--error); color:#fff; border:none; font-weight:600;"><i class="fas fa-trash"></i> ล้างระบบ</button>
             </div>
         </div>
-        <table class="movie-table">
-            <tbody id="movieList"></tbody>
-        </table>
+        <div style="overflow-x: auto;">
+            <table class="movie-table">
+                <tbody id="movieList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Member List Section -->
+    <div style="margin-top:60px; margin-bottom:40px;">
+        <h3 style="color:var(--text-dim); font-weight: 400; border-left: 3px solid #06C755; padding-left: 10px; margin-bottom:20px;">รายชื่อสมาชิกในระบบ</h3>
+        <div style="overflow-x: auto;">
+            <table class="movie-table">
+                <thead>
+                    <tr style="text-align:left; color:var(--text-dim); font-size:14px; border-bottom:1px solid var(--glass-border);">
+                        <th style="padding:15px;">ผู้ใช้งาน</th>
+                        <th>อีเมล</th>
+                        <th>วันที่สมัคร</th>
+                        <th>ใช้งานล่าสุด</th>
+                        <th style="text-align:right;">สถานะ</th>
+                    </tr>
+                </thead>
+                <tbody id="memberList"></tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -289,6 +339,57 @@
         }
     };
 
+    // --- YouTube Playlist Fetcher ---
+    document.getElementById('btnFetchPlaylist').onclick = async () => {
+        const url = document.getElementById('ytUrl').value;
+        if (!url.includes("list=")) return alert("ลิงก์ต้องมี list=... (เช่น https://www.youtube.com/playlist?list=PL...)");
+        
+        const listId = new URLSearchParams(new URL(url).search).get('list');
+        
+        let apiKey = localStorage.getItem("youtube_api_key");
+        if (!apiKey) {
+            apiKey = prompt("กรุณาใส่ YouTube Data API Key (หาได้ฟรีที่ console.cloud.google.com):");
+            if (apiKey) localStorage.setItem("youtube_api_key", apiKey);
+            else return;
+        }
+
+        const loader = document.getElementById('aiLoading');
+        loader.style.display = 'block';
+        loader.innerText = "กำลังดึง Playlist...";
+
+        try {
+            let videos = [];
+            let pageToken = "";
+            
+            do {
+                const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${listId}&key=${apiKey}&pageToken=${pageToken}`);
+                const data = await res.json();
+                
+                if (data.error) throw new Error(data.error.message);
+                if (data.items) videos = videos.concat(data.items);
+                pageToken = data.nextPageToken;
+            } while (pageToken);
+
+            if (videos.length > 0) {
+                document.getElementById('epContainer').innerHTML = ""; // Clear old inputs
+                videos.forEach(v => {
+                    const vId = v.snippet.resourceId.videoId;
+                    window.addEpField(`https://www.youtube.com/watch?v=${vId}`);
+                });
+                showToast(`ดึงข้อมูลสำเร็จ ${videos.length} ตอน`);
+            } else {
+                alert("ไม่พบวิดีโอใน Playlist นี้");
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Error: " + e.message);
+            if(e.message.includes("API key")) localStorage.removeItem("youtube_api_key");
+        } finally {
+            loader.style.display = 'none';
+            loader.innerText = "กำลังประมวลผล...";
+        }
+    };
+
     // --- AI Gemini Helper ---
     window.runAI = async (type) => {
         const title = document.getElementById('title').value;
@@ -297,11 +398,17 @@
         const loader = document.getElementById('aiLoading');
         loader.style.display = 'block';
         
-        // ใส่ API Key ของคุณที่นี่
-        const apiKey = "YOUR_GEMINI_API_KEY"; 
+        // ตรวจสอบ API Key ใน LocalStorage
+        let apiKey = localStorage.getItem("gemini_api_key");
+        if (!apiKey || apiKey === "YOUR_GEMINI_API_KEY") {
+            apiKey = prompt("กรุณาใส่ Gemini API Key ของคุณ (หาได้ฟรีที่ aistudio.google.com):");
+            if (apiKey) localStorage.setItem("gemini_api_key", apiKey);
+            else { loader.style.display = 'none'; return; }
+        }
+
         const prompt = type === 'desc' 
-            ? `เขียนเรื่องย่อซีรีส์เรื่อง ${title} แบบสั้นๆ 2 บรรทัดให้น่าสนใจ` 
-            : `ขอคำสั้นๆ 1 คำ (เช่น พากย์ไทย, จบแล้ว, แนะนำ) สำหรับเรื่อง ${title}`;
+            ? `เขียนเรื่องย่อซีรีส์เรื่อง "${title}" ภาษาไทย แบบน่าติดตาม สั้นๆ ไม่เกิน 3 บรรทัด` 
+            : `ขอคำสั้นๆ 1 คำ (เช่น พากย์ไทย, จบแล้ว, แนะนำ) สำหรับเรื่อง "${title}"`;
         
         try {
             const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
@@ -321,6 +428,16 @@
         }
     };
 
+    window.resetAIKey = () => {
+        localStorage.removeItem("gemini_api_key");
+        alert("รีเซ็ต API Key เรียบร้อยแล้ว ครั้งถัดไประบบจะถาม Key ใหม่");
+    };
+
+    window.resetYouTubeKey = () => {
+        localStorage.removeItem("youtube_api_key");
+        alert("รีเซ็ต YouTube API Key เรียบร้อยแล้ว ครั้งถัดไปที่ดึง Playlist ระบบจะถาม Key ใหม่");
+    };
+
     // --- UI Helpers ---
     window.addEpField = (val = "") => {
         const div = document.createElement('div');
@@ -330,6 +447,13 @@
             <button type="button" onclick="this.parentElement.remove()" style="color:var(--error); background:none; border:none; cursor:pointer; font-size:18px;"><i class="fas fa-minus-circle"></i></button>
         `;
         document.getElementById('epContainer').appendChild(div);
+    };
+
+    window.showToast = (msg) => {
+        const x = document.getElementById("toast");
+        x.innerText = msg;
+        x.className = "show";
+        setTimeout(() => { x.className = x.className.replace("show", ""); }, 3000);
     };
 
     window.resetForm = () => {
@@ -353,7 +477,9 @@
             desc: document.getElementById('desc').value,
             category: document.getElementById('category').value,
             poster: document.getElementById('poster').value,
+            trailer: document.getElementById('trailer').value,
             badge: document.getElementById('badge').value || "HD",
+            isPublished: true, // Default to published for new items
             isVip: document.getElementById('isVip').checked,
             links: links,
             updatedAt: serverTimestamp()
@@ -362,10 +488,12 @@
         try {
             if(id) {
                 await updateDoc(doc(db, 'artifacts', id), data);
+                showToast("อัปเดตข้อมูลเรียบร้อยแล้ว");
             } else {
                 data.createdAt = serverTimestamp();
                 data.viewCount = 0;
                 await addDoc(colPath, data);
+                showToast("เพิ่มข้อมูลใหม่เรียบร้อยแล้ว");
             }
             resetForm();
         } catch (err) { alert("Error: " + err.message); }
@@ -378,8 +506,10 @@
         document.getElementById('desc').value = item.desc || '';
         document.getElementById('category').value = item.category;
         document.getElementById('poster').value = item.poster;
+        document.getElementById('trailer').value = item.trailer || '';
         document.getElementById('badge').value = item.badge || '';
         document.getElementById('isVip').checked = item.isVip || false;
+        // Note: isPublished is managed via the table button, not the form
         
         document.getElementById('epContainer').innerHTML = '';
         if(item.links) item.links.forEach(l => window.addEpField(l));
@@ -397,12 +527,11 @@
 
     // --- Chart Variables ---
     let myChart = null;
+    let memberChart = null;
 
     // --- Pagination Variables ---
     let lastVisible = null;
     const ITEMS_PER_PAGE = 20;
-    let totalViewsAccumulated = 0;
-    let totalEpsAccumulated = 0;
 
     // --- Search Logic ---
     window.searchMovies = async () => {
@@ -435,12 +564,64 @@
         }
     };
 
+    // --- Export CSV Logic ---
+    window.exportEmails = async () => {
+        if(!confirm("ต้องการดาวน์โหลดรายชื่ออีเมลสมาชิกทั้งหมด?")) return;
+        
+        try {
+            // ดึงข้อมูลจาก Collection 'users' (ต้องมีการบันทึกจากหน้าบ้านก่อน)
+            const q = query(collection(db, "users"), orderBy("lastLogin", "desc"));
+            const snap = await getDocs(q);
+            
+            if(snap.empty) return alert("ไม่พบข้อมูลสมาชิก (ระบบจะเริ่มเก็บข้อมูลเมื่อมีคนล็อกอินเข้าหน้าเว็บ)");
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "UID,Name,Email,Last Login\n"; // Header
+
+            snap.forEach(doc => {
+                const data = doc.data();
+                const date = data.lastLogin ? data.lastLogin.toDate().toLocaleString('th-TH') : "-";
+                // ป้องกันเครื่องหมาย , ในชื่อทำให้ CSV เพี้ยน
+                const safeName = (data.displayName || "").replace(/"/g, '""');
+                csvContent += `${data.uid},"${safeName}",${data.email},"${date}"\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `members_export_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (e) {
+            console.error(e);
+            alert("เกิดข้อผิดพลาด: " + e.message);
+        }
+    };
+
+    // --- Delete All Logic ---
+    window.deleteAllMovies = async (btn) => {
+        if(!confirm("⚠️ คำเตือน: คุณกำลังจะลบหนังทั้งหมดในระบบ!\nการกระทำนี้ไม่สามารถกู้คืนได้\n\nคุณแน่ใจหรือไม่?")) return;
+        if(!confirm("ยืนยันครั้งสุดท้าย: ลบข้อมูลทั้งหมดจริงๆ ใช่ไหม?")) return;
+
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> กำลังลบ...';
+        btn.disabled = true;
+
+        try {
+            const snap = await getDocs(colPath);
+            const deletePromises = snap.docs.map(d => deleteDoc(doc(db, 'artifacts', d.id)));
+            await Promise.all(deletePromises);
+            showToast("ล้างข้อมูลระบบเรียบร้อยแล้ว");
+            resetSearch();
+        } catch(e) { alert("เกิดข้อผิดพลาด: " + e.message); }
+        finally { btn.innerHTML = originalText; btn.disabled = false; }
+    };
+
     window.resetSearch = () => {
         document.getElementById('searchInput').value = '';
         document.getElementById('movieList').innerHTML = '';
         lastVisible = null;
-        totalViewsAccumulated = 0;
-        totalEpsAccumulated = 0;
         loadMoreMovies();
     };
 
@@ -452,19 +633,60 @@
             document.getElementById('totalSeries').innerText = countSnap.data().count.toLocaleString();
         } catch(e) { console.error(e); }
 
-        // 2. ดึง Top 10 สำหรับกราฟ
+        // 2. ดึงข้อมูลทั้งหมดเพื่อคำนวณสถิติและสร้างกราฟ
         try {
-            const qChart = query(colPath, orderBy('viewCount', 'desc'), limit(10));
-            const snapChart = await getDocs(qChart);
-            const chartData = [];
-            snapChart.forEach(d => {
-                const item = d.data();
-                chartData.push({ title: item.title, views: item.viewCount || 0 });
+            const allDocsSnap = await getDocs(colPath);
+            const categoryViews = { series: 0, vertical: 0 };
+            let totalViews = 0;
+            let totalEps = 0;
+
+            allDocsSnap.forEach(doc => {
+                const item = doc.data();
+                const category = item.category || 'series';
+                const views = item.viewCount || 0;
+                
+                if (categoryViews.hasOwnProperty(category)) {
+                    categoryViews[category] += views;
+                }
+                totalViews += views;
+                totalEps += (item.links ? item.links.length : 0);
             });
-            updateChart(chartData);
+
+            // อัปเดตการ์ดสถิติด้วยข้อมูลจริงทั้งหมด
+            document.getElementById('totalViews').innerText = totalViews.toLocaleString();
+            document.getElementById('totalEps').innerText = totalEps.toLocaleString();
+
+            // สร้างกราฟใหม่ตามหมวดหมู่
+            updateCategoryChart(categoryViews);
+
+            // 3. ดึงข้อมูลสมาชิกเพื่อสร้างกราฟ New Members
+            const usersSnap = await getDocs(collection(db, "users"));
+            const memberStats = {};
+            
+            usersSnap.forEach(doc => {
+                const data = doc.data();
+                if (data.createdAt) {
+                    // แปลง Timestamp เป็นวันที่ YYYY-MM-DD
+                    const date = data.createdAt.toDate().toLocaleDateString('en-CA');
+                    memberStats[date] = (memberStats[date] || 0) + 1;
+                }
+            });
+
+            // เรียงลำดับวันที่
+            const sortedDates = Object.keys(memberStats).sort();
+            // ตัดมาแสดงเฉพาะ 7-14 วันล่าสุด (ถ้าข้อมูลเยอะ)
+            const recentDates = sortedDates.slice(-14); 
+            const memberCounts = recentDates.map(d => memberStats[d]);
+
+            // สร้างกราฟสมาชิก
+            updateMemberChart(recentDates, memberCounts);
+
+            // 4. แสดงตารางรายชื่อสมาชิก
+            renderMemberTable(usersSnap);
+
         } catch(e) { console.error(e); }
 
-        // 3. โหลดรายการหนังหน้าแรก
+        // 4. โหลดรายการหนังหน้าแรก
         loadMoreMovies();
     }
 
@@ -473,10 +695,14 @@
         const btn = document.getElementById('btnLoadMore');
         btn.innerText = "กำลังโหลด...";
         btn.disabled = true;
+        
+        // Sort Logic
+        const sortMode = document.getElementById('sortSelect').value;
+        const sortField = sortMode === 'views' ? 'viewCount' : 'createdAt';
 
-        let q = query(colPath, orderBy('createdAt', 'desc'), limit(ITEMS_PER_PAGE));
+        let q = query(colPath, orderBy(sortField, 'desc'), limit(ITEMS_PER_PAGE));
         if (lastVisible) {
-            q = query(colPath, orderBy('createdAt', 'desc'), startAfter(lastVisible), limit(ITEMS_PER_PAGE));
+            q = query(colPath, orderBy(sortField, 'desc'), startAfter(lastVisible), limit(ITEMS_PER_PAGE));
         }
 
         const snap = await getDocs(q);
@@ -491,10 +717,6 @@
 
         snap.forEach(d => renderMovieRow(d));
 
-        // อัปเดตตัวเลขสถิติ (แสดงเฉพาะของรายการที่โหลดมาแล้ว + คำอธิบาย)
-        document.getElementById('totalViews').innerText = totalViewsAccumulated.toLocaleString() + "+";
-        document.getElementById('totalEps').innerText = totalEpsAccumulated.toLocaleString() + "+";
-
         // จัดการปุ่ม Load More
         if (snap.docs.length < ITEMS_PER_PAGE) {
             btn.style.display = 'none';
@@ -508,58 +730,72 @@
 
     function renderMovieRow(d) {
         const item = d.data();
-        const jsonStr = encodeURIComponent(JSON.stringify(item));
+        // ป้องกันปัญหาเครื่องหมาย ' ในชื่อเรื่องทำให้กดแก้ไขไม่ได้
+        const jsonStr = encodeURIComponent(JSON.stringify(item)).replace(/'/g, "%27");
+        const isPublished = item.isPublished !== false; // Default to true if undefined
+
         const html = `
-            <tr class="movie-row">
+            <tr class="movie-row" style="${!isPublished ? 'opacity: 0.6; background: rgba(0,0,0,0.2);' : ''}">
                 <td width="60"><img src="${item.poster}" class="poster-mini" loading="lazy"></td>
                 <td>
-                    <div style="font-weight:600; color:var(--primary);">${item.title}</div>
+                    <div style="font-weight:600; color:${isPublished ? 'var(--primary)' : '#aaa'};">${item.title} ${!isPublished ? '(ซ่อนอยู่)' : ''}</div>
                     <div style="font-size:12px; color:var(--text-dim);">${item.category === 'vertical' ? 'แนวตั้ง' : 'พากย์ไทย'} • ${item.links ? item.links.length : 0} ตอน ${item.isVip ? '<span style="color:#f59e0b; border:1px solid #f59e0b; padding:0 4px; border-radius:4px; font-size:10px; margin-left:5px;">VIP</span>' : ''}</div>
                 </td>
                 <td align="right">
+                    <i class="fas ${isPublished ? 'fa-eye' : 'fa-eye-slash'}" class="action-btn" style="color:${isPublished ? '#06C755' : '#aaa'}; margin-right:10px; cursor:pointer;" onclick="togglePublish('${d.id}', ${isPublished})" title="${isPublished ? 'ซ่อนรายการ' : 'แสดงรายการ'}"></i>
                     <i class="fas fa-edit action-btn" style="color:var(--primary)" onclick="editItem('${d.id}', '${jsonStr}')"></i>
                     <i class="fas fa-trash-alt action-btn" style="color:var(--error)" onclick="deleteItem('${d.id}')"></i>
                 </td>
             </tr>
         `;
         document.getElementById('movieList').insertAdjacentHTML('beforeend', html);
-        
-        // สะสมยอดวิวและตอน (เฉพาะที่โหลดมาแสดง)
-        if(!document.getElementById('searchInput').value) { // นับเฉพาะตอนไม่ได้ค้นหา
-            totalViewsAccumulated += (item.viewCount || 0);
-            totalEpsAccumulated += (item.links ? item.links.length : 0);
-        }
     }
 
-    function updateChart(data) {
-        // เรียงลำดับตามยอดวิว และตัดมาแค่ 10 อันดับแรก
-        data.sort((a, b) => b.views - a.views);
-        const top10 = data.slice(0, 10);
+    window.togglePublish = async (id, currentStatus) => {
+        try {
+            await updateDoc(doc(db, 'artifacts', id), { isPublished: !currentStatus });
+            showToast(currentStatus ? "ซ่อนรายการเรียบร้อย" : "เปิดแสดงรายการเรียบร้อย");
+            // Refresh list logic is handled by loadMoreMovies or searchMovies called manually or via UI update
+            // For simplicity in this setup, we can just reload the current view or let the user refresh
+            // But since we don't have realtime listener on the list, let's manually update the row or reload
+            const btn = document.getElementById('searchInput').value ? window.searchMovies : window.loadMoreMovies;
+            // Reset list to reflect changes
+            document.getElementById('movieList').innerHTML = '';
+            window.lastVisible = null; 
+            btn();
+        } catch(e) { alert("Error: " + e.message); }
+    };
 
+    function updateCategoryChart(data) {
         const ctx = document.getElementById('viewsChart').getContext('2d');
 
         // ถ้ามีกราฟเดิมอยู่ ให้ทำลายก่อนสร้างใหม่
         if (myChart) myChart.destroy();
 
         myChart = new Chart(ctx, {
-            type: 'bar',
+            type: 'doughnut',
             data: {
-                labels: top10.map(d => d.title.length > 15 ? d.title.substring(0, 15) + '...' : d.title),
+                labels: ['ซีรีส์ยาว (พากย์ไทย)', 'ซีรีส์สั้น (แนวตั้ง)'],
                 datasets: [{
-                    label: 'ยอดการเข้าชม (Views)',
-                    data: top10.map(d => d.views),
-                    backgroundColor: 'rgba(0, 229, 255, 0.5)',
-                    borderColor: '#00e5ff',
-                    borderWidth: 1,
-                    borderRadius: 5
+                    label: 'ยอดการเข้าชม',
+                    data: [data.series, data.vertical],
+                    backgroundColor: [
+                        'rgba(0, 229, 255, 0.7)',
+                        'rgba(168, 85, 247, 0.7)'
+                    ],
+                    borderColor: [
+                        '#00e5ff',
+                        '#a855f7'
+                    ],
+                    borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { labels: { color: '#fff' } },
-                    title: { display: true, text: '10 อันดับซีรีส์ยอดนิยม', color: '#fff', font: { size: 16 } }
+                    legend: { position: 'top', labels: { color: '#fff' } },
+                    title: { display: true, text: 'สัดส่วนยอดวิวตามหมวดหมู่', color: '#fff', font: { size: 16 } }
                 },
                 scales: {
                     y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: '#aaa' } },
@@ -568,6 +804,73 @@
             }
         });
     }
+
+    function updateMemberChart(labels, data) {
+        const ctx = document.getElementById('membersChart').getContext('2d');
+        if (memberChart) memberChart.destroy();
+
+        memberChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'สมาชิกใหม่ (คน)',
+                    data: data,
+                    borderColor: '#06C755',
+                    backgroundColor: 'rgba(6, 199, 85, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#fff' } }, title: { display: true, text: 'จำนวนสมาชิกใหม่รายวัน', color: '#fff', font: { size: 16 } } },
+                scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { stepSize: 1, color: '#aaa' } }, x: { grid: { display: false }, ticks: { color: '#aaa' } } }
+            }
+        });
+    }
+
+    function renderMemberTable(usersSnap) {
+        const tbody = document.getElementById('memberList');
+        tbody.innerHTML = '';
+        
+        usersSnap.forEach(doc => {
+            const u = doc.data();
+            const regDate = u.createdAt ? u.createdAt.toDate().toLocaleDateString('th-TH') : '-';
+            const lastLogin = u.lastLogin ? u.lastLogin.toDate().toLocaleString('th-TH') : '-';
+            const isBanned = u.isBanned || false;
+            
+            const tr = document.createElement('tr');
+            tr.className = 'movie-row';
+            tr.innerHTML = `
+                <td style="display:flex; align-items:center; gap:10px;"><img src="${u.photoURL || 'https://via.placeholder.com/40'}" style="width:30px; height:30px; border-radius:50%;"> ${u.displayName || 'Unknown'}</td>
+                <td style="color:var(--text-dim);">${u.email}</td>
+                <td>${regDate}</td>
+                <td style="font-size:12px; color:#aaa;">${lastLogin}</td>
+                <td align="right">
+                    <button onclick="toggleBan('${doc.id}', ${isBanned})" style="background:${isBanned ? '#06C755' : '#ef4444'}; color:#fff; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:12px;">
+                        ${isBanned ? 'ปลดแบน' : 'แบนผู้ใช้'}
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    window.toggleBan = async (uid, currentStatus) => {
+        const action = currentStatus ? "ปลดแบน" : "แบน";
+        if(!confirm(`คุณต้องการ${action}ผู้ใช้นี้ใช่หรือไม่?`)) return;
+        
+        try {
+            await updateDoc(doc(db, 'users', uid), { isBanned: !currentStatus });
+            showToast(`${action}เรียบร้อยแล้ว`);
+            // ข้อมูลจะรีเฟรชเองเพราะเราไม่ได้ใช้ onSnapshot กับ users (ใน initDashboard โหลดครั้งเดียว)
+            // ดังนั้นเราอาจต้องโหลดใหม่ หรือแค่แจ้งเตือน (ถ้าอยากให้ Realtime ต้องเปลี่ยน logic การดึง users เป็น onSnapshot)
+            // แต่เพื่อความง่าย ให้กดรีเฟรชหน้าจอ หรือเรียก initDashboard ใหม่
+            initDashboard(); 
+        } catch(e) { alert("เกิดข้อผิดพลาด: " + e.message); }
+    };
 
     // เริ่มต้นระบบ
     window.addEpField();
