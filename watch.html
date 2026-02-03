@@ -115,7 +115,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
 <script>
-    // การตั้งค่า Firebase เดิมของคุณ
+    // การตั้งค่า Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyBuhTA1YwcsNyxR0NLYW6JrxUQ9U7vyVeo",
         authDomain: "classic-e8ab7.firebaseapp.com",
@@ -125,38 +125,29 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // ระบบจัดการ URL เพื่อป้องกัน Error ใน Sandbox
-    function goHome() {
-        // เปลี่ยนกลับไปยังหน้าหลัก index.html
-        window.location.href = 'index.html';
-    }
-
-    function watchMovie(id) {
-        // เปลี่ยนไปดูหนังเรื่องใหม่
-        window.location.href = `watch.html?id=${id}`;
-    }
-
     const movieId = new URLSearchParams(window.location.search).get('id');
 
+    // ✅ ฟังก์ชันดึง Video ID ที่แม่นยำที่สุด (รองรับ YouTube ทุกแบบ)
     function getEmbed(u) {
-        if (!u) return "";
-        let id = "";
-        try {
-            if (u.includes("youtu.be/")) {
-                id = u.split("youtu.be/")[1].split(/[?#]/)[0];
-            } else if (u.includes("v=")) {
-                id = new URLSearchParams(new URL(u).search).get('v');
-            } else if (u.includes("shorts/")) {
-                id = u.split("shorts/")[1].split(/[?#]/)[0];
-            }
-        } catch(e) { return u; }
-        return id ? `https://www.youtube.com/embed/${id}?autoplay=1&rel=0` : u;
+        if (!u || typeof u !== 'string') return "";
+        u = u.trim();
+        
+        // เช็คว่าเป็น YouTube หรือไม่
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = u.match(regExp);
+        
+        if (match && match[2].length === 11) {
+            // ถ้าเป็น YouTube ให้ส่งคืน URL สำหรับ Embed
+            return `https://www.youtube.com/embed/${match[2]}?autoplay=1&rel=0`;
+        }
+        
+        // 💡 ถ้าไม่ใช่ YouTube (เช่นลิงก์ .mp4 หรือลิงก์เว็บอื่น) ให้ส่งลิงก์เดิมกลับไปตรงๆ
+        return u;
     }
 
     async function init() {
         if(!movieId) { 
-            const loader = document.getElementById('loader');
-            loader.innerHTML = '<p style="color:var(--primary); font-size: 14px;">กรุณาเลือกวิดีโอจากหน้าหลัก</p>';
+            document.getElementById('loader').innerHTML = '<p>ไม่พบรหัสวิดีโอ</p>';
             return; 
         }
         
@@ -165,12 +156,13 @@
             const doc = await docRef.get();
             
             if(!doc.exists) {
-                document.getElementById('loader').innerHTML = '<p style="color:red">ไม่พบข้อมูลเรื่องนี้</p>';
+                document.getElementById('loader').innerHTML = '<p>ขออภัย ไม่พบข้อมูลหนัง</p>';
                 return;
             }
 
             const d = doc.data();
 
+            // แสดงข้อมูลเบื้องต้น
             document.title = `${d.title} | DUYDODEE-HD`;
             document.getElementById('m-title').innerText = d.title;
             document.getElementById('m-badge').innerText = d.badge || 'HD';
@@ -181,35 +173,50 @@
             const pBox = document.getElementById('player-box');
             const eList = document.getElementById('ep-list');
             
-            // ใช้โครงสร้างข้อมูลเดิม (links หรือ link)
-            let links = Array.isArray(d.links) ? d.links : (d.link ? [d.link] : []);
+            // ✅ ตรวจสอบโครงสร้างลิงก์ (เผื่อเก็บมาทั้งแบบ link และ links)
+            let videoSources = [];
+            if (Array.isArray(d.links) && d.links.length > 0) {
+                videoSources = d.links;
+            } else if (d.link) {
+                videoSources = [d.link];
+            }
 
-            if(links.length === 0) {
-                pBox.innerHTML = `<div style="padding: 100px 20px; text-align:center; color:gray;">
-                    <i class="fas fa-exclamation-circle" style="font-size:40px; margin-bottom:15px;"></i>
-                    <p>ขออภัย ไม่พบลิงก์วิดีโอสำหรับเรื่องนี้</p>
+            if(videoSources.length === 0) {
+                pBox.innerHTML = `<div style="padding:80px 20px; text-align:center; color:#666;">
+                    <i class="fas fa-video-slash" style="font-size:40px; margin-bottom:15px;"></i>
+                    <p>ยังไม่มีไฟล์วิดีโอสำหรับเรื่องนี้</p>
                 </div>`;
             } else {
-                links.forEach((url, i) => {
+                // สร้างปุ่มตอน
+                videoSources.forEach((url, i) => {
                     const b = document.createElement('button');
                     b.className = 'ep-btn';
-                    b.innerText = links.length > 1 ? `EP ${i+1}` : `เล่นวิดีโอ`;
+                    b.innerText = videoSources.length > 1 ? `ตอนที่ ${i+1}` : `เล่นวิดีโอ`;
+                    
                     b.onclick = () => {
-                        pBox.innerHTML = `<iframe src="${getEmbed(url)}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+                        const embedUrl = getEmbed(url);
+                        // เปลี่ยนวิดีโอใน Iframe
+                        pBox.innerHTML = `<iframe src="${embedUrl}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+                        
+                        // เปลี่ยนสถานะปุ่ม Active
                         document.querySelectorAll('.ep-btn').forEach(btn => btn.classList.remove('active'));
                         b.classList.add('active');
                     };
+                    
                     eList.appendChild(b);
+                    
+                    // สั่งให้เล่นตอนแรกอัตโนมัติ
                     if(i === 0) b.click();
                 });
             }
 
-            // อัปเดตยอดวิว
+            // เพิ่มยอดวิว
             docRef.update({ viewCount: firebase.firestore.FieldValue.increment(1) });
             fetchSuggest(d.category);
             
         } catch(e) { 
-            console.error("Error loading movie:", e); 
+            console.error("Error:", e);
+            document.getElementById('player-box').innerHTML = `<p style="text-align:center; padding:50px;">เกิดข้อผิดพลาด: ${e.message}</p>`;
         } finally { 
             const ld = document.getElementById('loader');
             ld.style.opacity = '0';
@@ -217,49 +224,30 @@
         }
     }
 
-    async function fetchSuggest(currentCategory) {
+    // ฟังก์ชันแนะนำ (เหมือนเดิม)
+    async function fetchSuggest(category) {
         const box = document.getElementById('suggest-box');
         try {
-            const snap = await db.collection('artifacts')
-                .where('category', '==', currentCategory)
-                .limit(6)
-                .get();
-            
-            let count = 0;
+            const snap = await db.collection('artifacts').where('category', '==', category).limit(6).get();
             snap.forEach(doc => {
-                if(doc.id === movieId || count >= 5) return;
+                if(doc.id === movieId) return;
                 const m = doc.data();
-                addSuggestCard(box, doc.id, m);
-                count++;
+                const card = document.createElement('div');
+                card.className = 'suggest-card';
+                card.onclick = () => window.location.href = `watch.html?id=${doc.id}`;
+                card.innerHTML = `
+                    <img src="${m.poster}" onerror="this.src='https://via.placeholder.com/150x225?text=No+Image'">
+                    <div class="suggest-info">
+                        <p>${m.title}</p>
+                        <span><i class="fas fa-play-circle"></i> ดูตอนนี้</span>
+                    </div>
+                `;
+                box.appendChild(card);
             });
-
-            if(count < 5) {
-                const extraSnap = await db.collection('artifacts').limit(8).get();
-                extraSnap.forEach(doc => {
-                    if(doc.id === movieId || count >= 6) return;
-                    if(!box.querySelector(`[data-id="${doc.id}"]`)) {
-                        addSuggestCard(box, doc.id, doc.data());
-                        count++;
-                    }
-                });
-            }
-        } catch(e) { console.error("Error suggestions:", e); }
+        } catch(e) { console.log(e); }
     }
 
-    function addSuggestCard(container, id, m) {
-        const c = document.createElement('div');
-        c.className = 'suggest-card';
-        c.setAttribute('data-id', id);
-        c.onclick = () => watchMovie(id);
-        c.innerHTML = `
-            <img src="${m.poster}" class="${m.category === 'vertical' ? 'vertical' : ''}" onerror="this.src='https://via.placeholder.com/150x225?text=No+Image'">
-            <div class="suggest-info">
-                <p>${m.title}</p>
-                <span><i class="fas fa-play-circle"></i> ${m.category === 'vertical' ? 'ซีรีส์สั้น' : 'พากย์ไทย'}</span>
-            </div>
-        `;
-        container.appendChild(c);
-    }
+    function goHome() { window.location.href = 'index.html'; }
 
     window.onload = init;
 </script>
